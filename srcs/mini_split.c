@@ -1,23 +1,44 @@
 #include "../header/minishell.h"
 
-static ssize_t	count(t_lex *lex, const char *str, char c)
+int	state_set(char c, char *str, int quotes_state)
 {
-	size_t	j;
-	ssize_t	i;
+	int i;
 
-	j = 0;
+	i = -1;
+	if (quotes_state)
+		return (quotes_state);
+	while (str[++i])
+		if (str[i] == c)
+			return (i + 3);
+	return (-1);
+}
+
+static ssize_t	count(const char *str)
+{
+	ssize_t	i;
+	ssize_t	j;
+	int	state;
+	int	quotes_state;
+	int	prev_state;
+
 	i = 0;
-	while (str[j])
-	{
-		while ((str[j] && quotes(str[j], &lex->open_quotes) && str[j] == c) || lex->open_quotes)
-			j++;
-		printf("%zd\t%c\t%zd\n", lex->open_quotes, str[j]);
-		if (str[j] && !(str[j] == c))
+	quotes_state = 0;
+	j = 0;
+	while (str[i])
+	{	
+		quotes(str[i], &quotes_state);
+		prev_state = state_set(str[i], ">|<", quotes_state);
+		state = prev_state;
+		while ((str[i] && quotes(str[i], &quotes_state) && state == prev_state) || quotes_state)
+		{
 			i++;
-		while (str[j] && !(str[j] == c))
-			j++;
+			state = state_set(str[i], ">|<", quotes_state);
+		}
+		printf("%c, %zd\n", str[i], i);
+		j++;
 	}
-	return (i);
+	printf("%zd\n", j);
+	return (j);
 }
 
 static char	**ft_free(char **in, ssize_t i)
@@ -31,46 +52,18 @@ static char	**ft_free(char **in, ssize_t i)
 	return (NULL);
 }
 
-static char	*str(t_lex *lex, char *s, char c)
-{
-	ssize_t	i;
-	char	*out;
+// static char	*str(char *s)
+// {
+// }
 
-	i = -1;
-	while ((s[++i] && quotes(s[i], &lex->open_quotes) && s[i] != c) || lex->open_quotes)
-		;
-	out = ft_substr(s, 0, i);
-	if (!out)
-		return (NULL);
-	return (out);
-}
-
-char	**mini_split(t_lex *lex, char *in, char c)
+char	**mini_split(char *in)
 {
+	//ssize_t	i;
 	char	**out;
-	char	*tmp;
-	ssize_t	i;
 	ssize_t	num;
 
-	i = -1;
-	num = count(lex, in, c);
-	if (!in)
-		return (NULL);
-	out = (char **)malloc((num + 1) * sizeof(char *));
-	if (!out)
-		return (NULL);
-	//printf("%zd\n", lex->open_quotes);
-	tmp = (char *)in;
-	while (++i < num)
-	{
-		while (*tmp && *tmp == c)
-			tmp++;
-		out[i] = str(lex, tmp, c);
-		if (!out[i])
-			return (ft_free(out, i));
-		while (*tmp && *tmp != c)
-			tmp++;
-	}
-	out[i] = NULL;
-	return (out);
+	num = count(in);
+	out = (char **)calloc(num + 1, sizeof(char *));
+	ft_free(out, 0);
+	return (NULL);
 }

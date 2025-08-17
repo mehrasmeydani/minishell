@@ -11,7 +11,6 @@ int main(int argc, char **argv, char **env)
 	(void)argv;
 	(void)env;
 	mini.lex = &lex;
-	lex.open_quotes = 0;
 	while (true)
 	{
 		my_read(&mini, &lex);

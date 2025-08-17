@@ -17,7 +17,6 @@ typedef struct s_lex
 	char	*in;
 	char	**out;
 	ssize_t	num_pipes;
-	ssize_t	open_quotes;
 }	t_lex;
 
 typedef struct s_minishell
@@ -27,7 +26,7 @@ typedef struct s_minishell
 }	t_minishell;
 
 int		my_read(t_minishell *mini, t_lex *lex);
-char	**mini_split(t_lex *lex, char *in, char c);
-ssize_t quotes(char c, ssize_t *state);
+char	**mini_split(char *in);
+int 	quotes(char c, int *state);
 
 #endif
