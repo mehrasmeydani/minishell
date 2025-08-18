@@ -16,29 +16,36 @@ int	state_set(char c, char *str, int quotes_state)
 static ssize_t	count(const char *str)
 {
 	ssize_t	i;
-	ssize_t	j;
+	ssize_t	tokens;
 	int	state;
-	int	quotes_state;
 	int	prev_state;
+	int	quotes_state;
 
 	i = 0;
+	state = 0;
+	tokens = 0;
 	quotes_state = 0;
-	j = 0;
 	while (str[i])
-	{	
-		quotes(str[i], &quotes_state);
-		prev_state = state_set(str[i], ">|<", quotes_state);
-		state = prev_state;
-		while ((str[i] && quotes(str[i], &quotes_state) && state == prev_state) || quotes_state)
-		{
+	{
+		while (str[i] == ' ')
 			i++;
-			state = state_set(str[i], ">|<", quotes_state);
+		quotes(str[i], &quotes_state);
+		if (quotes_state && ++i)
+		{
+			while (str[i] && quotes(str[i], &quotes_state) && quotes_state)
+				i++;
+			i++;
 		}
-		printf("%c, %zd\n", str[i], i);
-		j++;
+		else
+		{
+			state = state_set(str[i], "<|> ", quotes_state);
+			prev_state = state;
+			while (str[i] && state == prev_state)
+				state = state_set(str[++i], "<|> ", quotes_state);
+		}
+		tokens++;
 	}
-	printf("%zd\n", j);
-	return (j);
+	return (tokens);
 }
 
 static char	**ft_free(char **in, ssize_t i)
