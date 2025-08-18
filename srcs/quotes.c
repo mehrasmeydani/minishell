@@ -1,6 +1,6 @@
 #include "../header/minishell.h"
 
-int quotes(char c, int *state)
+int	quotes(char c, int *state)
 {
 	if (c == '"' && *state == DOUBLE)
 		*state = 0;

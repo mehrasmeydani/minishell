@@ -1,8 +1,8 @@
 #include "../header/minishell.h"
 
-int	state_set(char c, char *str)
+static int	state_set(char c, char *str)
 {
-	int i;
+	int	i;
 
 	i = -1;
 	while (str[++i])
@@ -15,23 +15,23 @@ static void	skip(char **str, ssize_t *i)
 {
 	int	state;
 	int	prev_state;
+	int	quotes_stat;
 
-	state = 0;
+	quotes_stat = 0;
 	while ((*str)[(*i)] == ' ')
-			(*str)++;
-	quotes((*str)[(*i)], &state);
-	if ((state == DOUBLE || state == SINGLE) && ++(*i))
+		(*str)++;
+	state = state_set((*str)[(*i)], "<|> ");
+	prev_state = state;
+	while ((*str)[(*i)] && state == prev_state)
 	{
-		while ((*str)[(*i)] && quotes((*str)[(*i)], &state) && state)
-			(*i)++;
-		(*i)++;
-	}
-	else
-	{
-		state = state_set((*str)[(*i)], "<|> ");
-		prev_state = state;
-		while ((*str)[(*i)] && state == prev_state)
-			state = state_set((*str)[++(*i)], "<|> ");
+		quotes((*str)[(*i)], &quotes_stat);
+		if (state == -1 && (quotes_stat == DOUBLE || quotes_stat == SINGLE) && ++(*i))
+		{
+			while ((*str)[(*i)] && quotes((*str)[(*i)], &quotes_stat) && quotes_stat)
+				(*i)++;
+			//(*i)++;
+		}
+		state = state_set((*str)[++(*i)], "<|> ");
 	}
 }
 
@@ -50,17 +50,6 @@ static ssize_t	count(char *str)
 	return (tokens);
 }
 
-static char	**ft_free(char **in, ssize_t i)
-{
-	ssize_t	j;
-
-	j = -1;
-	while (++j < i)
-		free(in[j]);
-	free(in);
-	return (NULL);
-}
-
 static char	*str(char **str)
 {
 	ssize_t	i;
@@ -69,6 +58,8 @@ static char	*str(char **str)
 	i = 0;
 	skip(str, &i);
 	out = ft_substr(*str, 0, i);
+	if (!out)
+		return (NULL);
 	*str = *str + i;
 	return (out);
 }
@@ -81,6 +72,8 @@ char	**mini_split(char *in)
 
 	num = count(in);
 	out = (char **)calloc(num + 1, sizeof(char *));
+	if (!out)
+		return (NULL);
 	i = -1;
 	while (++i < num)
 	{

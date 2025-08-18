@@ -27,6 +27,8 @@ typedef struct s_minishell
 
 int		my_read(t_minishell *mini, t_lex *lex);
 char	**mini_split(char *in);
-int 	quotes(char c, int *state);
+int		quotes(char c, int *state);
+char	**ft_free(char **in, ssize_t i);
+size_t	ft_str_str_len(char **in);
 
 #endif

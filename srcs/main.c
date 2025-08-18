@@ -1,10 +1,8 @@
 #include "../header/minishell.h"
 
-
-
-int main(int argc, char **argv, char **env)
+int	main(int argc, char **argv, char **env)
 {
-	t_minishell mini;
+	t_minishell	mini;
 	t_lex		lex;
 
 	(void)argc;
@@ -13,6 +11,7 @@ int main(int argc, char **argv, char **env)
 	mini.lex = &lex;
 	while (true)
 	{
-		my_read(&mini, &lex);
+		if (!my_read(&mini, &lex))
+			return (1);
 	}
 }

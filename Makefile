@@ -1,4 +1,4 @@
-SRC			= main.c mini_split.c my_read.c quotes.c
+SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c
 SRCS		= ${addprefix ${PRE}, ${SRC}}
 PRE			= ./srcs/
 HEAD		= ./header/
