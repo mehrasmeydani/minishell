@@ -29,5 +29,6 @@ int		quotes(char c, int *state);
 char	**ft_free(char **in, ssize_t i);
 size_t	ft_str_str_len(char **in);
 char	**ft_duostrdup(char **in, ssize_t len);
+int	remove_quotes(char **in);
 
 #endif

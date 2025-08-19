@@ -49,10 +49,67 @@ static int	check_syntax(t_minishell *mini, char **in)
 	return (1);
 }
 
-// int	check_heredoc(t_lex *lex, char **in)
-// {
+char	*ft_relocat(char *in, char *buff)
+{
+	char	*out;
+	size_t	mlen;
 
-// }
+	mlen = ft_strlen(buff) + 1;
+	if (!in)
+	{
+		out = (char *)ft_calloc(mlen, 1);
+		if (!out)
+			return (NULL);
+		ft_strlcat(out, buff, mlen);
+		return (out);
+	}
+	out = (char *)ft_calloc(ft_strlen(in) + mlen, 1);
+	if (!out)
+		return (free(in), NULL);
+	ft_strlcat(out, in, ft_strlen(in) + 1);
+	ft_strlcat(out, buff, ft_strlen(out) + mlen);
+	free(in);
+	return (out);
+}
+
+int	check_heredoc(t_lex *lex)
+{
+	t_redirect	*tmp;
+	char		*tmp_str;
+
+	while (lex)
+	{
+		tmp = lex->redic;
+		while (tmp)
+		{
+			tmp_str = NULL;
+			if (tmp->level == HEREDOC)
+			{
+				if (!remove_quotes(&tmp->name))
+					return(0);
+				printf ("%s\n", tmp->name);
+				while (!tmp_str)
+				{
+					tmp_str = readline(">");
+					if (!tmp_str)
+						return (0);
+					if (!ft_strcmp(tmp->name, tmp_str))
+					{
+						free(tmp_str);
+						break;
+					}
+					tmp->input = ft_relocat(tmp->input, "\n");
+					tmp->input = ft_relocat(tmp->input, tmp_str);
+					free(tmp_str);
+					tmp_str = NULL;
+				}
+			}
+			tmp = tmp->next;
+		}
+		lex = lex->next;
+	}
+	return (1);
+}
 
 int	my_read(t_minishell *mini)
 {
@@ -74,6 +131,8 @@ int	my_read(t_minishell *mini)
 		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL
 			, ft_putendl_fd("Syntax error", 2), 1); //syntax error
 	mini->lex = lexer(mini->out);
+	if (!mini->lex)
+		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL, 1);
 	tmp = mini->lex;
 	while (tmp)
 	{
@@ -89,7 +148,7 @@ int	my_read(t_minishell *mini)
 		printf ("\n============================\n");
 		tmp = tmp->next;
 	}
-	// if (!check_heredoc(mini, mini->out))
-	// 	return (0);
+	if (!check_heredoc(mini->lex))
+		return (0);
 	return (1);
 }

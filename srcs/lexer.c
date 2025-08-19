@@ -125,5 +125,7 @@ t_lex	*lexer(char **in)
 		return (NULL);
 	(void)out;
 	out = lex_redir(out);
+	if (!out)
+		return (NULL);
 	return (out);
 }
