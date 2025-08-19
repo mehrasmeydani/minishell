@@ -96,13 +96,16 @@ int	check_heredoc(t_lex *lex)
 					if (!ft_strcmp(tmp->name, tmp_str))
 					{
 						free(tmp_str);
+						tmp_str = NULL;
 						break;
 					}
-					tmp->input = ft_relocat(tmp->input, "\n");
+					if (tmp->input)
+						tmp->input = ft_relocat(tmp->input, "\n");
 					tmp->input = ft_relocat(tmp->input, tmp_str);
 					free(tmp_str);
 					tmp_str = NULL;
 				}
+				printf ("%s\n", tmp->input);
 			}
 			tmp = tmp->next;
 		}
@@ -149,6 +152,6 @@ int	my_read(t_minishell *mini)
 		tmp = tmp->next;
 	}
 	if (!check_heredoc(mini->lex))
-		return (0);
+		return (1);
 	return (1);
 }
