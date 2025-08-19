@@ -1,4 +1,7 @@
-SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c
+LEX_PRE		= lexer_tools/
+LEX_SRC		= lex_addback.c lex_clear.c lex_delone.c lex_last.c lex_new.c 
+SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c ft_duostrdup.c lexer.c\
+			${addprefix ${LEX_PRE}, ${LEX_SRC}}
 SRCS		= ${addprefix ${PRE}, ${SRC}}
 PRE			= ./srcs/
 HEAD		= ./header/

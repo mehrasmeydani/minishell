@@ -25,7 +25,7 @@ static int	state_set(char c, char *str)
 	return (-1);
 }
 
-static int	check_syntax(char **in)
+static int	check_syntax(t_minishell *mini, char **in)
 {
 	ssize_t	i;
 	ssize_t	state_one;
@@ -34,13 +34,17 @@ static int	check_syntax(char **in)
 	i = -1;
 	while (in[++i])
 	{
-		state_one = state_set(in[i][0], "<|>");
+		state_one = state_set(in[i][0], "<>|");
 		if (in[i + 1])
-			state_two = state_set(in[i + 1][0], "<|>");
-		if ((state_one != -1 && in[i + 1] && state_two != -1)
-			|| ((state_one == 3 || state_one == 5) && ft_strlen(in[i]) > 2)
-			|| (state_one == 4 && ft_strlen(in[i]) > 1))
+			state_two = state_set(in[i + 1][0], "<>|");
+		if (((state_one == 3 || state_one == 4) && (ft_strlen(in[i]) > 2
+					|| !in[i + 1] || (in[i + 1] && state_two != -1)))
+			|| (state_one == 5 && (ft_strlen(in[i]) > 1 || !in[i + 1])))
+		{
+			if (state_one == 5)
+				mini->num_pipes++;
 			return (0);
+		}
 	}
 	return (1);
 }
@@ -50,26 +54,34 @@ static int	check_syntax(char **in)
 
 // }
 
-int	my_read(t_minishell *mini, t_lex *lex)
+int	my_read(t_minishell *mini)
 {
-	(void)mini;
-	lex->in = readline("minishell>");
-	if (!lex->in)
-		return (1); //error
-	if (!check_quotes(lex->in))
-		return (free(lex->in), lex->in = NULL
+	t_lex	*tmp;
+
+	mini->in = readline("minishell>");
+	if (!mini->in)
+		return (0); //error
+	if (!check_quotes(mini->in))
+		return (free(mini->in), mini->in = NULL
 			, ft_putendl_fd("Count your quotes", 2), 1);
-	lex->out = mini_split(lex->in);
-	free(lex->in);
-	lex->in = NULL;
-	if (!lex->out)
+	mini->out = mini_split(mini->in);
+	free(mini->in);
+	mini->in = NULL;
+	if (!mini->out)
 		return (1); //error
-	for (size_t i = 0; lex->out[i]; i++)
-		printf("%s-\n", lex->out[i]);
-	if (!check_syntax(lex->out))
-		return (ft_free(lex->out, ft_str_str_len(lex->out)), lex->out = NULL
+	if (!check_syntax(mini, mini->out))
+		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL
 			, ft_putendl_fd("Syntax error", 2), 1); //syntax error
-	// if (!check_heredoc(lex, lex->out))
+	mini->lex = lexer(mini->out);
+	tmp = mini->lex;
+	while (tmp)
+	{
+		for (size_t i = 0; tmp->cmd[i]; i++)
+			printf("*%s*\n", tmp->cmd[i]);
+		printf ("=========================\n");
+		tmp = tmp->next;
+	}
+	// if (!check_heredoc(mini, mini->out))
 	// 	return (0);
 	return (1);
 }

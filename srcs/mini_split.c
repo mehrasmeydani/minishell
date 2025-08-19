@@ -25,12 +25,11 @@ static void	skip(char **str, ssize_t *i)
 	while ((*str)[(*i)] && state == prev_state)
 	{
 		quotes((*str)[(*i)], &quotes_stat);
-		if (state == -1 && (quotes_stat == DOUBLE || quotes_stat == SINGLE) && ++(*i))
-		{
-			while ((*str)[(*i)] && quotes((*str)[(*i)], &quotes_stat) && quotes_stat)
+		if (state == -1 && (quotes_stat == DOUBLE || quotes_stat == SINGLE)
+			&& ++(*i))
+			while ((*str)[(*i)] && quotes((*str)[(*i)], &quotes_stat)
+				&& quotes_stat)
 				(*i)++;
-			//(*i)++;
-		}
 		state = state_set((*str)[++(*i)], "<|> ");
 	}
 }

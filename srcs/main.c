@@ -3,15 +3,14 @@
 int	main(int argc, char **argv, char **env)
 {
 	t_minishell	mini;
-	t_lex		lex;
 
 	(void)argc;
 	(void)argv;
 	(void)env;
-	mini.lex = &lex;
 	while (true)
 	{
-		if (!my_read(&mini, &lex))
+		ft_bzero(&mini, sizeof(mini));
+		if (!my_read(&mini))
 			return (1);
 	}
 }
