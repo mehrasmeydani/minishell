@@ -1,4 +1,5 @@
 #include "../header/minishell.h"
+#include "../header/redirect.h"
 
 static t_lex	*lex_pipes(char **in, ssize_t i)
 {
@@ -29,6 +30,92 @@ static t_lex	*lex_pipes(char **in, ssize_t i)
 	return (out);
 }
 
+static int	find_type(char *str)
+{
+	if (*str == '<')
+	{
+		if (ft_strlen(str) == 1)
+			return (0);
+		else
+			return (2);
+	}
+	else if (ft_strlen(str) == 1)
+		return (1);
+	return (3);
+}
+
+int	clean_rest(t_lex *lex)
+{
+	t_lex 	*tmp;
+	ssize_t	i;
+	ssize_t	str_len;
+	char	**tmp_str;
+
+	tmp = lex;
+	while (tmp)
+	{
+		str_len = 0;
+		i = -1;
+		while (tmp->cmd[++i])
+		{
+			if (tmp->cmd[i][0] == '<' || tmp->cmd[i][0] == '>')
+				i++;
+			else
+				str_len++;
+		}
+		tmp_str = (char **)calloc(str_len + 1, sizeof(char *));
+		if (!tmp_str)
+			return (0);
+		str_len = 0;
+		i = -1;
+		while (tmp->cmd[++i])
+		{
+			if (tmp->cmd[i][0] == '<' || tmp->cmd[i][0] == '>')
+				i++;
+			else
+			{
+				tmp_str[str_len] = ft_strdup(tmp->cmd[i]);
+				if (!tmp_str[str_len])
+					return (ft_free(tmp_str, str_len), 0);
+				str_len++;
+			}
+		}
+		ft_free(tmp->cmd, i);
+		tmp->cmd = tmp_str;
+		tmp = tmp->next;
+	}
+	return (1);
+}
+
+t_lex	*lex_redir(t_lex *lex)
+{
+	char		*tmp_str;
+	t_lex		*tmp;
+	t_redirect	*redir;
+	ssize_t		i;
+
+	tmp = lex;
+	while (tmp)
+	{
+		i = -1;
+		while (tmp->cmd[++i])
+		{
+			if (tmp->cmd[i][0] == '<' || tmp->cmd[i][0] == '>')
+			{
+				tmp_str = ft_strdup(tmp->cmd[i + 1]);
+				redir = redirect_new(tmp_str, find_type(tmp->cmd[i++]));
+				if (!redir)
+					return (lex_clear(&lex, ft_free), free(tmp_str), NULL);
+				redirect_addback(&tmp->redic, redir);
+			}
+		}
+		tmp = tmp->next;
+	}
+	if (!clean_rest(lex))
+		return (lex_clear(&lex, ft_free), NULL);
+	return (lex);
+}
+
 t_lex	*lexer(char **in)
 {
 	t_lex	*out;
@@ -37,6 +124,6 @@ t_lex	*lexer(char **in)
 	if (!out)
 		return (NULL);
 	(void)out;
-	//out = lex_redir(out);
+	out = lex_redir(out);
 	return (out);
 }

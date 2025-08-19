@@ -57,6 +57,7 @@ static int	check_syntax(t_minishell *mini, char **in)
 int	my_read(t_minishell *mini)
 {
 	t_lex	*tmp;
+	t_redirect	*tmp_2;
 
 	mini->in = readline("minishell>");
 	if (!mini->in)
@@ -77,8 +78,15 @@ int	my_read(t_minishell *mini)
 	while (tmp)
 	{
 		for (size_t i = 0; tmp->cmd[i]; i++)
-			printf("*%s*\n", tmp->cmd[i]);
-		printf ("=========================\n");
+			printf("\t*%s*\n", tmp->cmd[i]);
+		printf ("\t============\n");
+		tmp_2 = tmp->redic;
+		while (tmp_2)
+		{
+			printf("\t*%s* -", tmp_2->name);
+			tmp_2 = tmp_2->next;
+		}
+		printf ("\n============================\n");
 		tmp = tmp->next;
 	}
 	// if (!check_heredoc(mini, mini->out))

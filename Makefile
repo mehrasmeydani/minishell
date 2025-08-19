@@ -1,7 +1,11 @@
+REDIR_PRE		= redir_tools/
+REDIR_SRC		= redir_addback.c redir_clear.c redir_delone.c redir_last.c redir_new.c 
+
+
 LEX_PRE		= lexer_tools/
 LEX_SRC		= lex_addback.c lex_clear.c lex_delone.c lex_last.c lex_new.c 
 SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c ft_duostrdup.c lexer.c\
-			${addprefix ${LEX_PRE}, ${LEX_SRC}}
+			${addprefix ${LEX_PRE}, ${LEX_SRC}} ${addprefix ${REDIR_PRE}, ${REDIR_SRC}} 
 SRCS		= ${addprefix ${PRE}, ${SRC}}
 PRE			= ./srcs/
 HEAD		= ./header/

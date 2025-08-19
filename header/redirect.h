@@ -19,4 +19,10 @@ typedef struct s_redirect
 	struct s_redirect	*next;
 }	t_redirect;
 
+void		redirect_addback(t_redirect **redirect, t_redirect *new);
+void		redirect_clear(t_redirect **redirect, void (*del)(void *));
+void		redirect_delone(t_redirect *redirect, void (*del)(void *));
+t_redirect	*redirect_new(char *in, int i);
+t_redirect	*redirect_last(t_redirect *redirect);
+
 #endif
