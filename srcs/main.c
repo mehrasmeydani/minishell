@@ -17,6 +17,7 @@ int	main(int argc, char **argv, char **env)
 	(void)env;
 	while (true)
 	{
+		signal(SIGQUIT, SIG_IGN); //
 		signal(SIGINT, sigint);
 		ft_bzero(&mini, sizeof(mini));
 		if (!my_read(&mini))
