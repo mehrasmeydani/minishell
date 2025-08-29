@@ -8,6 +8,7 @@
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <signal.h>
 
 # define SINGLE 1
 # define DOUBLE 2

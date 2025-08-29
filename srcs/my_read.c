@@ -153,5 +153,6 @@ int	my_read(t_minishell *mini)
 	}
 	if (!check_heredoc(mini->lex))
 		return (1);
+	ft_free(mini->out, ft_str_str_len(mini->out));
 	return (1);
 }
