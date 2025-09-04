@@ -16,6 +16,7 @@ typedef struct s_redirect
 	char				*name;
 	int					fd;
 	char				*input;
+	int					input_expand;
 	t_redir_type		level;
 	struct s_redirect	*next;
 }	t_redirect;

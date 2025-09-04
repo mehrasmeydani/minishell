@@ -4,7 +4,9 @@
 # include "./libft.h"
 # include "./redirect.h"
 # include "./lexer.h"
+# include "./env.h"
 # include <stdbool.h>
+# include <fcntl.h>
 # include <stdio.h>
 # include <readline/readline.h>
 # include <readline/history.h>
@@ -16,11 +18,11 @@
 typedef unsigned int	t_ui;
 typedef struct s_minishell
 {
-	char	**env;
 	char	*in;
 	char	**out;
 	ssize_t	num_pipes;
 	t_lex	*lex;
+	t_env	env;
 
 }	t_minishell;
 

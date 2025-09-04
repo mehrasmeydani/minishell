@@ -40,11 +40,7 @@ static int	check_syntax(t_minishell *mini, char **in)
 		if (((state_one == 3 || state_one == 4) && (ft_strlen(in[i]) > 2
 					|| !in[i + 1] || (in[i + 1] && state_two != -1)))
 			|| (state_one == 5 && (ft_strlen(in[i]) > 1 || !in[i + 1])))
-		{
-			if (state_one == 5)
-				mini->num_pipes++;
 			return (0);
-		}
 	}
 	return (1);
 }
@@ -72,6 +68,17 @@ char	*ft_relocat(char *in, char *buff)
 	return (out);
 }
 
+int	has_quotes(char *in)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (in && in[++i])
+		if (in[i] == '\'' || in[i] == '"')
+			return (1);
+	return (0);
+}
+
 int	check_heredoc(t_lex *lex)
 {
 	t_redirect	*tmp;
@@ -85,10 +92,11 @@ int	check_heredoc(t_lex *lex)
 			tmp_str = NULL;
 			if (tmp->level == HEREDOC)
 			{
+				if (has_quotes(tmp->name))
+					tmp->input_expand = 1;
 				if (!remove_quotes(&tmp->name))
 					return(0);
-				printf ("%s\n", tmp->name);
-				while (!tmp_str)
+				while (true)
 				{
 					tmp_str = readline(">");
 					if (!tmp_str)
@@ -105,7 +113,6 @@ int	check_heredoc(t_lex *lex)
 					free(tmp_str);
 					tmp_str = NULL;
 				}
-				printf ("%s\n", tmp->input);
 			}
 			tmp = tmp->next;
 		}
@@ -116,9 +123,6 @@ int	check_heredoc(t_lex *lex)
 
 int	my_read(t_minishell *mini)
 {
-	t_lex	*tmp;
-	t_redirect	*tmp_2;
-
 	mini->in = readline("minishell>");
 	if (!mini->in)
 		return (0); //error
@@ -136,21 +140,6 @@ int	my_read(t_minishell *mini)
 	mini->lex = lexer(mini->out);
 	if (!mini->lex)
 		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL, 1);
-	tmp = mini->lex;
-	while (tmp)
-	{
-		for (size_t i = 0; tmp->cmd[i]; i++)
-			printf("\t*%s*\n", tmp->cmd[i]);
-		printf ("\t============\n");
-		tmp_2 = tmp->redic;
-		while (tmp_2)
-		{
-			printf("\t*%s* -", tmp_2->name);
-			tmp_2 = tmp_2->next;
-		}
-		printf ("\n============================\n");
-		tmp = tmp->next;
-	}
 	if (!check_heredoc(mini->lex))
 		return (1);
 	ft_free(mini->out, ft_str_str_len(mini->out));

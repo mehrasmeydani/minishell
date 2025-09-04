@@ -23,6 +23,7 @@ int	main(int argc, char **argv, char **env)
 		if (!my_read(&mini))
 			return (1);
 		//signal(SIGINT, SIG_IGN);
+		open("lol.tmp", __O_TMPFILE);
 		lex_clear(&mini.lex, ft_free);
 	}
 }
