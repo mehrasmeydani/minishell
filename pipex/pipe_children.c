@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pipe_children.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/15 18:18:13 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/09/04 19:52:35 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/09/04 20:44:58 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,9 +109,9 @@ void	first_cmd(t_parts *parts, int *pipes, char **envp)
 void	second_cmd(t_parts *parts, int *pipes, char **envp)
 {
 
-		parts->pid2 = fork();
-		if (parts->pid2 == -1)
-			return(perror("Fork CMD2"));
+	parts->pid2 = fork();
+	if (parts->pid2 == -1)
+		return(perror("Fork CMD2"));
 	if (parts->pid2 == 0)
 
 		{

@@ -32,6 +32,7 @@ static int	check_syntax(t_minishell *mini, char **in)
 	ssize_t	state_two;
 
 	i = -1;
+	(void)mini;
 	while (in[++i])
 	{
 		state_one = state_set(in[i][0], "<>|");
@@ -142,6 +143,19 @@ int	my_read(t_minishell *mini)
 		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL, 1);
 	if (!check_heredoc(mini->lex))
 		return (1);
+	t_lex *tmp = mini->lex;
+	while (tmp)
+	{
+		t_redirect *tmp2 = tmp->redic;
+		while (tmp2)
+		{
+			if (tmp2->input_expand == 0)
+				tmp2->input = expand(tmp2->input, mini->env);
+			printf("%s\n", tmp2->input);
+			tmp2 = tmp2->next;
+		}
+		tmp = tmp->next;
+	}
 	ft_free(mini->out, ft_str_str_len(mini->out));
 	return (1);
 }
