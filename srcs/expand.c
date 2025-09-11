@@ -17,7 +17,7 @@ int	find_var(char **var, char *in, ssize_t len, t_env env)
 	return (*var = NULL, free(tmp), 1);
 }
 
-char	*expand(char *in, t_env env)
+char	*expand(char *in, t_env env, char *in_copy)
 {
 	ssize_t	i;
 	ssize_t	j;
@@ -38,7 +38,7 @@ char	*expand(char *in, t_env env)
 			while (in[i + j] && in[i + j] != ' ' && in[i + j] != '"' && in[i + j] != '$') //add_whitespaces
 				j++;
 			if (!find_var(&tmp_var, in + i + 1, j - 1, env))
-				return (NULL);
+				return (free(out), free(in_copy), NULL);
 			tmp = ft_substr(in, 0, i);
 			out	= ft_relocat(out, tmp);
 			free(tmp);
@@ -51,5 +51,5 @@ char	*expand(char *in, t_env env)
 		i++;
 	}
 	out = ft_relocat(out, in);
-	return (out);
+	return (free(in_copy), out);
 }

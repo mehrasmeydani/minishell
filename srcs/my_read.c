@@ -150,7 +150,7 @@ int	my_read(t_minishell *mini)
 		while (tmp2)
 		{
 			if (tmp2->input_expand == 0)
-				tmp2->input = expand(tmp2->input, mini->env);
+				tmp2->input = expand(tmp2->input, mini->env, tmp2->input);
 			printf("%s\n", tmp2->input);
 			tmp2 = tmp2->next;
 		}

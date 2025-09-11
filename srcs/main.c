@@ -13,6 +13,7 @@ int	set_var(t_minishell *mini, char **env_var)
 	t_env	*env;
 	ssize_t	i;
 	char	*tmp;
+	int	lvl;
 
 	(void)mini;
 	env = &mini->env;
@@ -36,10 +37,25 @@ int	set_var(t_minishell *mini, char **env_var)
 		if (!env->var_value[i] || !env->var_name[i])
 			return (ft_free(env->var_name, ft_str_str_len(env_var))
 				, ft_free(env->var_value, i), ft_free(env->raw_var, i), 0);
-		// puts("hi");
-		// printf("\"%s\"\t\"%s\"\t\"%s\"\n\n", env->raw_var[i], env->var_name[i], env->var_value[i]);
+		if (!ft_strcmp("SHLVL", env->var_name[i]))
+		{
+			lvl = ft_atoi(env->var_value[i]);
+			lvl++;
+			free(env->var_value[i]);
+			env->var_value[i] = ft_itoa(lvl);
+			if (!env->var_value[i])
+				return (ft_free(env->var_name, ft_str_str_len(env_var))
+					, ft_free(env->var_value, i), ft_free(env->raw_var, i), 0);
+		}
 	}
 	return (1);
+}
+
+void	free_var(t_env *in)
+{
+	ft_free(in->raw_var, ft_str_str_len(in->raw_var));
+	ft_free(in->var_name, ft_str_str_len(in->var_name));
+	ft_free(in->var_value, ft_str_str_len(in->var_value));
 }
 
 int	main(int argc, char **argv, char **env)
@@ -56,8 +72,10 @@ int	main(int argc, char **argv, char **env)
 		ft_bzero(&mini, sizeof(mini));
 		set_var(&mini, env);
 		if (!my_read(&mini))
-			return (1);
+			return (free_var(&mini.env), lex_clear(&mini.lex, ft_free), 1);
+		
 		//signal(SIGINT, SIG_IGN);
+		free_var(&mini.env);
 		open("lol.tmp", __O_TMPFILE);
 		lex_clear(&mini.lex, ft_free);
 	}
