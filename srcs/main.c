@@ -58,6 +58,20 @@ void	free_var(t_env *in)
 	ft_free(in->var_value, ft_str_str_len(in->var_value));
 }
 
+void	execution(t_minishell *mini)
+{
+	t_lex	*lex;
+
+	lex = mini->lex;
+	while (lex)
+	{
+		//for if not 1 builtin
+		if (is_builtin(lex->cmd[0]))
+			return (run_builtin(lex->cmd));
+	}
+	
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_minishell	mini;
@@ -73,7 +87,7 @@ int	main(int argc, char **argv, char **env)
 		set_var(&mini, env);
 		if (!my_read(&mini))
 			return (free_var(&mini.env), lex_clear(&mini.lex, ft_free), 1);
-		
+		execution(&mini);
 		//signal(SIGINT, SIG_IGN);
 		free_var(&mini.env);
 		open("lol.tmp", __O_TMPFILE);

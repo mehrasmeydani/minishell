@@ -110,12 +110,49 @@ int	check_heredoc(t_lex *lex)
 					}
 					if (tmp->input)
 						tmp->input = ft_relocat(tmp->input, "\n");
-					tmp->input = ft_relocat(tmp->input, tmp_str);
+					tmp->input = ft_relocat(tmp->input, tmp_str); //alloc check
 					free(tmp_str);
 					tmp_str = NULL;
 				}
 			}
 			tmp = tmp->next;
+		}
+		lex = lex->next;
+	}
+	return (1);
+}
+
+int	expand_all(t_minishell *mini)
+{
+	t_redirect	*red;
+	t_lex		*lex;
+	char		*tmp;
+	ssize_t		i;
+
+	lex = mini->lex;
+	while (lex)
+	{
+		tmp = lex->redic;
+		while (tmp)
+		{
+			if (red->level == HEREDOC && red->input_expand == 0)
+			{
+				tmp = expand(red->input, mini->env, red->input, 1);
+				if (!tmp)
+					return (0);
+				free(red->input);
+				red->input = tmp;
+			}
+			red = red->next;
+		}
+		i = -1;
+		while (lex->cmd[++i])
+		{
+			tmp = expand(lex->cmd[i], mini->env, lex->cmd[i], 0);
+			if (!tmp)
+				return (0);
+			free(lex->cmd[i]);
+			lex->cmd[i] = tmp;
 		}
 		lex = lex->next;
 	}
@@ -142,20 +179,9 @@ int	my_read(t_minishell *mini)
 	if (!mini->lex)
 		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL, 1);
 	if (!check_heredoc(mini->lex))
-		return (1);
-	t_lex *tmp = mini->lex;
-	while (tmp)
-	{
-		t_redirect *tmp2 = tmp->redic;
-		while (tmp2)
-		{
-			if (tmp2->input_expand == 0)
-				tmp2->input = expand(tmp2->input, mini->env, tmp2->input);
-			printf("%s\n", tmp2->input);
-			tmp2 = tmp2->next;
-		}
-		tmp = tmp->next;
-	}
+		return (1); //free and error for alloc
+	if (!expand_all(mini))
+		return (1); //free and error for alloc
 	ft_free(mini->out, ft_str_str_len(mini->out));
 	return (1);
 }
