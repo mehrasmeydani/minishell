@@ -132,12 +132,12 @@ int	expand_all(t_minishell *mini)
 	lex = mini->lex;
 	while (lex)
 	{
-		tmp = lex->redic;
-		while (tmp)
+		red = lex->redic;
+		while (red)
 		{
 			if (red->level == HEREDOC && red->input_expand == 0)
 			{
-				tmp = expand(red->input, mini->env, red->input, 1);
+				tmp = expand(red->input, mini->env, 1);
 				if (!tmp)
 					return (0);
 				free(red->input);
@@ -148,7 +148,7 @@ int	expand_all(t_minishell *mini)
 		i = -1;
 		while (lex->cmd[++i])
 		{
-			tmp = expand(lex->cmd[i], mini->env, lex->cmd[i], 0);
+			tmp = expand(lex->cmd[i], mini->env, 0);
 			if (!tmp)
 				return (0);
 			free(lex->cmd[i]);

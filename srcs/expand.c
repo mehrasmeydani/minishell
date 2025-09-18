@@ -17,7 +17,7 @@ int	find_var(char **var, char *in, ssize_t len, t_env env)
 	return (*var = NULL, free(tmp), 1);
 }
 
-char	*expand(char *in, t_env env, char *in_copy, int here_doc)
+char	*expand(char *in, t_env env, int here_doc)
 {
 	ssize_t	i;
 	ssize_t	j;

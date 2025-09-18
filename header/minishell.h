@@ -23,6 +23,7 @@ typedef struct s_minishell
 	ssize_t	num_pipes;
 	t_lex	*lex;
 	t_env	env;
+	int		error_code;
 
 }	t_minishell;
 
@@ -34,6 +35,6 @@ size_t	ft_str_str_len(char **in);
 char	**ft_duostrdup(char **in, ssize_t len);
 int		remove_quotes(char **in);
 char	*ft_relocat(char *in, char *buff);
-char	*expand(char *in, t_env env, char *in_copy, int);
+char	*expand(char *in, t_env env, int);
 
 #endif

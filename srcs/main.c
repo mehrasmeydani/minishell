@@ -58,16 +58,38 @@ void	free_var(t_env *in)
 	ft_free(in->var_value, ft_str_str_len(in->var_value));
 }
 
+void	env(t_minishell *mini)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (mini->env.raw_var[++i])
+		if (ft_strlen(mini->env.var_value[i]))
+			ft_putendl_fd(mini->env.raw_var[i], STDOUT_FILENO);
+}
+
+int	is_builtin(char **cmd, t_minishell *mini)
+{
+	if (!cmd || !*cmd)
+		return (0);
+	if (!ft_strcmp(cmd[0], "env"))
+		return (env(mini), 1);
+	return (0);
+}
+
 void	execution(t_minishell *mini)
 {
 	t_lex	*lex;
+	pid_t	pid;
 
 	lex = mini->lex;
 	while (lex)
 	{
 		//for if not 1 builtin
-		if (is_builtin(lex->cmd[0]))
-			return (run_builtin(lex->cmd));
+		pid = -2;
+		if (is_builtin(lex->cmd, mini) && pid != -2)
+			exit (0);
+		lex = lex->next;
 	}
 	
 }
