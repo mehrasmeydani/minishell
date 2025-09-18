@@ -35,7 +35,7 @@ char	*expand(char *in, t_env env, char *in_copy)
 		quotes(in[i], &quotes_state);
 		if (quotes_state != SINGLE && in[i] == '$')
 		{
-			while (in[i + j] && in[i + j] != ' ' && in[i + j] != '"' && in[i + j] != '$') //add_whitespaces
+			while (in[i + j] && in[i + j] != ' ' && in[i + j] != '"' && in[i + j] != '\''&& in[i + j] != '$') //add_whitespaces
 				j++;
 			if (!find_var(&tmp_var, in + i + 1, j - 1, env))
 				return (free(out), free(in_copy), NULL);
