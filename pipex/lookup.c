@@ -6,9 +6,10 @@
 /*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 16:16:03 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/08/15 19:06:57 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:06:04 by alvcampo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
 #include "pipex.h"
 
 static int	isemptypath(char *path)
@@ -69,10 +70,11 @@ static char	*findpath(char **envp)
 	return (NULL);
 }
 
-static char **emptysplit()
+static char	**emptysplit(void)
 {
 	char	**split;
-	split = malloc (2 * sizeof(char*));
+
+	split = malloc(2 * sizeof(char *));
 	if (!split)
 		return (NULL);
 	split[0] = ft_strdup("");
@@ -82,7 +84,7 @@ static char **emptysplit()
 		return (NULL);
 	}
 	split[1] = NULL;
-	return(split);
+	return (split);
 }
 
 void	getpatharray(t_parts *parts, char **envp)

@@ -6,7 +6,7 @@
 /*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 19:47:18 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/09/04 19:47:20 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/09/06 13:02:18 by alvcampo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ size_t	ft_strlen(const char *s)
 	size_t	i;
 
 	i = 0;
-while (s[i])
+	while (s[i])
 		i++;
 	return (i);
 }
@@ -79,13 +79,12 @@ char	*partialjoin(const char *s1, const char *s2, int len2)
 	size_t	len1;
 
 	if (len2 == 0)
-		return(NULL);
+		return (NULL);
 	len1 = ft_strlen(s1);
 	newstr = malloc((len1 + len2 + 1) * sizeof(char));
 	if (!newstr)
-		return(NULL);
+		return (NULL);
 	ft_strlcpy(newstr, s1, len1 + 1);
 	ft_strlcpy(newstr + len1, s2, len2 + 1);
-	return(newstr);
+	return (newstr);
 }
-

@@ -70,7 +70,7 @@ endef
 export RAT
 export GOODBYE
 SRCS = lookup.c parsing.c pipe_children.c pipe_children_utils.c utils.c \
-split.c utils2.c main.c
+split.c utils2.c execute_children.c main.c
 OBJECTS = ${SRCS:.c=.o}
 OBJDIR = obj
 OBJECTFILES = $(addprefix $(OBJDIR)/, $(OBJECTS))

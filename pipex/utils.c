@@ -6,7 +6,7 @@
 /*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/04 19:47:38 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/09/04 19:47:39 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/09/06 16:16:40 by alvcampo         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,22 +23,6 @@ char	*ft_strdup(const char *s)
 		return (NULL);
 	ft_strlcpy (copy, s, len + 1);
 	return (copy);
-}
-
-char	*ft_strchr(const char *s, int c)
-{
-	size_t	i;
-
-	i = 0;
-	while (s[i])
-	{
-		if ((char)s[i] == c)
-			return ((char *)&s[i]);
-		i++;
-	}
-	if ((char)c == '\0')
-		return ((char *)&s[i]);
-	return (NULL);
 }
 
 int	splitlen(char **split)
@@ -66,5 +50,18 @@ void	freepaths(t_parts *parts)
 	}
 	free(parts->pathlist);
 	parts->pathlist = NULL;
+}
 
+int	lentilspace(char *str)
+{
+	size_t	i;
+
+	i = 0;
+	while (str[i])
+	{
+		if (str[i] == ' ')
+			return (i);
+		i++;
+	}
+	return (i);
 }
