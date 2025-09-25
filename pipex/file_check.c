@@ -35,13 +35,13 @@ void	check_append(t_redirect *file)
 	}
 }
 
-void	dup_redirs(int fd, t_redir_type level)
+void	dup_redirs(t_redirect *file)
 {
-	if (level == INFILE) // or heredoc
-		if (dup2(fd, STDIN_FILENO) == -1);
+	if (file->level == INFILE) // or heredoc
+		if (dup2(file->fd, STDIN_FILENO) == -1);
 				exit(1); // clean up!
-	if (level == OUTFILE || level == APPEND)
-		if (dup2 (fd, STDOUT_FILENO) == -1);
+	if (file->level == OUTFILE || file->level == APPEND)
+		if (dup2 (file->fd, STDOUT_FILENO) == -1);
 			exit(1); //clean up!
 
 }
@@ -62,6 +62,7 @@ void	open_fds(t_redirect *head)
 		// maybe heredoc here?
 		if (temp->fd == FAIL)
 			exit (1) // child should be cleaned of memory, fds, etc.take into account this might be in parent
+		dup_redirs(temp);
 		temp = temp->next;
 	}
 }
