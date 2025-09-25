@@ -25,7 +25,12 @@
 # include <fcntl.h>
 # include <sys/wait.h>
 # include <errno.h>
-
+typedef struct s_cmds
+{
+	char **cmd;
+	char **pid;
+	struct s_cmds *next;
+}				t_cmds;
 typedef struct s_parts
 {
 	char	**pathlist;
@@ -36,7 +41,9 @@ typedef struct s_parts
 	int		pid1;
 	int		pid2;
 	int		status;
+	t_cmds	*head;
 	int		cmds_fail;
+	
 }				t_parts;
 
 size_t	ft_strlen(const char *s);
@@ -60,4 +67,5 @@ void	clean_children(t_parts *parts, int *pipes, int cmd);
 void	set_exit_status(t_parts *parts, int use, int status1, int status2);
 int		lentilspace(char *str);
 void	construct_baby(t_parts *parts, int *pipes, char **envp, int cmd);
+char *skip_starting_spaces(char *cmd);
 #endif

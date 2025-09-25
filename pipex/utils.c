@@ -52,11 +52,21 @@ void	freepaths(t_parts *parts)
 	parts->pathlist = NULL;
 }
 
+static size_t trim_empty(char *str)
+{
+	size_t i;
+
+	i = 0;
+	while (str[i] == ' ')
+		i++;
+	return (i);
+}
+
 int	lentilspace(char *str)
 {
 	size_t	i;
-
-	i = 0;
+	
+	i = trim_empty(str);
 	while (str[i])
 	{
 		if (str[i] == ' ')
@@ -65,3 +75,4 @@ int	lentilspace(char *str)
 	}
 	return (i);
 }
+

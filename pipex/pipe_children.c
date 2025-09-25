@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "./pipex.h"
+#include "pipex.h"
 
 static void	wait_for_death(t_parts *parts)
 {
