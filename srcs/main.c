@@ -68,12 +68,94 @@ void	env(t_minishell *mini)
 			ft_putendl_fd(mini->env.raw_var[i], STDOUT_FILENO);
 }
 
+void	export_print(char *name, t_env env)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (env.var_name[++i])
+		if (!ft_strcmp(name, env.var_name[i]))
+			break;
+	ft_putstr_fd("declare -x ", 1);
+	ft_putstr_fd(name, 1);
+	if (ft_strlen(env.var_value[i]) > 0)
+	{
+		ft_putstr_fd("=\"", 1);
+		ft_putstr_fd(env.var_value[i], 1);
+		ft_putendl_fd("\"", 1);
+	}
+}
+
+char *min_str(char **in)
+{
+	char	*out;
+	ssize_t	i;
+
+	out = *in;
+	i = -1;
+	while (in && in[++i])
+		if (ft_strcmp(out, in[i]) > 0)
+			out = in[i];
+	return (out);
+}
+
+char *max_str(char **in)
+{
+	char	*out;
+	ssize_t	i;
+
+	out = *in;
+	i = -1;
+	while (in && in[++i])
+		if (ft_strcmp(out, in[i]) < 0)
+			out = in[i];
+	return (out);
+}
+
+void	print_export(t_minishell *mini)
+{
+	ssize_t	i;
+	ssize_t	j;
+	char	*last;
+	char	*print;
+	t_env	env;
+
+	env = mini->env;
+	last = min_str(env.var_name);
+	export_print(last, env);
+	i = -1;
+	print = last;
+	while (env.var_name[++i] && ft_strcmp(env.var_name[i], "_"))
+	{
+		print = max_str(env.var_name);
+		j = -1;
+		while (env.var_name[++j])
+			if (ft_strcmp(print, env.var_name[j]) > 0 && ft_strcmp(env.var_name[j], last) > 0)
+				print = env.var_name[j];
+		export_print(last, env);
+		last = print;
+	}
+}
+
+void	export(t_minishell *mini, char **cmd)
+{
+	// if (ft_str_str_len(cmd) > 1)
+	// 	add_var(mini);
+	//else
+	(void)cmd;
+	print_export(mini);
+}
+
 int	is_builtin(char **cmd, t_minishell *mini)
 {
 	if (!cmd || !*cmd)
 		return (0);
 	if (!ft_strcmp(cmd[0], "env"))
 		return (env(mini), 1);
+	if (!ft_strcmp(cmd[0], "exit"))
+		return (exit(0), 1); //set exit code and free
+	if (!ft_strcmp(cmd[0], "export"))
+		return (export(mini, cmd), 1);
 	return (0);
 }
 
@@ -87,6 +169,7 @@ void	execution(t_minishell *mini)
 	{
 		//for if not 1 builtin
 		pid = -2;
+		//if should fork
 		if (is_builtin(lex->cmd, mini) && pid != -2)
 			exit (0);
 		lex = lex->next;

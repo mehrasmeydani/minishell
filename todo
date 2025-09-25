@@ -1,0 +1,8 @@
+1.	split word of expansion
+
+	ex: export hi="  hi  hi  "
+	echo $hi -> 'hi hi'
+	echo c$hi -> 'c hi hi'
+...
+
+2. 
