@@ -1,6 +1,7 @@
+#include "testheader.h"
 void	check_infile(t_redirect *file)
 {
-	if (acess(file->name, R_OK) == 0)
+	if (access(file->name, R_OK) == 0)
 		file->fd = open(file->name, O_RDONLY);
 	else
 	{
@@ -38,12 +39,15 @@ void	check_append(t_redirect *file)
 void	dup_redirs(t_redirect *file)
 {
 	if (file->level == INFILE) // or heredoc
-		if (dup2(file->fd, STDIN_FILENO) == -1);
+	{
+		if (dup2(file->fd, STDIN_FILENO) == -1)
 				exit(1); // clean up!
+	}
 	if (file->level == OUTFILE || file->level == APPEND)
-		if (dup2 (file->fd, STDOUT_FILENO) == -1);
+	{
+		if (dup2 (file->fd, STDOUT_FILENO) == -1)
 			exit(1); //clean up!
-
+	}
 }
 void	open_fds(t_redirect *head)
 {
@@ -58,10 +62,10 @@ void	open_fds(t_redirect *head)
 		else if (temp->level == OUTFILE)
 			check_outfile(temp);
 		else if (temp->level == APPEND)
-			check_apprend(temp);
+			check_append(temp);
 		// maybe heredoc here?
 		if (temp->fd == FAIL)
-			exit (1) // child should be cleaned of memory, fds, etc.take into account this might be in parent
+			exit (1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
 		dup_redirs(temp);
 		temp = temp->next;
 	}
