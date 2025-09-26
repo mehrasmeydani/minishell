@@ -173,15 +173,15 @@ int	my_read(t_minishell *mini)
 	if (!mini->out)
 		return (1); //error
 	if (!check_syntax(mini, mini->out))
-		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL
+		return (ft_free(mini->out), mini->out = NULL
 			, ft_putendl_fd("Syntax error", 2), 1); //syntax error
 	mini->lex = lexer(mini->out);
 	if (!mini->lex)
-		return (ft_free(mini->out, ft_str_str_len(mini->out)), mini->out = NULL, 1);
+		return (ft_free(mini->out), mini->out = NULL, 1);
 	if (!check_heredoc(mini->lex))
 		return (1); //free and error for alloc
 	if (!expand_all(mini))
 		return (1); //free and error for alloc
-	ft_free(mini->out, ft_str_str_len(mini->out));
+	ft_free(mini->out);
 	return (1);
 }

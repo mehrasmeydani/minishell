@@ -5,4 +5,11 @@
 	echo c$hi -> 'c hi hi'
 ...
 
-2. 
+2.	$_ env set in parent with no pipes
+...
+
+
+3.	env on not env_var coredumps
+
+	ex: env -i ./minishell
+...

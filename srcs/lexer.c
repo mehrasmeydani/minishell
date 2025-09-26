@@ -19,7 +19,7 @@ static t_lex	*lex_pipes(char **in, ssize_t i)
 		tmp = lex_new(cmd);
 		if (!tmp)
 			return (lex_clear(&out, ft_free)
-				, ft_free(cmd, ft_str_str_len(cmd)), NULL);
+				, ft_free(cmd), NULL);
 		lex_addback(&out, tmp);
 		if (in[i])
 		{
@@ -76,11 +76,11 @@ int	clean_rest(t_lex *lex)
 			{
 				tmp_str[str_len] = ft_strdup(tmp->cmd[i]);
 				if (!tmp_str[str_len])
-					return (ft_free(tmp_str, str_len), 0);
+					return (ft_free(tmp_str), 0);
 				str_len++;
 			}
 		}
-		ft_free(tmp->cmd, i);
+		ft_free(tmp->cmd);
 		tmp->cmd = tmp_str;
 		tmp = tmp->next;
 	}

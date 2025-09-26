@@ -1,10 +1,10 @@
 #include "../header/minishell.h"
 
-void	lex_delone(t_lex *lex, char **(*del)(char **, ssize_t), ssize_t i)
+void	lex_delone(t_lex *lex, char **(*del)(char **))
 {
 	if (lex && del)
 	{
-		(*del)(lex->cmd, i);
+		(*del)(lex->cmd);
 		free(lex);
 	}
 }

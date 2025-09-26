@@ -11,8 +11,8 @@ typedef struct s_lex
 	struct s_lex	*next;
 }	t_lex;
 
-void	lex_delone(t_lex *lex, char **(*del)(char **, ssize_t), ssize_t i);
-void	lex_clear(t_lex **lex, char **(*del)(char **, ssize_t));
+void	lex_delone(t_lex *lex, char **(*del)(char **));
+void	lex_clear(t_lex **lex, char **(*del)(char **));
 t_lex	*lex_last(t_lex *lex);
 void	lex_addback(t_lex **lex, t_lex *new);
 t_lex	*lex_new(char **in);

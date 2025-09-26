@@ -13,7 +13,7 @@ char	**ft_duostrdup(char **in, ssize_t len)
 	{
 		out[i] = ft_strdup(in[i]);
 		if (!out[i])
-			return (ft_free(out, i));
+			return (ft_free(out));
 	}
 	return (out);
 }

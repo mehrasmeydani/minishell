@@ -78,7 +78,7 @@ char	**mini_split(char *in)
 	{
 		out[i] = str(&in);
 		if (!out[i])
-			return (ft_free(out, 0));
+			return (ft_free(out));
 	}
 	return (out);
 }
