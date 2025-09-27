@@ -1,0 +1,22 @@
+#ifndef EXECUTION_H
+# define EXECUTION_H
+
+# define FAIL -1
+
+# include "../header/minishell.h"
+
+typedef struct	s_exec
+{
+	char	**pathlist;
+	size_t children_count;
+	pid_t	*pids;
+	int		pipes[2];
+}				t_exec;
+
+void	open_fds(t_redirect *head);
+char	*check_against_cmd(t_lex *node, char **pathlist);
+void	freepaths(char **pathlist);
+char	**get_path_array(char **envp);
+
+
+#endif

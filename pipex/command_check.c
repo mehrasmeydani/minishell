@@ -1,6 +1,6 @@
-#include "../header/libft.h"
-#include "../header/lexer.h"
+#include "execution.h"
 // NULL t_lext->cmd[0] means the command wont be run as it does not exist!
+// how we handle redirections without commands like " < test2 > test4 > test7  | ls"
 char	*check_against_cmd(t_lex *node, char **pathlist)
 {
 	ssize_t	i;
@@ -18,7 +18,6 @@ char	*check_against_cmd(t_lex *node, char **pathlist)
 	}
 	return (NULL);
 }
-
 
 // actually, i think it's better to have each child check its own cmd, ensuring
 // errors are printed accurately and in order, plus parity for the pipeline logic.

@@ -1,5 +1,5 @@
-#include "testheader.h"
-void	check_infile(t_redirect *file)
+#include "execution.h" // cahnge to the header folder on merge
+static void	check_infile(t_redirect *file)
 {
 	if (access(file->name, F_OK) == -1)
 	{
@@ -16,7 +16,7 @@ void	check_infile(t_redirect *file)
 	}
 }
 
-void	check_outfile(t_redirect *file)
+static void	check_outfile(t_redirect *file)
 {
 	if(access(file->name, F_OK) == -1)
 		file->fd = open(file->name, O_WRONLY | O_CREAT, 0644);
@@ -29,7 +29,7 @@ void	check_outfile(t_redirect *file)
 	}
 }
 
-void	check_append(t_redirect *file)
+static void	check_append(t_redirect *file)
 {
 	if(access(file->name, F_OK) == -1)
 		file->fd = open(file->name, O_WRONLY | O_CREAT, 0644);
@@ -42,7 +42,7 @@ void	check_append(t_redirect *file)
 	}
 }
 
-void	dup_redirs(t_redirect *file)
+static void	dup_redirs(t_redirect *file)
 {
 	if (file->level == INFILE) // or heredoc
 	{
@@ -69,7 +69,7 @@ void	open_fds(t_redirect *head)
 			check_outfile(temp);
 		else if (temp->level == APPEND)
 			check_append(temp);
-		// maybe heredoc here?
+		// maybe heredoc here? 
 		if (temp->fd == FAIL)
 			exit (1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
 		dup_redirs(temp);
