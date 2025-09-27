@@ -1,6 +1,12 @@
 #include "testheader.h"
 void	check_infile(t_redirect *file)
 {
+	if (access(file->name, F_OK) == -1)
+	{
+		perror(file->name);
+		file->fd = FAIL;
+		return ;
+	}
 	if (access(file->name, R_OK) == 0)
 		file->fd = open(file->name, O_RDONLY);
 	else
