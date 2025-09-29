@@ -10,7 +10,7 @@ typedef struct	s_exec
 	char	**pathlist;
 	size_t children_count;
 	pid_t	*pids;
-	int		pipes[2];
+	int		**pipes;
 }				t_exec;
 
 void	open_fds(t_redirect *head);
