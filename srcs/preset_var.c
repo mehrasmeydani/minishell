@@ -14,7 +14,7 @@ int	preset_var(t_env *env)
 	free(tmp);
 	if (!env->raw_var[0])
 		return (ft_free(env->raw_var), 0);
-	env->raw_var[1] = ft_strdup("SHLVL=1");
+	env->raw_var[1] = ft_strdup("SHLVL=0");
 	if (!env->raw_var[1])
 		return (ft_free(env->raw_var), 0);
 	env->raw_var[2] = ft_strdup("_=./minishell");

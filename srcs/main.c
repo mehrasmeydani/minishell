@@ -13,6 +13,7 @@ int	set_var(t_minishell *mini, char **env_var)
 	t_env	*env;
 	ssize_t	i;
 	char	*tmp;
+	char	*tmp2;
 	int	lvl;
 
 	(void)mini;
@@ -20,7 +21,7 @@ int	set_var(t_minishell *mini, char **env_var)
 	i = ft_str_str_len(env_var);
 	if (!i)
 	{
-		if (preset_var(env))
+		if (!preset_var(env))
 			return (0);
 		i = 4;
 	}
@@ -36,11 +37,11 @@ int	set_var(t_minishell *mini, char **env_var)
 		return (ft_free(env->var_name), free(env->var_value), free(env->raw_var)
 		, 0);
 	i = -1;
-	while (env_var[++i])
+	while (env->raw_var[++i])
 	{
-		tmp = ft_strchr(env_var[i], '=');
-		env->var_name[i] = ft_substr(env_var[i], 0, tmp - env_var[i]);
-		env->var_value[i] = ft_substr(env_var[i], tmp - env_var[i] + 1, ft_strlen(tmp) - 1);
+		tmp = ft_strchr(env->raw_var[i], '=');
+		env->var_name[i] = ft_substr(env->raw_var[i], 0, tmp - env->raw_var[i]);
+		env->var_value[i] = ft_substr(env->raw_var[i], tmp - env->raw_var[i] + 1, ft_strlen(tmp) - 1);
 		if (!env->var_value[i] || !env->var_name[i])
 			return (ft_free(env->var_name)
 				, ft_free(env->var_value), ft_free(env->raw_var), 0);
@@ -48,13 +49,32 @@ int	set_var(t_minishell *mini, char **env_var)
 		{
 			lvl = ft_atoi(env->var_value[i]);
 			lvl++;
-			free(env->var_value[i]);
-			env->var_value[i] = ft_itoa(lvl);
-			if (!env->var_value[i])
+			tmp = ft_itoa(lvl);
+			if (!tmp)
 				return (ft_free(env->var_name)
 					, ft_free(env->var_value), ft_free(env->raw_var), 0);
+			free(env->var_value[i]);
+			env->var_value[i] = tmp;
+			tmp = ft_strdup("SHLVL=");
+			if (!tmp)
+				return (ft_free(env->var_name)
+					, ft_free(env->var_value), ft_free(env->raw_var), 0);
+			free(env->raw_var[i]);
+			env->raw_var[i] = tmp;
+			tmp = ft_itoa(lvl);
+			if (!tmp)
+				return (ft_free(env->var_name)
+					, ft_free(env->var_value), ft_free(env->raw_var), 0);
+			tmp2 = ft_strjoin(env->raw_var[i], tmp);
+			if (!tmp2)
+				return (ft_free(env->var_name), free(tmp)
+					, ft_free(env->var_value), ft_free(env->raw_var), 0);
+			free(env->raw_var[i]);
+			free(tmp);
+			env->raw_var[i] = tmp2;
 		}
 	}
+
 	return (1);
 }
 
@@ -196,9 +216,9 @@ int	main(int argc, char **argv, char **env)
 	{
 		signal(SIGQUIT, SIG_IGN); //
 		signal(SIGINT, sigint);
-		//ft_bzero(&mini, sizeof(mini));
+		//ft_bzero(&mini, sizeof(mini)); // still needed
 		if (!my_read(&mini))
-			return (free_var(&mini.env), lex_clear(&mini.lex, ft_free), 1);
+			return (free_var(&mini.env), 1);
 		execution(&mini);
 		//signal(SIGINT, SIG_IGN);
 		//free_var(&mini.env);
