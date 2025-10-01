@@ -156,7 +156,7 @@ void	spawn_children(t_minishell *mini)
 				if (dup2(exec.pipe[i % 2][1], STDOUT_FILENO) == -1) // if not last command, current to to out.
 					close_exit(&exec, mini, "dup STDOUT", 1);
 			}
-			close_all_pipes(exec.pipe);
+			close_all_pipes(exec.pipe); // actually not! logic for closing should be better to avoid closing a thing that i should dup.
 			// redirections
 			// exec
 			// maybe a single function?
