@@ -14,65 +14,10 @@ size_t	count_cmds(t_lex *lex) // is this really needed? why not pipes + 1?
 }
 
 
-void	rig_child(t_minishell *mini, size_t current_cmd, pid_t pid)
-{
-	static int prev_rd_end = -1;
-
-	if (pid == -1)
-		return (perror("fork"));
-	if (pid > 0)
-	{
-		if (i != 0)
-			close(prev_rd_end);
-		close[]
-	}
 
 
-}
 
-void	clean_pipe_array(t_exec *exec, ssize_t num_pipes)
-{
-	ssize_t	i;
 
-	i = -1;
-	while(++i < num_pipes)
-	{
-		free(exec->pipes[i]);
-		exec->pipes[i] = NULL;
-	}
-	free(exec->pipes);
-	exec->pipes = NULL;
-}
-
-int	create_pipes(t_exec *exec, t_minishell *mini)
-{
-	ssize_t	i;
-
-	i = -1;
-	exec->pipes = ft_calloc(mini->num_pipes, sizeof(int *));
-	if (!exec->pipes)
-		return(perror("pipes"), -1);
-	while(++i < mini->num_pipes - 1)
-	{
-		exec->pipes[i] = ft_calloc(2, sizeof(int));
-		if (exec->pipes[i] == NULL)
-			return(clean_pipe_array(exec, mini->num_pipes), perror("pipes"), -1);
-	}
-	return (1);
-}
-
-int	open_pipes(t_exec *exec, ssize_t num_pipes)
-{
-	ssize_t	i;
-
-	i = -1;
-	while(++i < num_pipes)
-	{
-		if (pipe(exec->pipes[i]) == -1)
-			return(clean_pipe_array(exec, num_pipes), perror("pipes"), -1);
-	}
-
-}
 int	fill_struct(t_exec *exec, t_minishell *mini)
 {
 	exec->pathlist = get_path_array(mini->env.var_pass_to_exec);
@@ -98,10 +43,6 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 	return (1);
 }
 
-void	pipe_em()
-{
-	
-}
 
 void	safe_close_fd(int *fd)
 {
@@ -156,7 +97,7 @@ void	spawn_children(t_minishell *mini)
 				if (dup2(exec.pipe[i % 2][1], STDOUT_FILENO) == -1) // if not last command, current to to out.
 					close_exit(&exec, mini, "dup STDOUT", 1);
 			}
-			close_all_pipes(exec.pipe); // actually not! logic for closing should be better to avoid closing a thing that i should dup.
+			close_all_pipes(exec.pipe);
 			// redirections
 			// exec
 			// maybe a single function?
