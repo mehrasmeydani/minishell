@@ -18,6 +18,6 @@ void	open_fds(t_redirect *head);
 char	*check_against_cmd(t_lex *node, char **pathlist);
 void	freepaths(char **pathlist);
 char	**get_path_array(char **envp);
-void	redirect_and_filecheck(t_redirect *head);
+int	redirect_and_filecheck(t_redirect *head);
 
 #endif

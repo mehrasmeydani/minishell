@@ -47,19 +47,20 @@ static void	dup_redirs(t_redirect *file)
 	if (file->level == INFILE) // or heredoc
 	{
 		if (dup2(file->fd, STDIN_FILENO) == -1)
-				exit(1); // clean up!
+				file->fd = FAIL; // clean up!
 		close(file->fd);
 	}
 	if (file->level == OUTFILE || file->level == APPEND)
 	{
 		if (dup2 (file->fd, STDOUT_FILENO) == -1)
-			exit(1); //clean up!
+			file->fd = FAIL; //clean up!
 		close(file->fd);
 	}
 }
-void	redirect_and_filecheck(t_redirect *head)
+int	redirect_and_filecheck(t_redirect *head)
 {
 	// by this point, pipe should already be duped into in/out
+	// here, i should also close all fds of the redirs, and free the redirs struct
 	t_redirect	*temp;
 	
 	temp = head;
@@ -71,11 +72,14 @@ void	redirect_and_filecheck(t_redirect *head)
 			check_outfile(temp);
 		else if (temp->level == APPEND)
 			check_append(temp);
-		// maybe heredoc here? 
+		// maybe heredoc here?
 		if (temp->fd == FAIL)
-			close_exit (1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
+			return (-1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
 		dup_redirs(temp);
+		if (temp->fd == FAIL)
+			return(perror("dup redirections"), -1);
 		temp = temp->next;
 	}
+		return (1);
 }
 

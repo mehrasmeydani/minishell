@@ -23,7 +23,7 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 	size_t	i;
 
 	i = -1;
-	exec->status = 0;
+	exec->status = 1;
 	exec->pathlist = get_path_array(mini->env.var_pass_to_exec);
 	if (!exec->pathlist)
 		return (perror("paths not retrieved"), -1);
@@ -80,7 +80,6 @@ void my_pipe_dup(t_minishell *mini, t_exec *exec, size_t i)
 		if (dup2(exec->pipe[i % 2][1], STDOUT_FILENO) == -1) // if not last command, current to to out.
 				close_exit(exec, mini, "dup STDOUT", 1);
 	}
-	
 }
 
 void	my_pipe_dup_close(t_exec *exec, size_t i)
@@ -111,13 +110,15 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 
 	my_pipe_dup(mini, exec, i);
 	close_all_pipes(exec->pipe);
-	redirect_and_filecheck(cur);
+	if (redirect_and_filecheck(cur) == -1)
+		close_exit(exec, mini, NULL, 1);
 	free(mini->lex->cmd[0]);
 	cmd->cmd[0] = check_against_cmd(cmd, exec->pathlist);
 	if (!cmd->cmd[0])
 		close_exit(exec, mini, "Arg[0]", 1);
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
-		close_exit(exec, mini, "execution", 1);
+		return (close(STDIN_FILENO), close(STDOUT_FILENO), 
+			close_exit(exec, mini, "execution", 1));
 }
 
 void	set_exit_status(t_exec *exec, int status)
@@ -156,7 +157,7 @@ void	spawn_children(t_minishell *mini)
 	while(++i < exec.children_count)
 	{
 		if (pipe(exec.pipe[i % 2]) < 0)
-			return (perror("pipe"));
+			return (perror("pipe"), wait_for_death(&exec));
 		if ((exec.pids[i] = fork()) == -1)
 			return (perror("fork"), wait_for_death(&exec)); // i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0)
