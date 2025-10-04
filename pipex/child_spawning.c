@@ -22,7 +22,7 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 {
 	size_t	i;
 
-	i = 0;
+	i = -1;
 	exec->status = 0;
 	exec->pathlist = get_path_array(mini->env.var_pass_to_exec);
 	if (!exec->pathlist)
@@ -158,7 +158,7 @@ void	spawn_children(t_minishell *mini)
 		if (pipe(exec.pipe[i % 2]) < 0)
 			return (perror("pipe"));
 		if ((exec.pids[i] = fork()) == -1)
-			return (perror("fork")); // i should also wait here for all the previous commands!
+			return (perror("fork"), wait_for_death(&exec)); // i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
