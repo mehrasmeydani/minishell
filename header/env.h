@@ -7,7 +7,7 @@ typedef struct s_env
 	char	**var_name;
 	char	**var_value;
 	char	**var_pass_to_exec;
-	char	**sorted;
+	ssize_t	allocated_l;
 }	t_env;
 
 

@@ -24,57 +24,30 @@ static int	shlvl(t_env *env, int lvl, ssize_t i)
 
 void	free_env(t_env *env)
 {
-	if (env->raw_var)
-	{
-		ft_free(env->raw_var);
-		env->raw_var = NULL;
-	}
-	if (env->var_name)
-	{
-		ft_free(env->var_name);
-		env->var_name = NULL;
-	}
-	if (env->var_pass_to_exec)
-	{
-		ft_free(env->var_pass_to_exec);
-		env->var_pass_to_exec = NULL;
-	}
-	if (env->var_value)
-	{
-		ft_free(env->var_value);
-		env->var_value = NULL;
-	}
-	if (env->sorted)
-	{
-		ft_free(env->sorted);
-		env->sorted = NULL;
-	}
-}
+	ssize_t	i;
 
-static int	set_var2(t_env *env, ssize_t i)
-{
-	char	*tmp;
-
-	env->var_name = ft_calloc(i + 1, sizeof(char *));
-	env->var_value = ft_calloc(i + 1, sizeof(char *));
-	if (!env->var_value || !env->var_name)
-		return (free_env(env), 0);
 	i = -1;
-	while (env->raw_var[++i])
+	while (++i < env->allocated_l)
 	{
-		tmp = ft_strchr(env->raw_var[i], '=');
-		env->var_name[i] = ft_substr(env->raw_var[i], 0, tmp - env->raw_var[i]);
-		env->var_value[i] = ft_substr(env->raw_var[i], tmp - env->raw_var[i] + 1, ft_strlen(tmp) - 1);
-		if (!env->var_value[i] || !env->var_name[i])
-			return (free_env(env), 0);
-		if (!ft_strcmp("SHLVL", env->var_name[i]))
-			if (!shlvl(env, ft_atoi(env->var_value[i]) + 1, i))
-				return (free_env(env), 0);
+		if (env->raw_var)
+			free(env->raw_var[i]);
+		if (env->var_name)
+			free(env->var_name[i]);
+		if (env->var_value)
+			free(env->var_value[i]);
 	}
-	return (1);
+	free(env->raw_var);
+	env->raw_var = NULL;
+	free(env->var_name);
+	env->var_name = NULL;
+	free(env->var_value);
+	env->var_value = NULL;
+	free(env->var_pass_to_exec);
+	env->var_pass_to_exec = NULL;
+	env->allocated_l = 0;
 }
 
-static int	set_var3(t_env *env)
+int	set_pass_to_exec(t_env *env)
 {
 	ssize_t	i;
 	ssize_t	j;
@@ -82,7 +55,7 @@ static int	set_var3(t_env *env)
 	i = -1;
 	j = 0;
 	while (env->raw_var[++i])
-		if (ft_strlen(env->var_value[i]) > 0)
+		if (ft_strchr(env->raw_var[i], '='))
 			j++;
 	env->var_pass_to_exec = ft_calloc(j + 1, sizeof(char *));
 	if (!env->var_pass_to_exec)
@@ -90,14 +63,39 @@ static int	set_var3(t_env *env)
 	i = -1;
 	j = 0;
 	while (env->raw_var[++i])
+		if (ft_strchr(env->raw_var[i], '='))
+			env->var_pass_to_exec[j++] = env->raw_var[i];
+	return (1);
+}
+
+int	set_name_value(t_env *env, ssize_t i)
+{
+	char	*tmp;
+
+	env->var_name = ft_calloc(i + 1, sizeof(char *));
+	env->var_value = ft_calloc(i + 1, sizeof(char *));
+	if (!env->var_name || !env->var_value)
+		return (free_env(env), 0);
+	i = -1;
+	while (env->raw_var[++i])
 	{
-		if (ft_strlen(env->var_value[i]) > 0)
+		tmp = ft_strchr(env->raw_var[i], '=');
+		if (!tmp)
 		{
-			env->var_pass_to_exec[j] = ft_strdup(env->raw_var[i]);
-			if (!env->var_pass_to_exec[j])
+			env->var_name[i] = ft_strdup(env->raw_var[i]);
+			if (!env->var_name[i])
 				return (free_env(env), 0);
-			j++;
 		}
+		else
+		{
+			env->var_name[i] = ft_substr(env->raw_var[i], 0, tmp - env->raw_var[i]);
+			env->var_value[i] = ft_strdup(tmp + 1);
+			if (!env->var_name[i] || !env->var_value[i])
+				return (free_env(env), 0);
+		}
+		if (!ft_strcmp(env->var_name[i], "SHLVL"))
+			if (!shlvl(env, ft_atoi(env->var_value[i]), i))
+				return (free_env(env), 0);
 	}
 	return (1);
 }
@@ -111,21 +109,16 @@ int	set_var(t_minishell *mini, char **env_var)
 	env = &mini->env;
 	i = ft_str_str_len(env_var);
 	if (!i && ++i && ++i && ++i && ++i)
-	{
 		if (!preset_var(env))
 			return (0);
-	}
-	else
+	if (!env->raw_var)
 	{
 		env->raw_var = ft_duostrdup(env_var, i);
-		env->sorted = ft_duostrdup(env_var, i);
-		if (!env->raw_var || !env->sorted)
-			return (free_env(env), 0);
+		if (!env->raw_var)
+			return (0);
 	}
-	if (!set_var2(env, i))
+	env->allocated_l = i;
+	if (!set_name_value(env, i) || !set_pass_to_exec(env)) // must_env(SHLVL, PWD, OLDPWD)
 		return (0);
-	if (!set_var3(env))
-		return (0);
-	ft_sort_string_tab(env->sorted);
 	return (1);
 }

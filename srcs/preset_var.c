@@ -20,7 +20,7 @@ int	preset_var(t_env *env)
 	env->raw_var[2] = ft_strdup("_=./minishell");
 	if (!env->raw_var[2])
 		return (ft_free(env->raw_var), 0);
-	env->raw_var[3] = ft_strdup("OLDPWD=");
+	env->raw_var[3] = ft_strdup("OLDPWD");
 	if (!env->raw_var[3])
 		return (ft_free(env->raw_var), 0);
 	return (1);
