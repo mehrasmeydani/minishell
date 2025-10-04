@@ -9,7 +9,8 @@
 ...
 
 
-3.	env on not env_var coredumps
+3.	export change value and printing
+...
 
-	ex: env -i ./minishell
+4.	set_var add must be variables SHLVL
 ...

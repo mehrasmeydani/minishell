@@ -40,42 +40,88 @@ void	env(t_minishell *mini)
 
 	i = -1;
 	while (mini->env.raw_var[++i])
-		if (ft_strlen(mini->env.var_value[i]))
+		if (mini->env.var_value[i])
 			ft_putendl_fd(mini->env.raw_var[i], STDOUT_FILENO);
 }
 
-void	print_export(t_minishell *mini)
+void	print_export2(char *str, t_env *env)
 {
 	ssize_t	i;
-	t_env	env;
-	char	*tmp;
 
-	env = mini->env;
 	i = -1;
-	while (env.sorted[++i])
+	if (!strcmp("_", str))
+		return ;
+	while (++i < env->allocated_l)
 	{
-		if (ft_strncmp(env.sorted[i], "_", 1))
+		if (!ft_strcmp(str, env->var_name[i]))
 		{
 			ft_putstr_fd("declare -x ", 1);
-			tmp = ft_strchr(env.sorted[i], '=');
-			write(1, env.sorted[i], tmp - env.sorted[i]);
-			if (*(tmp + 1))
+			ft_putstr_fd(env->var_name[i], 1);
+			if (env->var_value[i])
 			{
 				ft_putstr_fd("=\"", 1);
-				ft_putstr_fd(tmp + 1, 1);
-				ft_putendl_fd("\"", 1);
+				ft_putstr_fd(env->var_value[i], 1);
+				ft_putstr_fd("\"", 1);
 			}
+			ft_putendl_fd("", 1);
+			break ;
 		}
 	}
 }
 
-void	export(t_minishell *mini, char **cmd)
+void	print_export(t_minishell *mini)
 {
-	// if (ft_str_str_len(cmd) > 1)
-	// 	add_var(mini);
-	//else
-	(void)cmd;
-	print_export(mini);
+	t_env	env;
+	char	*print;
+	char	*last;
+	ssize_t	i;
+	ssize_t	j;
+
+	env = mini->env;
+	print = min_str(env.var_name);
+	print_export2(print, &env);
+	last = print;
+	i = -1;
+	while (++i < env.allocated_l - 1)
+	{
+		j = -1;
+		print = max_str(env.var_name);
+		while (++j < env.allocated_l)
+		{
+			if (ft_strcmp(env.var_name[j], print) < 0 && ft_strcmp(env.var_name[j], last) > 0)
+				print = env.var_name[j];
+		}
+		print_export2(print, &env);
+		last = print;
+	}
+}
+
+int	add_var(t_minishell *mini, char **cmd)
+{
+	t_env	*env;
+	char	**tmp;
+	//char	*tmp2;
+	ssize_t	i;
+
+	env = &(mini->env);
+	i = ft_str_str_len(env->raw_var);
+	tmp = ft_duostrdup(env->raw_var, i + 1);
+	if (!tmp)
+		return (0);
+	tmp[i] = cmd[1];
+	free_env(env);
+	if (!set_var(mini, tmp))
+		return (0); //reset value
+	return (1);
+}
+
+int	export(t_minishell *mini, char **cmd)
+{
+	if (ft_str_str_len(cmd) > 1)
+		return (add_var(mini, cmd));
+	else
+		print_export(mini);
+	return (1);
 }
 
 int	is_builtin(char **cmd, t_minishell *mini)
@@ -85,7 +131,7 @@ int	is_builtin(char **cmd, t_minishell *mini)
 	if (!ft_strcmp(cmd[0], "env"))
 		return (env(mini), 1);
 	if (!ft_strcmp(cmd[0], "exit"))
-		return (exit(0), 1); //set exit code and free
+		return (exit(ft_atoi(cmd[1])), 1);
 	if (!ft_strcmp(cmd[0], "export"))
 		return (export(mini, cmd), 1);
 	return (0);

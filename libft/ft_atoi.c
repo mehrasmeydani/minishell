@@ -18,6 +18,8 @@ int	ft_atoi(const char *nptr)
 	ssize_t	j;
 	int		sign;
 
+	if (!nptr)
+		return (0);
 	out = 0;
 	j = -1;
 	sign = 1;
