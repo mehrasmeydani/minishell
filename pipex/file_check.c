@@ -73,7 +73,7 @@ void	redirect_and_filecheck(t_redirect *head)
 			check_append(temp);
 		// maybe heredoc here? 
 		if (temp->fd == FAIL)
-			exit (1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
+			close_exit (1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
 		dup_redirs(temp);
 		temp = temp->next;
 	}

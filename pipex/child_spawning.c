@@ -93,13 +93,38 @@ void	my_pipe_dup_close(t_exec *exec, size_t i)
 		safe_close_fd(&exec->pipe[i % 2][1]);
 }
 
-replace_
+t_lex	*find_current_cmd(t_lex *head, size_t pos)
+{
+	size_t	i;
+	t_lex	*temp;
+
+	temp = head;
+	i = -1;
+	while(++i < pos)
+		temp = head->next;
+	return (temp);
+}
+void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
+{
+	t_lex	*cmd;
+
+	cmd = find_current_cmd(mini->lex, i);
+
+	my_pipe_dup(mini, exec, i);
+	close_all_pipes(exec->pipe);
+	redirect_and_filecheck(cur);
+	free(mini->lex->cmd[0]);
+	cmd->cmd[0] = check_against_cmd(cmd, exec->pathlist);
+	if (!cmd->cmd[0])
+		close_exit(exec, mini, "Arg[0]", 1);
+	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
+		close_exit(exec, mini, "execution", 1);
+}
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
 	t_exec	exec;
 	t_redirect *current;
-	char	*
 
 	
 	current = mini->lex->redic;
@@ -115,13 +140,7 @@ void	spawn_children(t_minishell *mini)
 		if ((exec.pids[i] = fork()) == -1)
 			return (perror("fork")); // i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0)
-		{
-			my_pipe_dup(mini, &exec, i);
-			close_all_pipes(exec.pipe);
-			redirect_and_filecheck(current);
-			if (execve() == -1)
-			// maybe a single function?
-		}
+			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 		current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
