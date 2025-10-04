@@ -48,14 +48,16 @@ static void	dup_redirs(t_redirect *file)
 	{
 		if (dup2(file->fd, STDIN_FILENO) == -1)
 				exit(1); // clean up!
+		close(file->fd);
 	}
 	if (file->level == OUTFILE || file->level == APPEND)
 	{
 		if (dup2 (file->fd, STDOUT_FILENO) == -1)
 			exit(1); //clean up!
+		close(file->fd);
 	}
 }
-void	open_fds(t_redirect *head)
+void	redirect_and_filecheck(t_redirect *head)
 {
 	// by this point, pipe should already be duped into in/out
 	t_redirect	*temp;
@@ -76,3 +78,4 @@ void	open_fds(t_redirect *head)
 		temp = temp->next;
 	}
 }
+

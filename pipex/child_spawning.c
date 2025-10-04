@@ -92,11 +92,17 @@ void	my_pipe_dup_close(t_exec *exec, size_t i)
 	if (i < exec->children_count - 1)
 		safe_close_fd(&exec->pipe[i % 2][1]);
 }
+
+replace_
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
 	t_exec	exec;
+	t_redirect *current;
+	char	*
 
+	
+	current = mini->lex->redic;
 	if (fill_struct(&exec, mini) == -1)
 		return ; // cleaned, all pids closed
 	if (exec.children_count == 1) // this check should also verify if its a builtin
@@ -112,11 +118,12 @@ void	spawn_children(t_minishell *mini)
 		{
 			my_pipe_dup(mini, &exec, i);
 			close_all_pipes(exec.pipe);
-			// redirections
-			// exec
+			redirect_and_filecheck(current);
+			if (execve() == -1)
 			// maybe a single function?
 		}
 		my_pipe_dup_close(&exec, i);
+		current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
 	//waiting
 	//freeing
