@@ -97,12 +97,16 @@ void	spawn_children(t_minishell *mini)
 				if (dup2(exec.pipe[i % 2][1], STDOUT_FILENO) == -1) // if not last command, current to to out.
 					close_exit(&exec, mini, "dup STDOUT", 1);
 			}
+
 			close_all_pipes(exec.pipe);
 			// redirections
 			// exec
 			// maybe a single function?
 		}
-		close_all_pipes(exec.pipe);
+		if (i > 0)
+			safe_close_fd(&exec.pipe[(i - 1) % 2][0]);
+		if (i < exec.children_count - 1)
+			safe_close_fd(&exec.pipe[i % 2][1]);
 	}
 	//waiting
 	//freeing
