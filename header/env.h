@@ -10,5 +10,4 @@ typedef struct s_env
 	ssize_t	allocated_l;
 }	t_env;
 
-
 #endif

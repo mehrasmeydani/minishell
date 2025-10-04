@@ -96,6 +96,18 @@ void	print_export(t_minishell *mini)
 	}
 }
 
+/*ssize_t	var_exists(t_env *env, char	*input)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (++i < env->allocated_l)
+	{
+		if (env->)
+	}
+	
+}*/
+
 int	add_var(t_minishell *mini, char **cmd)
 {
 	t_env	*env;
@@ -104,14 +116,21 @@ int	add_var(t_minishell *mini, char **cmd)
 	ssize_t	i;
 
 	env = &(mini->env);
+	/*i = 0;
+	while (cmd[++i])
+	{
+		tmp2 = 
+	}
+	
+	tmp2 = ft_strchr(cmd[])*/
 	i = ft_str_str_len(env->raw_var);
 	tmp = ft_duostrdup(env->raw_var, i + 1);
 	if (!tmp)
 		return (0);
 	tmp[i] = cmd[1];
 	free_env(env);
-	if (!set_var(mini, tmp))
-		return (0); //reset value
+	if (!set_var(mini, tmp, 0))
+		return (0); // reset value
 	return (1);
 }
 
@@ -163,7 +182,7 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	(void)env;
 	ft_bzero(&mini, sizeof(mini));
-	set_var(&mini, env);
+	set_var(&mini, env, 1);
 	while (true)
 	{
 		signal(SIGQUIT, SIG_IGN); //

@@ -38,6 +38,6 @@ char	*ft_relocat(char *in, char *buff);
 char	*expand(char *in, t_env env, int);
 int		preset_var(t_env *env);
 void	free_env(t_env *env);
-int		set_var(t_minishell *mini, char **env_var);
+int		set_var(t_minishell *mini, char **env_var, bool first);
 
 #endif
