@@ -15,8 +15,17 @@ size_t	count_cmds(t_lex *lex) // is this really needed? why not pipes + 1?
 
 
 
+void	fill_file_fd(t_redirect *head)
+{
+	t_redirect	*temp;
 
-
+	temp = head;
+	while(temp != NULL)
+	{
+		temp->fd = -1;
+		temp = temp->next;
+	}
+}
 
 int	fill_struct(t_exec *exec, t_minishell *mini)
 {
@@ -24,6 +33,7 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 
 	i = -1;
 	exec->status = 1;
+	fill_file_fd(mini->lex->redic);
 	exec->pathlist = get_path_array(mini->env.var_pass_to_exec);
 	if (!exec->pathlist)
 		return (perror("paths not retrieved"), -1);
@@ -150,7 +160,7 @@ void	spawn_children(t_minishell *mini)
 
 	current = mini->lex->redic;
 	if (fill_struct(&exec, mini) == -1)
-		return ; // cleaned, all pids closed
+		return ; // cleaned, all pids closed except for redirs
 	if (exec.children_count == 1) // this check should also verify if its a builtin
 		perror("single command logic with builtin is not here yet, but must be implemented");
 	i = -1;

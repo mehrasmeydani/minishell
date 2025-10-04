@@ -57,6 +57,8 @@ static void	dup_redirs(t_redirect *file)
 		close(file->fd);
 	}
 }
+
+
 int	redirect_and_filecheck(t_redirect *head)
 {
 	// by this point, pipe should already be duped into in/out
