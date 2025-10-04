@@ -44,32 +44,57 @@ void	env(t_minishell *mini)
 			ft_putendl_fd(mini->env.raw_var[i], STDOUT_FILENO);
 }
 
-// void	print_export(t_minishell *mini)
-// {
-// 	ssize_t	i;
-// 	t_env	env;
-// 	char	*tmp;
+void	print_export2(char *str, t_env *env)
+{
+	ssize_t	i;
 
-// 	env = mini->env;
-// 	i = -1;
-// 	while (env.sorted[++i])
-// 	{
-// 		if (ft_strncmp(env.sorted[i], "_", 1))
-// 		{
-// 			ft_putstr_fd("declare -x ", 1);
-// 			tmp = ft_strchr(env.sorted[i], '=');
-// 			write(1, env.sorted[i], tmp - env.sorted[i]);
-// 			if (*(tmp + 1))
-// 			{
-// 				ft_putstr_fd("=\"", 1);
-// 				ft_putstr_fd(tmp + 1, 1);
-// 				ft_putendl_fd("\"", 1);
-// 			}
-// 			else
-// 				ft_putendl_fd("", 1);
-// 		}
-// 	}
-// }
+	i = -1;
+	if (!strcmp("_", str))
+		return ;
+	while (++i < env->allocated_l)
+	{
+		if (!ft_strcmp(str, env->var_name[i]))
+		{
+			ft_putstr_fd("declare -x ", 1);
+			ft_putstr_fd(env->var_name[i], 1);
+			if (env->var_value[i])
+			{
+				ft_putstr_fd("=\"", 1);
+				ft_putstr_fd(env->var_value[i], 1);
+				ft_putstr_fd("\"", 1);
+			}
+			ft_putendl_fd("", 1);
+			break ;
+		}
+	}
+}
+
+void	print_export(t_minishell *mini)
+{
+	t_env	env;
+	char	*print;
+	char	*last;
+	ssize_t	i;
+	ssize_t	j;
+
+	env = mini->env;
+	print = min_str(env.var_name);
+	print_export2(print, &env);
+	last = print;
+	i = -1;
+	while (++i < env.allocated_l - 1)
+	{
+		j = -1;
+		print = max_str(env.var_name);
+		while (++j < env.allocated_l)
+		{
+			if (ft_strcmp(env.var_name[j], print) < 0 && ft_strcmp(env.var_name[j], last) > 0)
+				print = env.var_name[j];
+		}
+		print_export2(print, &env);
+		last = print;
+	}
+}
 
 int	add_var(t_minishell *mini, char **cmd)
 {
@@ -94,8 +119,8 @@ int	export(t_minishell *mini, char **cmd)
 {
 	if (ft_str_str_len(cmd) > 1)
 		return (add_var(mini, cmd));
-	// else
-	// 	print_export(mini);
+	else
+		print_export(mini);
 	return (1);
 }
 
