@@ -20,23 +20,21 @@ size_t	count_cmds(t_lex *lex) // is this really needed? why not pipes + 1?
 
 int	fill_struct(t_exec *exec, t_minishell *mini)
 {
+	size_t	i;
+
+	i = 0;
+	exec->status = 0;
 	exec->pathlist = get_path_array(mini->env.var_pass_to_exec);
 	if (!exec->pathlist)
-	{
-		/*close(exec->pipes[0]);
-		close(exec->pipes[1]);*/
 		return (perror("paths not retrieved"), -1);
-	}
 	exec->children_count = count_cmds(mini->lex);
-	exec->pids = ft_calloc(exec->children_count, sizeof(pid_t));
+	exec->pids = malloc(exec->children_count * sizeof(pid_t));
 	if (!exec->pids)
-	{
-		/*close(exec->pipes[0]);
-		close(exec->pipes[1]);*/
-		return(perror("pid allocation"), freepaths(exec->pathlist),
-			exec->pathlist = NULL, -1);
-	}
-	exec->pipe[0][0] = -1;
+		return(perror("pid allocation"), freepaths(exec->pathlist), 
+		exec->pathlist = NULL, -1);
+	while (++i < exec->children_count)
+		exec->pids[i] = -1;
+ 	exec->pipe[0][0] = -1;
 	exec->pipe[0][1] = -1;
 	exec->pipe[1][0] = -1;
 	exec->pipe[1][1] = -1;
@@ -104,6 +102,7 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 		temp = head->next;
 	return (temp);
 }
+
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
@@ -120,13 +119,34 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
 		close_exit(exec, mini, "execution", 1);
 }
+
+void	set_exit_status(t_exec *exec, int status)
+{
+	if (WIFEXITED(status))
+		exec->status = WEXITSTATUS(status);
+	else
+		exec->status = EXIT_FAILURE;
+}
+void	wait_for_death(t_exec *exec)
+{
+	size_t	i;
+	int status;
+
+	status = 0;
+	i = -1;
+	while(++i < exec->children_count)
+	{
+		if (exec->pids[i] != -1)
+			waitpid(exec->pids[i], &status, 0);
+	}
+	set_exit_status(exec, status);
+}
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
 	t_exec	exec;
 	t_redirect *current;
 
-	
 	current = mini->lex->redic;
 	if (fill_struct(&exec, mini) == -1)
 		return ; // cleaned, all pids closed
@@ -144,7 +164,7 @@ void	spawn_children(t_minishell *mini)
 		my_pipe_dup_close(&exec, i);
 		current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
-	//waiting
+	wait_for_death(&exec);
 	//freeing
 	//closing pipes
 }

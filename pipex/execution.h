@@ -4,13 +4,14 @@
 # define FAIL -1
 
 # include "../header/minishell.h"
-
+#include <sys/wait.h>
 typedef struct	s_exec
 {
 	char	**pathlist;
 	size_t children_count;
 	pid_t	*pids;
 	int		pipe[2][2];
+	int		status;
 }				t_exec;
 
 void	open_fds(t_redirect *head);
