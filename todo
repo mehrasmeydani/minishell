@@ -10,10 +10,10 @@
 
 
 3.	export change value and printing
-...
+... SEMI
 
 4.	set_var add must be variables SHLVL
-...
+... FIXED!
 
 5.	space at the end stdin?
-...
+... FIXED!
