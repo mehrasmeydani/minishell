@@ -125,7 +125,7 @@ int	add_var(t_minishell *mini, char **cmd)
 		if (!tmp2 && var_exists(env, cmd[i]) != -1)
 			return (1);
 		else if (tmp2 && var_exists(env, ft_substr(cmd[i], 0, tmp2 - cmd[i])) != -1) // ft_substr leaks
-			return (1);
+			return (1); // reset value
 		else
 		{
 			j = ft_str_str_len(env->raw_var);
@@ -141,14 +141,6 @@ int	add_var(t_minishell *mini, char **cmd)
 			ft_free(tmp);
 		}
 	}
-	/*i = ft_str_str_len(env->raw_var);
-	tmp = ft_duostrdup(env->raw_var, i + 1);
-	if (!tmp)
-		return (0);
-	tmp[i] = cmd[1];
-	free_env(env);
-	if (!set_var(mini, tmp, 0))
-		return (0); // reset value*/
 	return (1);
 }
 
