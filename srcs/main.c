@@ -96,14 +96,16 @@ void	print_export(t_minishell *mini)
 	}
 }
 
-ssize_t	var_exists(t_env *env, char	*input)
+ssize_t	var_exists(t_env *env, char	*input, char *tmp)
 {
 	ssize_t	i;
 
 	i = -1;
 	while (++i < env->allocated_l)
 	{
-		if (!ft_strcmp(input, env->var_name[i]))
+		if (!tmp && !ft_strcmp(input, env->var_name[i]))
+			return (i);
+		else if (tmp && !ft_strncmp(input, env->var_name[i], tmp - input))
 			return (i);
 	}
 	return (-1);
@@ -116,28 +118,43 @@ int	add_var(t_minishell *mini, char **cmd)
 	char	*tmp2;
 	ssize_t	i;
 	ssize_t	j;
+	ssize_t	k;
 
 	env = &(mini->env);
 	i = 0;
 	while (cmd[++i])
 	{
 		tmp2 = ft_strchr(cmd[i], '=');
-		if (!tmp2 && var_exists(env, cmd[i]) != -1)
+		k = var_exists(env, cmd[i], tmp2);
+		if (!tmp2 && k != -1)
 			return (1);
-		else if (tmp2 && var_exists(env, ft_substr(cmd[i], 0, tmp2 - cmd[i])) != -1) // ft_substr leaks
-			return (1); // reset value
+		else if (tmp2 && k != -1)
+		{
+			tmp = ft_duostrdup(env->raw_var, ft_str_str_len(env->raw_var));
+			if (!tmp)
+				return (0); // maybe free?
+			tmp2 = ft_strdup(cmd[i]);
+			if (!tmp2)
+				return ft_free(tmp), (0); // maybe free?
+			free(tmp[k]);
+			tmp[k] = tmp2;
+			free_env(env);
+			if (!set_var(mini, tmp, 0))
+				return (ft_free(tmp), 0);
+			ft_free(tmp);
+		}
 		else
 		{
 			j = ft_str_str_len(env->raw_var);
 			tmp = ft_duostrdup(env->raw_var, j + 1);
 			if (!tmp)
-				return (0);
+				return (0); // maybe free?
 			tmp[ft_str_str_len(env->raw_var)] = ft_strdup(cmd[i]);
 			if (!tmp[ft_str_str_len(env->raw_var)])
 				return (ft_free(tmp), 0);
 			free_env(env);
 			if (!set_var(mini, tmp, 0))
-				return (0);
+				return (ft_free(tmp), 0);
 			ft_free(tmp);
 		}
 	}
