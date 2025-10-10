@@ -36,7 +36,7 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 	i = -1;
 	exec->status = 1;
 	fill_file_fd(mini->lex->redic);
-	exec->pathlist = get_path_array(mini->env.var_pass_to_exec);
+	exec->pathlist = get_path_array(mini->env.raw_var);
 	if (!exec->pathlist)
 		return (perror("paths not retrieved"), -1);
 	exec->children_count = count_cmds(mini->lex);
