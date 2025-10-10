@@ -29,7 +29,19 @@ int	main(int argc, char **argv, char **env)
 		//ft_bzero(&mini, sizeof(mini)); // still needed
 		if (!my_read(&mini))
 			return (free_env(&mini.env), 1);
-		
+		/*int i = -1;
+	 	t_lex *lex;
+	 	lex = mini.lex;
+	 	while (lex)
+	 	{
+	 		i = -1;
+	 		while (lex->cmd[++i])
+	 		{
+	 			printf("%s\n", lex->cmd[i]);
+	 		}
+	 		lex = lex->next;
+	 	}*/
+
 		execution(&mini);
 		lex_clear(&mini.lex, ft_free);
 	}

@@ -111,7 +111,7 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	temp = head;
 	i = -1;
 	while(++i < pos)
-		temp = head->next;
+		temp = temp->next;
 	return (temp);
 }
 
@@ -121,7 +121,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	char	*tmp;
 
 	cmd = find_current_cmd(mini->lex, i);
-
+	cur = cmd->redic;
 	my_pipe_dup(mini, exec, i);
 	close_all_pipes(exec->pipe);
 	if (redirect_and_filecheck(cur) == -1)
@@ -182,7 +182,7 @@ void	spawn_children(t_minishell *mini)
 		if (pipe(exec.pipe[i % 2]) < 0)
 			return (perror("pipe"), wait_for_death(&exec));
 		if ((exec.pids[i] = fork()) == -1)
-			return (perror("fork"), wait_for_death(&exec)); // i should also wait here for all the previous commands!
+			return (perror("fork"), wait_for_death(&exec));// i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
