@@ -29,6 +29,7 @@ int	main(int argc, char **argv, char **env)
 		//ft_bzero(&mini, sizeof(mini)); // still needed
 		if (!my_read(&mini))
 			return (free_env(&mini.env), 1);
+		
 		execution(&mini);
 		lex_clear(&mini.lex, ft_free);
 	}

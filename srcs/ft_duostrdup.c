@@ -9,7 +9,7 @@ char	**ft_duostrdup(char **in, ssize_t len)
 	if (!out)
 		return (NULL);
 	i = -1;
-	while (in[++i])
+	while (in[++i] && i < len)
 	{
 		out[i] = ft_strdup(in[i]);
 		if (!out[i])

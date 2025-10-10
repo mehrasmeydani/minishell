@@ -169,6 +169,22 @@ int	my_read(t_minishell *mini)
 		return (free(mini->in), mini->in = NULL
 			, ft_putendl_fd("Count your quotes", 2), 1);
 	mini->out = mini_split(mini->in);
+	//int i = -1;
+	// 	t_lex *lex;
+	// 	lex = mini->lex;
+	// 	while (lex)
+	// 	{
+	// 		i = -1;
+	// 		while (lex->cmd[++i])
+	// 		{
+	// 			printf("%s\n", lex->cmd[i]);
+	// 		}
+	// 		lex = lex->next;
+	// 	}
+	// while (mini->out[++i])
+	// {
+	// 	printf("\"%s\"\n", mini->out[i]);
+	// }
 	free(mini->in);
 	mini->in = NULL;
 	if (!mini->out)

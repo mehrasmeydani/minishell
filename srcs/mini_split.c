@@ -44,8 +44,8 @@ static ssize_t	count(char *str)
 	while (str[i])
 	{
 		skip(&str, &i);
-		while (str[i] == ' ')
-			str++;
+		// while (str[i] == ' ')
+		// 	str++;
 		tokens++;
 	}
 	return (tokens);
