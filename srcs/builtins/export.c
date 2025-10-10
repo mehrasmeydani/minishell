@@ -31,7 +31,7 @@ void	print_export2(char *str, t_env *env)
 	ssize_t	i;
 
 	i = -1;
-	if (!strcmp("_", str))
+	if (!ft_strcmp("_", str))
 		return ;
 	while (++i < env->allocated_l)
 	{
@@ -53,27 +53,27 @@ void	print_export2(char *str, t_env *env)
 
 void	print_export(t_minishell *mini)
 {
-	t_env	env;
+	t_env	*env;
 	char	*print;
 	char	*last;
 	ssize_t	i;
 	ssize_t	j;
 
-	env = mini->env;
-	print = min_str(env.var_name);
-	print_export2(print, &env);
+	env = &mini->env;
+	print = min_str(env->var_name);
+	print_export2(print, env);
 	last = print;
 	i = -1;
-	while (++i < env.allocated_l - 1)
+	while (++i < env->allocated_l - 1)
 	{
 		j = -1;
-		print = max_str(env.var_name);
-		while (++j < env.allocated_l)
+		print = max_str(env->var_name);
+		while (++j < env->allocated_l)
 		{
-			if (ft_strcmp(env.var_name[j], print) < 0 && ft_strcmp(env.var_name[j], last) > 0)
-				print = env.var_name[j];
+			if (ft_strcmp(env->var_name[j], print) < 0 && ft_strcmp(env->var_name[j], last) > 0)
+				print = env->var_name[j];
 		}
-		print_export2(print, &env);
+		print_export2(print, env);
 		last = print;
 	}
 }

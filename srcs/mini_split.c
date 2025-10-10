@@ -72,7 +72,7 @@ char	**mini_split(char *in)
 	ssize_t	num;
 
 	num = count(in);
-	out = (char **)calloc(num + 1, sizeof(char *));
+	out = (char **)ft_calloc(num + 1, sizeof(char *));
 	if (!out)
 		return (NULL);
 	i = -1;

@@ -28,7 +28,7 @@ MAKEFLAGS	+= --no-print-directory
 all:		${NAME}
 
 .c.o:
-			@${CC} ${CFLAGS} -c -I ${HEAD} $< -o ${<:.c=.o} -g
+			${CC} ${CFLAGS} -c -I ${HEAD} $< -o ${<:.c=.o} -g
 
 ${NAME}:	${OBJS}
 			@(${LIBFT} && make all)

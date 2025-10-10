@@ -5,7 +5,7 @@ char	**ft_duostrdup(char **in, ssize_t len)
 	ssize_t	i;
 	char	**out;
 
-	out = (char **)calloc(len + 1, sizeof(char *));
+	out = (char **)ft_calloc(len + 1, sizeof(char *));
 	if (!out)
 		return (NULL);
 	i = -1;

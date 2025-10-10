@@ -29,7 +29,7 @@ static char	*str(char *in, ssize_t i, int quotes_status)
 	ssize_t	j;
 	char	*tmp;
 
-	tmp = calloc(i + 1, sizeof(char));
+	tmp = ft_calloc(i + 1, sizeof(char));
 	if (!tmp)
 		return (NULL);
 	i = 0;

@@ -63,7 +63,7 @@ int	clean_rest(t_lex *lex)
 			else
 				str_len++;
 		}
-		tmp_str = (char **)calloc(str_len + 1, sizeof(char *));
+		tmp_str = (char **)ft_calloc(str_len + 1, sizeof(char *));
 		if (!tmp_str)
 			return (0);
 		str_len = 0;
