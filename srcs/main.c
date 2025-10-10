@@ -13,6 +13,17 @@ void	execution(t_minishell *mini)
 	spawn_children(mini);
 }
 
+void	set_zero(t_minishell *mini)
+{
+	if (mini)
+	{
+		mini->error_code = 0;
+		mini->in = NULL;
+		mini->out = NULL;
+		mini->lex = NULL;
+	}
+}
+
 int	main(int argc, char **argv, char **env)
 {
 	t_minishell	mini;
@@ -26,22 +37,9 @@ int	main(int argc, char **argv, char **env)
 	{
 		signal(SIGQUIT, SIG_IGN); //
 		signal(SIGINT, sigint);
-		//ft_bzero(&mini, sizeof(mini)); // still needed
+		set_zero(&mini);
 		if (!my_read(&mini))
 			return (free_env(&mini.env), 1);
-		/*int i = -1;
-	 	t_lex *lex;
-	 	lex = mini.lex;
-	 	while (lex)
-	 	{
-	 		i = -1;
-	 		while (lex->cmd[++i])
-	 		{
-	 			printf("%s\n", lex->cmd[i]);
-	 		}
-	 		lex = lex->next;
-	 	}*/
-
 		execution(&mini);
 		lex_clear(&mini.lex, ft_free);
 	}

@@ -20,7 +20,6 @@ typedef struct s_minishell
 {
 	char	*in;
 	char	**out;
-	ssize_t	num_pipes;
 	t_lex	*lex;
 	t_env	env;
 	int		error_code;
