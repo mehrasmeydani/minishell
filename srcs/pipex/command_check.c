@@ -1,4 +1,4 @@
-#include "execution.h"
+#include "../../header/execution.h"
 // NULL t_lext->cmd[0] means the command wont be run as it does not exist!
 // how we handle redirections without commands like " < test2 > test4 > test7  | ls"
 char	*check_against_cmd(t_lex *node, char **pathlist)

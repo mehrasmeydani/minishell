@@ -1,4 +1,4 @@
-#include "execution.h" // cahnge to the header folder on merge
+#include "../../header/execution.h" // cahnge to the header folder on merge
 static void	check_infile(t_redirect *file)
 {
 	if (access(file->name, F_OK) == -1)
@@ -82,6 +82,6 @@ int	redirect_and_filecheck(t_redirect *head)
 			return(perror("dup redirections"), -1);
 		temp = temp->next;
 	}
-		return (1);
+	return (1);
 }
 

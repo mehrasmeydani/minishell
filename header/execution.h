@@ -3,8 +3,9 @@
 
 # define FAIL -1
 
-# include "../header/minishell.h"
+# include "./minishell.h"
 #include <sys/wait.h>
+
 typedef struct	s_exec
 {
 	char	**pathlist;
@@ -14,10 +15,10 @@ typedef struct	s_exec
 	int		status;
 }				t_exec;
 
-void	open_fds(t_redirect *head);
 char	*check_against_cmd(t_lex *node, char **pathlist);
 void	freepaths(char **pathlist);
 char	**get_path_array(char **envp);
-int	redirect_and_filecheck(t_redirect *head);
+int		redirect_and_filecheck(t_redirect *head);
+void	spawn_children(t_minishell *mini);
 
 #endif

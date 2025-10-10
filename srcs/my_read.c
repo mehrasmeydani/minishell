@@ -164,6 +164,7 @@ int	my_read(t_minishell *mini)
 	mini->in = readline("minishell>");
 	if (!mini->in)
 		return (0); //error
+	add_history(mini->in);
 	if (!check_quotes(mini->in))
 		return (free(mini->in), mini->in = NULL
 			, ft_putendl_fd("Count your quotes", 2), 1);

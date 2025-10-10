@@ -1,10 +1,12 @@
-#include "execution.h"
+#include "../../header/execution.h"
+
 size_t	count_cmds(t_lex *lex) // is this really needed? why not pipes + 1?
 {
 	t_lex *temp;
 	size_t	i;
 
 	temp = lex;
+	i = 0;
 	while (temp != NULL)
 	{
 		i++;
@@ -48,6 +50,7 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 	exec->pipe[0][1] = -1;
 	exec->pipe[1][0] = -1;
 	exec->pipe[1][1] = -1;
+	//ft_memset(&(exec->pipe), -1, sizeof(int[2][2]));
 	return (1);
 }
 
@@ -115,6 +118,7 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
+	char	*tmp;
 
 	cmd = find_current_cmd(mini->lex, i);
 
@@ -122,10 +126,18 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	close_all_pipes(exec->pipe);
 	if (redirect_and_filecheck(cur) == -1)
 		close_exit(exec, mini, NULL, 1);
-	free(mini->lex->cmd[0]);
-	cmd->cmd[0] = check_against_cmd(cmd, exec->pathlist);
-	if (!cmd->cmd[0])
+	if (is_builtin(cmd->cmd))
+	{
+		if (!exec_builtin(cmd->cmd, mini))
+			return (exit(127));
+		exit(0); // free mehras
+	}
+	tmp = check_against_cmd(cmd, exec->pathlist);
+	if (!tmp)
 		close_exit(exec, mini, "Arg[0]", 1);
+	//free(mini->lex->cmd[0]);
+	free(cmd->cmd[0]);
+	cmd->cmd[0] = tmp;
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
 		return (close(STDIN_FILENO), close(STDOUT_FILENO), 
 			close_exit(exec, mini, "execution", 1));
@@ -158,14 +170,15 @@ void	spawn_children(t_minishell *mini)
 	t_exec	exec;
 	t_redirect *current;
 
-	current = mini->lex->redic;
 	if (fill_struct(&exec, mini) == -1)
 		return ; // cleaned, all pids closed except for redirs
-	if (exec.children_count == 1) // this check should also verify if its a builtin
-		perror("single command logic with builtin is not here yet, but must be implemented");
+	if (exec.children_count == 1 && is_builtin(mini->lex->cmd)) // this check should also verify if its a builtin
+		if (!exec_builtin(mini->lex->cmd, mini))
+			return ; // free_and_seterror mehras
 	i = -1;
 	while(++i < exec.children_count)
 	{
+		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)
 			return (perror("pipe"), wait_for_death(&exec));
 		if ((exec.pids[i] = fork()) == -1)
@@ -173,7 +186,7 @@ void	spawn_children(t_minishell *mini)
 		if (exec.pids[i] == 0)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
-		current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
+		//current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
 	wait_for_death(&exec);
 	//freeing

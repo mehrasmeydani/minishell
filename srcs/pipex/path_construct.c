@@ -1,6 +1,6 @@
 // returns the path of arrays
 
-#include "execution.h"
+#include "../../header/execution.h"
 
 static int	isemptypath(char *path)
 {
