@@ -177,12 +177,16 @@ void	spawn_children(t_minishell *mini)
 	size_t	i;
 	t_exec	exec;
 	t_redirect *current;
+	t_lex	*cmd;
 
 	if (fill_struct(&exec, mini) == -1)
 		return ; // cleaned, all pids closed except for redirs
 	i = -1;
 	while(++i < exec.children_count)
 	{
+		cmd = find_current_cmd(mini->lex, i);
+		expand_all(mini, cmd);
+		remove_quotes(cmd->cmd);
 		exec.pids[i] = -2;
 		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)
@@ -195,7 +199,8 @@ void	spawn_children(t_minishell *mini)
 		my_pipe_dup_close(&exec, i);
 		//current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
-	wait_for_death(mini, &exec);
+	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
+		wait_for_death(mini, &exec);
 	//freeing
 	//closing pipes
 }

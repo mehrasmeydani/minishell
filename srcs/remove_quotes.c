@@ -53,7 +53,7 @@ static char	*str(char *in, ssize_t i, int quotes_status)
 	return (tmp);
 }
 
-int	remove_quotes(char **in)
+int	remove_quotes_2(char **in)
 {
 	char	*tmp;
 	ssize_t	len;
@@ -64,5 +64,17 @@ int	remove_quotes(char **in)
 		return (0);
 	free (*in);
 	*in = tmp;
+	return (1);
+}
+
+int	remove_quotes(char **in)
+{
+	ssize_t i;
+
+	i = -1;
+	while (in && in[++i])
+	{
+		remove_quotes_2(&in[i]); // check for leak
+	}
 	return (1);
 }

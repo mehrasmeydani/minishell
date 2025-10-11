@@ -122,39 +122,33 @@ int	check_heredoc(t_lex *lex)
 	return (1);
 }
 
-int	expand_all(t_minishell *mini) //change
+int	expand_all(t_minishell *mini, t_lex *lex) //change
 {
 	t_redirect	*red;
-	t_lex		*lex;
 	char		*tmp;
 	ssize_t		i;
 
-	lex = mini->lex;
-	while (lex)
+	red = lex->redic;
+	while (red)
 	{
-		red = lex->redic;
-		while (red)
+		if (red->level == HEREDOC && red->input_expand == 0)
 		{
-			if (red->level == HEREDOC && red->input_expand == 0)
-			{
-				tmp = expand(mini, red->input, mini->env, 1);
-				if (!tmp)
-					return (0);
-				free(red->input);
-				red->input = tmp;
-			}
-			red = red->next;
-		}
-		i = -1;
-		while (lex->cmd[++i])
-		{
-			tmp = expand(mini, lex->cmd[i], mini->env, 0);
+			tmp = expand(mini, red->input, mini->env, 1);
 			if (!tmp)
 				return (0);
-			free(lex->cmd[i]);
-			lex->cmd[i] = tmp;
+			free(red->input);
+			red->input = tmp;
 		}
-		lex = lex->next;
+		red = red->next;
+	}
+	i = -1;
+	while (lex->cmd[++i])
+	{
+		tmp = expand(mini, lex->cmd[i], mini->env, 0);
+		if (!tmp)
+			return (0);
+		free(lex->cmd[i]);
+		lex->cmd[i] = tmp;
 	}
 	return (1);
 }
