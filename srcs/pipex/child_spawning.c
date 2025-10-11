@@ -120,6 +120,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	t_lex	*cmd;
 	char	*tmp;
 
+	
 	cmd = find_current_cmd(mini->lex, i);
 	cur = cmd->redic;
 	my_pipe_dup(mini, exec, i);

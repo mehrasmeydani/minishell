@@ -122,7 +122,7 @@ int	check_heredoc(t_lex *lex)
 	return (1);
 }
 
-int	expand_all(t_minishell *mini)
+int	expand_all(t_minishell *mini) //change
 {
 	t_redirect	*red;
 	t_lex		*lex;
