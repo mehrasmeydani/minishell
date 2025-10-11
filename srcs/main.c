@@ -17,7 +17,6 @@ void	set_zero(t_minishell *mini)
 {
 	if (mini)
 	{
-		mini->error_code = 0;
 		mini->in = NULL;
 		mini->out = NULL;
 		mini->lex = NULL;
@@ -39,7 +38,9 @@ int	main(int argc, char **argv, char **env)
 		signal(SIGINT, sigint);
 		set_zero(&mini);
 		if (!my_read(&mini))
-			return (free_env(&mini.env), 1);
+			return (free_env(&mini.env), 0);
+		if (!mini.lex)
+			continue ;
 		execution(&mini);
 		lex_clear(&mini.lex, ft_free);
 	}

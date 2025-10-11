@@ -35,7 +35,7 @@ size_t	ft_str_str_len(char **in);
 char	**ft_duostrdup(char **in, ssize_t len);
 int		remove_quotes(char **in);
 char	*ft_relocat(char *in, char *buff);
-char	*expand(char *in, t_env env, int);
+char	*expand(t_minishell *mini, char *in, t_env env, int here_doc);
 int		preset_var(t_env *env);
 void	free_env(t_env *env);
 int		set_var(t_minishell *mini, char **env_var, bool first);

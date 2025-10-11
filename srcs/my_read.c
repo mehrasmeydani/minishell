@@ -137,7 +137,7 @@ int	expand_all(t_minishell *mini)
 		{
 			if (red->level == HEREDOC && red->input_expand == 0)
 			{
-				tmp = expand(red->input, mini->env, 1);
+				tmp = expand(mini, red->input, mini->env, 1);
 				if (!tmp)
 					return (0);
 				free(red->input);
@@ -148,7 +148,7 @@ int	expand_all(t_minishell *mini)
 		i = -1;
 		while (lex->cmd[++i])
 		{
-			tmp = expand(lex->cmd[i], mini->env, 0);
+			tmp = expand(mini, lex->cmd[i], mini->env, 0);
 			if (!tmp)
 				return (0);
 			free(lex->cmd[i]);
@@ -165,9 +165,11 @@ int	my_read(t_minishell *mini)
 	if (!mini->in)
 		return (0); //error
 	add_history(mini->in);
+	if (!*(mini->in))
+		return (free(mini->in), mini->in = NULL, 1);
 	if (!check_quotes(mini->in))
 		return (free(mini->in), mini->in = NULL
-			, ft_putendl_fd("Count your quotes", 2), 1);
+			, ft_putendl_fd("Count your quotes", 2), mini->error_code = 2, 1);
 	mini->out = mini_split(mini->in);
 	free(mini->in);
 	mini->in = NULL;
@@ -175,14 +177,14 @@ int	my_read(t_minishell *mini)
 		return (1); //error
 	if (!check_syntax(mini, mini->out))
 		return (ft_free(mini->out), mini->out = NULL
-			, ft_putendl_fd("Syntax error", 2), 1); //syntax error
+			, ft_putendl_fd("Syntax error", 2), mini->error_code = 2, 1); //syntax error
 	mini->lex = lexer(mini->out);
+	ft_free(mini->out);
 	if (!mini->lex)
-		return (ft_free(mini->out), mini->out = NULL, 1);
+		return (ft_free(mini->out), mini->out = NULL, mini->error_code = -1, 1);
 	if (!check_heredoc(mini->lex))
 		return (1); //free and error for alloc
 	if (!expand_all(mini))
 		return (1); //free and error for alloc
-	ft_free(mini->out);
 	return (1);
 }

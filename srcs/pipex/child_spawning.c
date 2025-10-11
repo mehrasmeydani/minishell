@@ -143,14 +143,14 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 			close_exit(exec, mini, "execution", 1));
 }
 
-void	set_exit_status(t_exec *exec, int status)
+void	set_exit_status(t_minishell *mini, int status)
 {
 	if (WIFEXITED(status))
-		exec->status = WEXITSTATUS(status);
+		mini->error_code = WEXITSTATUS(status);
 	else
-		exec->status = EXIT_FAILURE;
+		mini->error_code = EXIT_FAILURE;
 }
-void	wait_for_death(t_exec *exec)
+void	wait_for_death(t_minishell *mini, t_exec *exec)
 {
 	size_t	i;
 	int status;
@@ -162,7 +162,7 @@ void	wait_for_death(t_exec *exec)
 		if (exec->pids[i] != -1)
 			waitpid(exec->pids[i], &status, 0);
 	}
-	set_exit_status(exec, status);
+	set_exit_status(mini, status);
 }
 void	spawn_children(t_minishell *mini)
 {
@@ -180,15 +180,15 @@ void	spawn_children(t_minishell *mini)
 	{
 		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)
-			return (perror("pipe"), wait_for_death(&exec));
+			return (perror("pipe"), wait_for_death(mini, &exec));
 		if ((exec.pids[i] = fork()) == -1)
-			return (perror("fork"), wait_for_death(&exec));// i should also wait here for all the previous commands!
+			return (perror("fork"), wait_for_death(mini, &exec));// i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 		//current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
-	wait_for_death(&exec);
+	wait_for_death(mini, &exec);
 	//freeing
 	//closing pipes
 }
