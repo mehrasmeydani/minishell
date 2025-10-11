@@ -2,6 +2,8 @@
 	"files.associations": {
 		"execution.h": "c",
 		"env.h": "c",
-		"minishell.h": "c"
+		"minishell.h": "c",
+		"stdio.h": "c",
+		"history.h": "c"
 	}
 }

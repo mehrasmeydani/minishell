@@ -129,8 +129,15 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	if (is_builtin(cmd->cmd))
 	{
 		if (!exec_builtin(cmd->cmd, mini))
-			return (exit(127));
-		exit(0); // free mehras
+		{
+			if (exec->children_count > 1)
+				return (exit(127)); // free
+			else
+				return ((void)(mini->error_code = 127));
+		}
+		if (exec->children_count > 1)
+			exit(0); // free mehras
+		return ((void)(mini->error_code = 0));
 	}
 	tmp = check_against_cmd(cmd, exec->pathlist);
 	if (!tmp)
@@ -172,18 +179,17 @@ void	spawn_children(t_minishell *mini)
 
 	if (fill_struct(&exec, mini) == -1)
 		return ; // cleaned, all pids closed except for redirs
-	if (exec.children_count == 1 && is_builtin(mini->lex->cmd)) // this check should also verify if its a builtin
-		if (!exec_builtin(mini->lex->cmd, mini))
-			return ; // free_and_seterror mehras
 	i = -1;
 	while(++i < exec.children_count)
 	{
+		exec.pids[i] = -2;
 		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)
 			return (perror("pipe"), wait_for_death(mini, &exec));
-		if ((exec.pids[i] = fork()) == -1)
-			return (perror("fork"), wait_for_death(mini, &exec));// i should also wait here for all the previous commands!
-		if (exec.pids[i] == 0)
+		if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
+			if ((exec.pids[i] = fork()) == -1)
+				return (perror("fork"), wait_for_death(mini, &exec));// i should also wait here for all the previous commands!
+		if (exec.pids[i] == 0 || exec.pids[i] == -2)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 		//current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation

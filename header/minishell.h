@@ -1,6 +1,8 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
+# define __USE_POSIX 1
+
 # include "./libft.h"
 # include "./redirect.h"
 # include "./lexer.h"

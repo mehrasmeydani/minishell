@@ -161,7 +161,8 @@ int	expand_all(t_minishell *mini)
 
 int	my_read(t_minishell *mini)
 {
-	mini->in = readline("minishell>");
+	if (isatty(fileno(stdin)))
+		mini->in = readline("minishell>");
 	if (!mini->in)
 		return (0); //error
 	add_history(mini->in);
@@ -183,8 +184,6 @@ int	my_read(t_minishell *mini)
 	if (!mini->lex)
 		return (ft_free(mini->out), mini->out = NULL, mini->error_code = -1, 1);
 	if (!check_heredoc(mini->lex))
-		return (1); //free and error for alloc
-	if (!expand_all(mini))
 		return (1); //free and error for alloc
 	return (1);
 }
