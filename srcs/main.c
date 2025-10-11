@@ -38,7 +38,7 @@ int	main(int argc, char **argv, char **env)
 		signal(SIGINT, sigint);
 		set_zero(&mini);
 		if (!my_read(&mini))
-			return (free_env(&mini.env), 0);
+			return (free_env(&mini.env), mini.error_code);
 		if (!mini.lex)
 			continue ;
 		execution(&mini);
