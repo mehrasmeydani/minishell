@@ -138,13 +138,13 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 				return ((void)(mini->error_code = 127));
 		}
 		if (exec->children_count > 1)
-			exit(0); // free mehras
+			exit(0); // freed everything from exec, missing free of stuff
 		return ((void)(mini->error_code = 0));
 	}
 	tmp = check_against_cmd(cmd, exec->pathlist);
-	freepaths(exec->pathlist);
 	if (!tmp)
 		close_exit(exec, mini, cmd->cmd[0], 1);
+	freepaths(exec->pathlist); // paths are freed if alloc failure
 	free(cmd->cmd[0]);
 	cmd->cmd[0] = tmp;
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
@@ -199,13 +199,11 @@ void	spawn_children(t_minishell *mini)
 		if (exec.pids[i] == 0 || exec.pids[i] == -2)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
-		//current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
 	close_all_pipes(exec.pipe);
 	free(exec.pids);
 	freepaths(exec.pathlist);
-	//freeing
 }
 
