@@ -28,12 +28,28 @@ void	fill_file_fd(t_redirect *head)
 	}
 }
 
+size_t	count_heredocs(t_minishell *mini)
+{
+	t_redirect	*temp;
+	size_t	i;
+
+	i = 0;
+	temp = mini->lex->redic;
+	while (temp != NULL)
+	{
+		if (temp->level == HEREDOC)
+			i++;
+		temp = temp->next;
+	}
+	return (i);
+}
 int	fill_struct(t_exec *exec, t_minishell *mini)
 {
 	size_t	i;
 
 	i = -1;
 	exec->status = 1;
+	exec->heredoc_amount = count_heredocs(mini);
 	fill_file_fd(mini->lex->redic);
 	exec->pathlist = get_path_array(mini->env.raw_var);
 	if (!exec->pathlist)
