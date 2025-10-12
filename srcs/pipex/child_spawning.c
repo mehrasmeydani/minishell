@@ -121,6 +121,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	char	*tmp;
 
 	
+	free(exec->pids);
 	cmd = find_current_cmd(mini->lex, i);
 	cur = cmd->redic;
 	my_pipe_dup(mini, exec, i);
@@ -141,9 +142,9 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 		return ((void)(mini->error_code = 0));
 	}
 	tmp = check_against_cmd(cmd, exec->pathlist);
+	freepaths(exec->pathlist);
 	if (!tmp)
-		close_exit(exec, mini, "Arg[0]", 1);
-	//free(mini->lex->cmd[0]);
+		close_exit(exec, mini, cmd->cmd[0], 1);
 	free(cmd->cmd[0]);
 	cmd->cmd[0] = tmp;
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
@@ -172,6 +173,7 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 	}
 	set_exit_status(mini, status);
 }
+
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
@@ -201,7 +203,9 @@ void	spawn_children(t_minishell *mini)
 	}
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
+	close_all_pipes(exec.pipe);
+	free(exec.pids);
+	freepaths(exec.pathlist);
 	//freeing
-	//closing pipes
 }
 
