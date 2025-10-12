@@ -16,7 +16,6 @@ size_t	count_cmds(t_lex *lex) // is this really needed? why not pipes + 1?
 }
 
 
-
 void	fill_file_fd(t_redirect *head)
 {
 	t_redirect	*temp;
@@ -121,7 +120,6 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	char	*tmp;
 
 	
-	free(exec->pids);
 	cmd = find_current_cmd(mini->lex, i);
 	cur = cmd->redic;
 	my_pipe_dup(mini, exec, i);
@@ -147,6 +145,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	freepaths(exec->pathlist); // paths are freed if alloc failure
 	free(cmd->cmd[0]);
 	cmd->cmd[0] = tmp;
+	free(exec->pids);
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
 		return (close(STDIN_FILENO), close(STDOUT_FILENO), 
 			close_exit(exec, mini, "execution", 1));
