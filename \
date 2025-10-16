@@ -1,0 +1,37 @@
+  .git
+  .gitignore
+  .vscode
+  ✗ header
+  │  env.h
+  │  ✗ execution.h
+  │  lexer.h
+  │  libft.h
+  │  minishell.h
+  └  redirect.h
+  libft
+  ✗ srcs
+    builtins
+    lexer_tools
+    ✗ pipex
+  │   old
+  │ │  ✗ child_spawning.c
+  │ │  command_check.c
+  │ │  ✗ file_check.c
+  │ │  free_paths.c
+  │ └  path_construct.c
+    redir_tools
+  │  builtin.c
+  │  env_var.c
+  │  expand.c
+  │  ft_duostrdup.c
+  │  ft_free.c
+  │  lexer.c
+  │  main.c
+  │  mini_split.c
+  │  my_read.c
+  │  preset_var.c
+  │  quotes.c
+  └  remove_quotes.c
+  󰈚 .vgignore
+   Makefile
+  󰈚 todo

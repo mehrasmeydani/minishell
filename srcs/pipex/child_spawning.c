@@ -16,7 +16,6 @@ size_t	count_cmds(t_lex *lex) // is this really needed? why not pipes + 1?
 }
 
 
-
 void	fill_file_fd(t_redirect *head)
 {
 	t_redirect	*temp;
@@ -29,12 +28,28 @@ void	fill_file_fd(t_redirect *head)
 	}
 }
 
+size_t	count_heredocs(t_minishell *mini)
+{
+	t_redirect	*temp;
+	size_t	i;
+
+	i = 0;
+	temp = mini->lex->redic;
+	while (temp != NULL)
+	{
+		if (temp->level == HEREDOC)
+			i++;
+		temp = temp->next;
+	}
+	return (i);
+}
 int	fill_struct(t_exec *exec, t_minishell *mini)
 {
 	size_t	i;
 
 	i = -1;
 	exec->status = 1;
+	exec->heredoc_amount = count_heredocs(mini);
 	fill_file_fd(mini->lex->redic);
 	exec->pathlist = get_path_array(mini->env.raw_var);
 	if (!exec->pathlist)
@@ -137,15 +152,16 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 				return ((void)(mini->error_code = 127));
 		}
 		if (exec->children_count > 1)
-			exit(0); // free mehras
+			exit(0); // freed everything from exec, missing free of stuff
 		return ((void)(mini->error_code = 0));
 	}
 	tmp = check_against_cmd(cmd, exec->pathlist);
 	if (!tmp)
-		close_exit(exec, mini, "Arg[0]", 1);
-	//free(mini->lex->cmd[0]);
+		close_exit(exec, mini, cmd->cmd[0], 1);
+	freepaths(exec->pathlist); // paths are freed if alloc failure
 	free(cmd->cmd[0]);
 	cmd->cmd[0] = tmp;
+	free(exec->pids);
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
 		return (close(STDIN_FILENO), close(STDOUT_FILENO), 
 			close_exit(exec, mini, "execution", 1));
@@ -172,6 +188,7 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 	}
 	set_exit_status(mini, status);
 }
+
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
@@ -197,11 +214,12 @@ void	spawn_children(t_minishell *mini)
 		if (exec.pids[i] == 0 || exec.pids[i] == -2)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
-		//current = current->next; // shouldnt be a problem with currenty being NULL because of incrementation
 	}
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
-	//freeing
-	//closing pipes
+	close_all_pipes(exec.pipe);
+	free(exec.pids);
+	freepaths(exec.pathlist);
+	unlink("test");
 }
 
