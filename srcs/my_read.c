@@ -106,6 +106,9 @@ int	check_heredoc(t_lex *lex)
 					{
 						free(tmp_str);
 						tmp_str = NULL;
+						free(tmp->name);
+						tmp->name = NULL;
+						tmp->input = ft_relocat(tmp->input, "\n");
 						break;
 					}
 					if (tmp->input)
@@ -175,9 +178,10 @@ int	my_read(t_minishell *mini)
 			, ft_putendl_fd("Syntax error", 2), mini->error_code = 2, 1); //syntax error
 	mini->lex = lexer(mini->out);
 	ft_free(mini->out);
+	mini->out = NULL;
 	if (!mini->lex)
-		return (ft_free(mini->out), mini->out = NULL, mini->error_code = -1, 1);
+		return (mini->error_code = -1, 1);
 	if (!check_heredoc(mini->lex))
-		return (1); //free and error for alloc
+		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); //free and error for alloc
 	return (1);
 }

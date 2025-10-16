@@ -48,7 +48,7 @@ char	*expand(t_minishell *mini, char *in, t_env env, int here_doc)
 			}
 			else
 			{
-				while (in[i + j] && in[i + j] != ' ' && in[i + j] != '"' && in[i + j] != '\''&& in[i + j] != '$') //add_whitespaces
+				while (in[i + j] && !ft_iswhitespace(in[i + j]) && in[i + j] != '"' && in[i + j] != '\''&& in[i + j] != '$') //add_whitespaces
 					j++;
 				if (!find_var(&tmp_var, in + i + 1, j - 1, env))
 					return (free(out), NULL);
