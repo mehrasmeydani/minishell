@@ -220,5 +220,6 @@ void	spawn_children(t_minishell *mini)
 	close_all_pipes(exec.pipe);
 	free(exec.pids);
 	freepaths(exec.pathlist);
+	unlink("test");
 }
 

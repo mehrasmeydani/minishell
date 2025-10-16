@@ -45,10 +45,8 @@ static void	check_append(t_redirect *file)
 
 static void	check_heredoc(t_redirect *file) // filenames need to be generated in the temp name
 {
-	char	temp_name[11];
 	
-	ft_bzero(temp_name, 11 * sizeof(char));
-	file->fd = open(temp_name, O_CREAT | O_RDWR, 0600);
+	file->fd = open("test", O_CREAT | O_RDWR, 0600);
 	if (file->fd == -1)
 	{
 		perror("heredoc");
@@ -56,7 +54,7 @@ static void	check_heredoc(t_redirect *file) // filenames need to be generated in
 	}
 	write(file->fd, file->input, ft_strlen(file->input));
 	close(file->fd);
-	file->fd = open(temp_name, O_RDONLY);
+	file->fd = open("test", O_RDONLY);
 	if (file->fd == -1)
 	{
 		perror("heredoc");
