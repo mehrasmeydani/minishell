@@ -73,8 +73,7 @@ int	remove_quotes(char **in)
 
 	i = -1;
 	while (in && in[++i])
-	{
-		remove_quotes_2(&in[i]); // check for leak
-	}
+		if (!remove_quotes_2(&in[i]))
+			return (0);
 	return (1);
 }

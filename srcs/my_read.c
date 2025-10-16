@@ -80,10 +80,55 @@ int	has_quotes(char *in)
 	return (0);
 }
 
+int	here_docrl2(t_redirect *tmp, char *tmp_str)
+{
+	if (tmp->input)
+	{
+		tmp->input = ft_relocat(tmp->input, "\n");
+			if (!tmp->input)
+				return (free(tmp_str), 0);
+	}
+	tmp->input = ft_relocat(tmp->input, tmp_str);
+	free(tmp_str);
+	tmp_str = NULL;
+	if (!tmp->input)
+		return (0);
+	return (1);
+}
+
+int	here_docrl(t_redirect *tmp, char *tmp_str)
+{
+	if (has_quotes(tmp->name))
+	tmp->input_expand = 1;
+	if (!remove_quotes(&tmp->name))
+		return(0);
+	while (true)
+	{
+		tmp_str = readline(">");
+		if (!tmp_str)
+			return (-1);
+		if (!ft_strcmp(tmp->name, tmp_str))
+		{
+			free(tmp_str);
+			tmp_str = NULL;
+			free(tmp->name);
+			tmp->name = NULL;
+			tmp->input = ft_relocat(tmp->input, "\n");
+			if (!tmp->input)
+				return (0);
+			break;
+		}
+		if (!here_docrl2(tmp, tmp_str))
+			return (0);
+	}
+	return (1);
+}
+
 int	check_heredoc(t_lex *lex)
 {
 	t_redirect	*tmp;
 	char		*tmp_str;
+	int			err;
 
 	while (lex)
 	{
@@ -93,30 +138,9 @@ int	check_heredoc(t_lex *lex)
 			tmp_str = NULL;
 			if (tmp->level == HEREDOC)
 			{
-				if (has_quotes(tmp->name))
-					tmp->input_expand = 1;
-				if (!remove_quotes(&tmp->name))
-					return(0);
-				while (true)
-				{
-					tmp_str = readline(">");
-					if (!tmp_str)
-						return (0);
-					if (!ft_strcmp(tmp->name, tmp_str))
-					{
-						free(tmp_str);
-						tmp_str = NULL;
-						free(tmp->name);
-						tmp->name = NULL;
-						tmp->input = ft_relocat(tmp->input, "\n");
-						break;
-					}
-					if (tmp->input)
-						tmp->input = ft_relocat(tmp->input, "\n");
-					tmp->input = ft_relocat(tmp->input, tmp_str); //alloc check
-					free(tmp_str);
-					tmp_str = NULL;
-				}
+				err = here_docrl(tmp, tmp_str);
+				if (err == 0)
+					return (0);
 			}
 			tmp = tmp->next;
 		}
@@ -158,8 +182,7 @@ int	expand_all(t_minishell *mini, t_lex *lex) //change
 
 int	my_read(t_minishell *mini)
 {
-	if (isatty(fileno(stdin)))
-		mini->in = readline("minishell>");
+	mini->in = readline("minishell>");
 	if (!mini->in)
 		return (0); //error
 	add_history(mini->in);
@@ -180,8 +203,8 @@ int	my_read(t_minishell *mini)
 	ft_free(mini->out);
 	mini->out = NULL;
 	if (!mini->lex)
-		return (mini->error_code = -1, 1);
+		return (mini->error_code = -1, 1); // alloc fail
 	if (!check_heredoc(mini->lex))
-		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); //free and error for alloc
+		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); // alloc fail
 	return (1);
 }
