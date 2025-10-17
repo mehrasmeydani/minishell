@@ -189,6 +189,17 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 	set_exit_status(mini, status);
 }
 
+void	clean_after_exec(t_exec *exec, char *errormsg)
+{
+	close_all_pipes(exec->pipe);
+	free(exec->pids);
+	exec->pids = NULL;
+	freepaths(exec->pathlist);
+	exec->pathlist = NULL;
+	if (errormsg != NULL)
+		perror(errormsg);
+
+}
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
@@ -207,19 +218,18 @@ void	spawn_children(t_minishell *mini)
 		exec.pids[i] = -2;
 		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)
-			return (perror("pipe"), wait_for_death(mini, &exec));
+			return (clean_after_exec(&exec, "pipe"), 
+			wait_for_death(mini, &exec));
 		if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 			if ((exec.pids[i] = fork()) == -1)
-				return (freepaths(exec.pathlist), close_all_pipes(exec.pipe),
-				perror("fork"), wait_for_death(mini, &exec));// i should also wait here for all the previous commands!
+				return (clean_after_exec(&exec, "fork"),
+				wait_for_death(mini, &exec));// i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0 || exec.pids[i] == -2)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 	}
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
-	close_all_pipes(exec.pipe);
-	free(exec.pids);
-	freepaths(exec.pathlist);
+	clean_after_exec(&exec, NULL);
 }
 
