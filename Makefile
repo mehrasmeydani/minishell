@@ -5,7 +5,7 @@ LEX_PRE		= lexer_tools/
 LEX_SRC		= lex_addback.c lex_clear.c lex_delone.c lex_last.c lex_new.c 
 
 PIPE_PRE	= pipex/
-PIPE_SRC	= child_spawning.c command_check.c file_check.c free_paths.c path_construct.c
+PIPE_SRC	= child_spawning.c command_check.c file_check.c free_paths.c path_construct.c heredoc_filegen.c
 
 BUILT_PRE	= builtins/
 BUILT_SRC	= env.c export.c

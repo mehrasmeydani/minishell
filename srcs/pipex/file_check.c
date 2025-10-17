@@ -43,7 +43,7 @@ static void	check_append(t_redirect *file)
 }
 
 
-static void	check_heredoc(t_redirect *file) // filenames need to be generated in the temp name
+/*static void	check_heredoc(t_redirect *file) // filenames need to be generated in the temp name
 {
 	
 	file->fd = open("test", O_CREAT | O_RDWR, 0600);
@@ -61,7 +61,7 @@ static void	check_heredoc(t_redirect *file) // filenames need to be generated in
 		return ;
 	}
 }
-
+*/
 static void	dup_redirs(t_redirect *file)
 {
 	if (file->level == INFILE || file->level == HEREDOC) // or heredoc
@@ -87,15 +87,12 @@ int	redirect_and_filecheck(t_redirect *head)
 	temp = head;
 	while(temp != NULL)
 	{
-		if (temp->level == INFILE)
+		if (temp->level == INFILE || temp->level == HEREDOC)
 			check_infile(temp);
 		else if (temp->level == OUTFILE)
 			check_outfile(temp);
 		else if (temp->level == APPEND)
 			check_append(temp);
-		else if (temp->level == HEREDOC)
-			check_heredoc(temp);
-		// maybe heredoc here?
 		if (temp->fd == FAIL)
 			return (-1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
 		dup_redirs(temp);

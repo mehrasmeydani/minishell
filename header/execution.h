@@ -21,5 +21,6 @@ void	freepaths(char **pathlist);
 char	**get_path_array(char **envp);
 int		redirect_and_filecheck(t_redirect *head);
 void	spawn_children(t_minishell *mini);
-
+int		name_heredocs(t_minishell *mini);
+void	clear_heredoc_fns(t_lex *cmds);
 #endif
