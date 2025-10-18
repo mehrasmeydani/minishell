@@ -117,7 +117,7 @@ void	close_exit(t_exec *exec, t_minishell *mini, char *errorstr, int ex_code)
 	freepaths(exec->pathlist);
 	exec->pathlist = NULL;
 	close_all_pipes(exec->pipe);
-	//close_redirs(mini->lex);
+	//close_redirs(mini->lex); // needs more testing, but isnt needed, all contained on redirect filecheck function.
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	if (errorstr != NULL) // null when no error, pass a str for error.
@@ -258,8 +258,10 @@ void	spawn_children(t_minishell *mini)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 	}
-	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
+	if (exec.children_count != 1) /*/|| !is_builtin(mini->lex->cmd)) <== removed, waiting will not take effect on any process that isnt builtin*/
 		wait_for_death(mini, &exec);
+	else
+		
 	clean_after_exec(&exec,mini, NULL);
 }
 
