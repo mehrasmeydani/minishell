@@ -113,10 +113,11 @@ void	close_redirs(t_lex *cmds)
 }
 void	close_exit(t_exec *exec, t_minishell *mini, char *errorstr, int ex_code)
 {
+	(void) mini;
 	freepaths(exec->pathlist);
 	exec->pathlist = NULL;
 	close_all_pipes(exec->pipe);
-	close_redirs(mini->lex);
+	//close_redirs(mini->lex);
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
 	if (errorstr != NULL) // null when no error, pass a str for error.

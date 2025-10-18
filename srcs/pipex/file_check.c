@@ -67,13 +67,21 @@ static void	dup_redirs(t_redirect *file)
 	if (file->level == INFILE || file->level == HEREDOC) // or heredoc
 	{
 		if (dup2(file->fd, STDIN_FILENO) == -1)
-				file->fd = FAIL; // clean up!
+		{
+				close(file->fd);
+				file->fd = FAIL;
+				return ;
+		}
 		close(file->fd);
 	}
 	if (file->level == OUTFILE || file->level == APPEND)
 	{
 		if (dup2 (file->fd, STDOUT_FILENO) == -1)
-			file->fd = FAIL; //clean up!
+		{
+			close(file->fd);
+			file->fd = FAIL;
+			return ;
+		}
 		close(file->fd);
 	}
 }
