@@ -80,8 +80,6 @@ static void	dup_redirs(t_redirect *file)
 
 int	redirect_and_filecheck(t_redirect *head)
 {
-	// by this point, pipe should already be duped into in/out
-	// here, i should also close all fds of the redirs, and free the redirs struct
 	t_redirect	*temp;
 	
 	temp = head;

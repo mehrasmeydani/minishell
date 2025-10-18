@@ -10,8 +10,10 @@ char	*check_against_cmd(t_lex *node, char **pathlist)
 	while(pathlist[++i] != NULL)
 	{
 		new_cmd = ft_strjoin(pathlist[i], node->cmd[0]);
+		if (errno == ENOMEM)
+			perror("cmd allocation");
 		if (!new_cmd)
-			return (perror(node->cmd[0]), NULL);
+			return (NULL);
 		if (access(new_cmd, F_OK) == 0 && access(new_cmd, X_OK) == 0)
 			return (new_cmd);
 		free(new_cmd);
