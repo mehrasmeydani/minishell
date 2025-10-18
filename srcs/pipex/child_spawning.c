@@ -258,10 +258,9 @@ void	spawn_children(t_minishell *mini)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 	}
-	if (exec.children_count != 1) /*/|| !is_builtin(mini->lex->cmd)) <== removed, waiting will not take effect on any process that isnt builtin*/
+	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
-	else
-		
+	// re-make the STDIN and STDOUT in case of 1 cmd
 	clean_after_exec(&exec,mini, NULL);
 }
 
