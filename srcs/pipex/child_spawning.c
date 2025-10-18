@@ -16,15 +16,20 @@ size_t	count_cmds(t_lex *lex) // is this really needed? why not pipes + 1?
 }
 
 
-void	fill_file_fd(t_redirect *head)
+void	fill_file_fd(t_lex *head)
 {
 	t_redirect	*temp;
 
-	temp = head;
-	while(temp != NULL)
+	temp = head->redic;
+	while(head != NULL)
 	{
-		temp->fd = -1;
-		temp = temp->next;
+		temp = head->redic;
+		while (temp != NULL)
+		{
+			temp->fd = -1;
+			temp = temp->next;
+		}
+		head = head->next;
 	}
 }
 
@@ -50,7 +55,7 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 	i = -1;
 	exec->status = 1;
 	exec->heredoc_amount = count_heredocs(mini);
-	fill_file_fd(mini->lex->redic);
+	fill_file_fd(mini->lex);
 	exec->pathlist = get_path_array(mini->env.raw_var);
 	if (!exec->pathlist)
 		return (perror("paths not retrieved"), -1);
@@ -86,11 +91,33 @@ void	close_all_pipes(int pipes[2][2])
 	safe_close_fd(&pipes[1][1]);
 }
 
+void	close_redirs(t_lex *cmds)
+{
+	t_redirect	*redir;
+	
+	while (cmds != NULL)
+	{
+		redir = cmds->redic;
+		while (redir != NULL)
+		{
+			if (redir->fd != -1)
+			{
+				close(redir->fd);
+				redir->fd = -1;
+			}
+			redir = redir->next;
+		}
+		cmds = cmds->next;
+	}
+
+}
 void	close_exit(t_exec *exec, t_minishell *mini, char *errorstr, int ex_code)
 {
-	(void) mini; // placeholder so i can free ministuff after
 	freepaths(exec->pathlist);
 	close_all_pipes(exec->pipe);
+	close_redirs(mini->lex);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
 	if (errorstr != NULL) // null when no error, pass a str for error.
 		perror(errorstr);
 	exit(ex_code);
@@ -163,8 +190,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	cmd->cmd[0] = tmp;
 	free(exec->pids);
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
-		return (close(STDIN_FILENO), close(STDOUT_FILENO), 
-			close_exit(exec, mini, "execution", 1));
+		return (close_exit(exec, mini, "execution", 1));
 }
 
 void	set_exit_status(t_minishell *mini, int status)
