@@ -114,6 +114,7 @@ void	close_redirs(t_lex *cmds)
 void	close_exit(t_exec *exec, t_minishell *mini, char *errorstr, int ex_code)
 {
 	freepaths(exec->pathlist);
+	exec->pathlist = NULL;
 	close_all_pipes(exec->pipe);
 	close_redirs(mini->lex);
 	close(STDIN_FILENO);
@@ -174,18 +175,19 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 		if (!exec_builtin(cmd->cmd, mini))
 		{
 			if (exec->children_count > 1)
-				return (exit(127)); // free
+				return (close_exit(exec, mini, "builtin", 127));
 			else
 				return ((void)(mini->error_code = 127));
 		}
 		if (exec->children_count > 1)
-			exit(0); // freed everything from exec, missing free of stuff
+			close_exit(exec, mini, NULL, 0); // freed everything from exec, missing free of stuff
 		return ((void)(mini->error_code = 0));
 	}
 	tmp = check_against_cmd(cmd, exec->pathlist);
 	if (!tmp)
 		close_exit(exec, mini, cmd->cmd[0], 1);
 	freepaths(exec->pathlist); // paths are freed if alloc failure
+	exec->pathlist = NULL;
 	free(cmd->cmd[0]);
 	cmd->cmd[0] = tmp;
 	free(exec->pids);
@@ -215,9 +217,10 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 	set_exit_status(mini, status);
 }
 
-void	clean_after_exec(t_exec *exec, char *errormsg)
+void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg)
 {
 	close_all_pipes(exec->pipe);
+	close_redirs(mini->lex);
 	free(exec->pids);
 	exec->pids = NULL;
 	freepaths(exec->pathlist);
@@ -244,11 +247,11 @@ void	spawn_children(t_minishell *mini)
 		exec.pids[i] = -2;
 		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)
-			return (clean_after_exec(&exec, "pipe"), 
+			return (clean_after_exec(&exec, mini, "pipe"), 
 			wait_for_death(mini, &exec));
 		if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 			if ((exec.pids[i] = fork()) == -1)
-				return (clean_after_exec(&exec, "fork"),
+				return (clean_after_exec(&exec, mini, "fork"),
 				wait_for_death(mini, &exec));// i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0 || exec.pids[i] == -2)
 			executor(mini, &exec, i, current);
@@ -256,6 +259,6 @@ void	spawn_children(t_minishell *mini)
 	}
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
-	clean_after_exec(&exec, NULL);
+	clean_after_exec(&exec,mini, NULL);
 }
 
