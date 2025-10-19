@@ -120,7 +120,8 @@ void	close_all_pipes(int pipes[2][2])
 	safe_close_fd(&pipes[1][0]);
 	safe_close_fd(&pipes[1][1]);
 }
-
+/*
+UNUSED: Redirs are closed on duping.
 void	close_redirs(t_lex *cmds)
 {
 	t_redirect	*redir;
@@ -141,17 +142,20 @@ void	close_redirs(t_lex *cmds)
 	}
 
 }
+*/
 void	close_exit(t_exec *exec, t_minishell *mini, char *errorstr, int ex_code)
 {
 	(void) mini;
 	freepaths(exec->pathlist);
 	exec->pathlist = NULL;
 	close_all_pipes(exec->pipe);
-	//close_redirs(mini->lex); // needs more testing, but isnt needed, all contained on redirect filecheck function.
-	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
 	if (errorstr != NULL) // null when no error, pass a str for error.
 		perror(errorstr);
+	close(STDOUT_FILENO);
+	close(STDIN_FILENO);
+	lex_clear(&(mini->lex), ft_free);
+	free_env(&mini->env);
+	free(exec->pids);
 	exit(ex_code);
 }
 
@@ -267,8 +271,8 @@ int	restore_stdin_stdout(t_exec *exec)
 }
 void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg)
 {
+	(void) mini;
 	close_all_pipes(exec->pipe);
-	close_redirs(mini->lex);
 	free(exec->pids);
 	exec->pids = NULL;
 	freepaths(exec->pathlist);
