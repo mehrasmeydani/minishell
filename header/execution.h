@@ -13,7 +13,8 @@ typedef struct	s_exec
 	pid_t	*pids;
 	int		pipe[2][2];
 	int		status;
-	size_t	heredoc_amount;
+	int		backup_stdin;
+	int		backup_stdout;
 }				t_exec;
 
 char	*check_against_cmd(t_lex *node, char **pathlist);

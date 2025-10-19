@@ -33,48 +33,6 @@ void	fill_file_fd(t_lex *head)
 	}
 }
 
-size_t	count_heredocs(t_minishell *mini)
-{
-	t_redirect	*temp;
-	size_t	i;
-
-	i = 0;
-	temp = mini->lex->redic;
-	while (temp != NULL)
-	{
-		if (temp->level == HEREDOC)
-			i++;
-		temp = temp->next;
-	}
-	return (i);
-}
-int	fill_struct(t_exec *exec, t_minishell *mini)
-{
-	size_t	i;
-
-	i = -1;
-	exec->status = 1;
-	exec->heredoc_amount = count_heredocs(mini);
-	fill_file_fd(mini->lex);
-	exec->pathlist = get_path_array(mini->env.raw_var);
-	if (!exec->pathlist)
-		return (perror("paths not retrieved"), -1);
-	exec->children_count = count_cmds(mini->lex);
-	exec->pids = malloc(exec->children_count * sizeof(pid_t));
-	if (!exec->pids)
-		return(perror("pid allocation"), freepaths(exec->pathlist), 
-		exec->pathlist = NULL, -1);
-	while (++i < exec->children_count)
-		exec->pids[i] = -1;
- 	exec->pipe[0][0] = -1;
-	exec->pipe[0][1] = -1;
-	exec->pipe[1][0] = -1;
-	exec->pipe[1][1] = -1;
-	//ft_memset(&(exec->pipe), -1, sizeof(int[2][2]));
-	return (1);
-}
-
-
 void	safe_close_fd(int *fd)
 {
 	if (*fd == -1)
@@ -82,6 +40,78 @@ void	safe_close_fd(int *fd)
 	close(*fd);
 	*fd = -1;
 }
+
+void close_backups(t_exec *exec)
+{
+	safe_close_fd(&(exec->backup_stdin));
+	safe_close_fd(&(exec->backup_stdout));
+}
+
+int	backup_needed(t_exec *exec, char **cmd)
+{
+	exec->backup_stdin = -1;
+	exec->backup_stdout = -1;
+	if (exec->children_count != 1 || !is_builtin(cmd))
+		return (0);
+	return (1);
+}
+
+int	back_up_standardfds(t_exec *exec, t_lex *firstcmd)
+{
+	t_redirect	*temp;
+
+	if (!backup_needed(exec, firstcmd->cmd))
+		return (1);
+	temp = firstcmd->redic;
+	while (temp != NULL)
+	{
+		if (exec->backup_stdin == -1 && 
+			(temp->level == HEREDOC || temp->level == INFILE))
+		{
+			exec->backup_stdin = dup(STDIN_FILENO);
+			if (exec->backup_stdin == -1)
+				return (close_backups(exec), -1);
+		}
+		else if (exec->backup_stdout == -1 &&
+			(temp->level == OUTFILE || temp->level == APPEND))
+		{
+			exec->backup_stdout = dup(STDOUT_FILENO);
+			if (exec->backup_stdout == -1)
+				return (close_backups(exec), -1);
+		}
+		temp = temp->next;
+	}
+	return (1);
+}
+
+
+
+int	fill_struct(t_exec *exec, t_minishell *mini)
+{
+	size_t	i;
+
+	i = -1;
+	exec->status = 1;
+	fill_file_fd(mini->lex);
+	exec->children_count = count_cmds(mini->lex);
+	if (back_up_standardfds(exec, mini->lex) == -1)
+		return (perror("backup stdin/out"), -1);
+	exec->pathlist = get_path_array(mini->env.raw_var);
+	if (!exec->pathlist)
+		return (perror("paths not retrieved"), close_backups(exec), -1);
+	exec->pids = malloc(exec->children_count * sizeof(pid_t));
+	if (!exec->pids)
+		return(perror("pid allocation"), freepaths(exec->pathlist), 
+			exec->pathlist = NULL, close_backups(exec), -1);
+	while (++i < exec->children_count)
+		exec->pids[i] = -1;
+ 	exec->pipe[0][0] = -1;
+	exec->pipe[0][1] = -1;
+	exec->pipe[1][0] = -1;
+	exec->pipe[1][1] = -1;
+	return (1);
+}
+
 
 void	close_all_pipes(int pipes[2][2])
 {
@@ -218,6 +248,23 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 	set_exit_status(mini, status);
 }
 
+int	restore_stdin_stdout(t_exec *exec)
+{
+	if (exec->backup_stdin != -1)
+	{
+		if (dup2(exec->backup_stdin, STDIN_FILENO) == -1)
+			return (perror("FATAL: error restoring STDIN"), 
+				close_backups(exec), -1);
+	}
+	if (exec->backup_stdout != -1)
+	{
+		if (dup2(exec->backup_stdout, STDOUT_FILENO) == -1)
+			return (perror("FATAL: error restoring STDOUT"), 
+				close_backups(exec), -1);
+	}
+	close_backups(exec);
+	return (1);
+}
 void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg)
 {
 	close_all_pipes(exec->pipe);
@@ -228,7 +275,7 @@ void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg)
 	exec->pathlist = NULL;
 	if (errormsg != NULL)
 		perror(errormsg);
-
+	restore_stdin_stdout(exec);
 }
 void	spawn_children(t_minishell *mini)
 {
@@ -238,7 +285,7 @@ void	spawn_children(t_minishell *mini)
 	t_lex	*cmd;
 
 	if (fill_struct(&exec, mini) == -1)
-		return ; // cleaned, all pids closed except for redirs
+		return ;
 	i = -1;
 	while(++i < exec.children_count)
 	{
@@ -260,7 +307,6 @@ void	spawn_children(t_minishell *mini)
 	}
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
-	// re-make the STDIN and STDOUT in case of 1 cmd
 	clean_after_exec(&exec,mini, NULL);
 }
 
