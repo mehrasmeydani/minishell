@@ -18,7 +18,6 @@ void	close_all_pipes(int pipes[2][2])
 
 void	close_exit(t_exec *exec, t_minishell *mini, char *error, int ex_code)
 {
-	(void) mini;
 	freepaths(exec->pathlist);
 	exec->pathlist = NULL;
 	close_all_pipes(exec->pipe);
@@ -45,3 +44,13 @@ void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg)
 	restore_stdin_stdout(exec);
 }
 
+void	exit_or_return(t_exec *exec, t_minishell *mini, char *error, int excd)
+{
+	if (is_builtin(mini->lex->cmd) && exec->children_count == 1)
+	{
+		mini->error_code = excd;
+		return ;
+	}
+	else
+		close_exit(exec, mini, error, excd);
+}

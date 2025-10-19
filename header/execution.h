@@ -17,7 +17,7 @@ typedef struct	s_exec
 	int		backup_stdout;
 }				t_exec;
 
-char	*check_against_cmd(t_lex *node, char **pathlist);
+char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode);
 void	freepaths(char **pathlist);
 char	**get_path_array(char **envp);
 int		redirect_and_filecheck(t_redirect *head);
@@ -34,4 +34,5 @@ void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg);
 int		fill_struct(t_exec *exec, t_minishell *mini);
 void my_pipe_dup(t_minishell *mini, t_exec *exec, size_t i);
 void	my_pipe_dup_close(t_exec *exec, size_t i);
+void	exit_or_return(t_exec *exec, t_minishell *mini, char *error, int excd);
 #endif
