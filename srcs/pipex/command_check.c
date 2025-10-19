@@ -22,6 +22,7 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 				*errorcode = 0;
 			return (NULL);
 		}
+		// THIS ERROR CODE HANDLING!
 		if (access(new_cmd, F_OK) == 0 && access(new_cmd, X_OK) == 0)
 		{
 			*errorcode = 1;
