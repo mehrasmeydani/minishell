@@ -18,10 +18,7 @@
 5.	space at the end stdin?
 ... FIXED!
 
-6.	expand_all does not work on heredoc
-... PENDING
-
-7.	special redirections for the builtins (hangup on "env > hi.txt", 
+6.	special redirections for the builtins (hangup on "env > hi.txt", 
 exits minishell if redirection check fails due to line first if condition
 	in the executor)
-... PENDING
+... FIXED!
