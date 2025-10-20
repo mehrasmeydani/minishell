@@ -1,8 +1,11 @@
-REDIR_PRE		= redir_tools/
-REDIR_SRC		= redir_addback.c redir_clear.c redir_delone.c redir_last.c redir_new.c 
+EXPAND_PRE	= expand_tools/
+EXPAND_SRC	= exp_addback.c exp_clear.c exp_delone.c exp_last.c exp_new.c exp_split.c
+
+REDIR_PRE	= redir_tools/
+REDIR_SRC	= redir_addback.c redir_clear.c redir_delone.c redir_last.c redir_new.c 
 
 LEX_PRE		= lexer_tools/
-LEX_SRC		= lex_addback.c lex_clear.c lex_delone.c lex_last.c lex_new.c 
+LEX_SRC		= lex_addback.c lex_clear.c lex_delone.c lex_last.c lex_new.c
 
 PIPE_PRE	= pipex/
 PIPE_SRC	= child_spawning.c command_check.c file_check.c free_paths.c path_construct.c
@@ -13,7 +16,7 @@ BUILT_SRC	= env.c export.c
 SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c ft_duostrdup.c lexer.c\
 			${addprefix ${LEX_PRE}, ${LEX_SRC}} ${addprefix ${REDIR_PRE}, ${REDIR_SRC}}\
 			remove_quotes.c expand.c preset_var.c env_var.c ${addprefix ${PIPE_PRE}, ${PIPE_SRC}}\
-			${addprefix ${BUILT_PRE}, ${BUILT_SRC}} builtin.c
+			${addprefix ${BUILT_PRE}, ${BUILT_SRC}} builtin.c ${addprefix ${EXPAND_PRE}, ${EXPAND_SRC}}
 SRCS		= ${addprefix ${PRE}, ${SRC}}
 PRE			= ./srcs/
 HEAD		= ./header/

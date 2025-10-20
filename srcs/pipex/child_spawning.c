@@ -192,18 +192,15 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
-	t_exec	exec;
-	t_redirect *current;
-	t_lex	*cmd;
+	t_exec		exec;
+	t_redirect	*current;
+	//t_lex	*cmd;
 
 	if (fill_struct(&exec, mini) == -1)
 		return ; // cleaned, all pids closed except for redirs
 	i = -1;
 	while(++i < exec.children_count)
 	{
-		cmd = find_current_cmd(mini->lex, i);
-		expand_all(mini, cmd);
-		remove_quotes(cmd->cmd);
 		exec.pids[i] = -2;
 		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)

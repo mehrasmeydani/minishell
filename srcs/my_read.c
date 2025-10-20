@@ -149,33 +149,39 @@ int	check_heredoc(t_lex *lex)
 	return (1);
 }
 
-int	expand_all(t_minishell *mini, t_lex *lex) //change
-{
-	t_redirect	*red;
-	char		*tmp;
-	ssize_t		i;
 
-	red = lex->redic;
-	while (red)
-	{
-		if (red->level == HEREDOC && red->input_expand == 0)
-		{
-			tmp = expand(mini, red->input, mini->env, 1);
-			if (!tmp)
-				return (0);
-			free(red->input);
-			red->input = tmp;
-		}
-		red = red->next;
-	}
+
+int	expand_tmp(t_lex *lex, t_expand *exp)
+{
+	ssize_t	i;
+	char	**str;
+
 	i = -1;
+	(void)exp;
 	while (lex->cmd[++i])
 	{
-		tmp = expand(mini, lex->cmd[i], mini->env, 0);
-		if (!tmp)
+		str	= exp_split(lex->cmd[i]);
+	}
+	return (1);
+}
+
+int	expand_all(t_minishell *mini) //change
+{
+	t_lex		*lex;
+	t_expand	exp;
+	//ssize_t		i;
+
+	lex = mini->lex;
+	while (lex)
+	{
+		// i = ft_str_str_len(lex->cmd);
+		// exp.exp	= ft_calloc(i, sizeof(t_expands *));
+		// if (!exp.exp)
+		// 	return (0);
+		// exp.len = i;
+		if (!expand_tmp(lex, &exp))
 			return (0);
-		free(lex->cmd[i]);
-		lex->cmd[i] = tmp;
+		lex = lex->next;
 	}
 	return (1);
 }
@@ -204,6 +210,8 @@ int	my_read(t_minishell *mini)
 	mini->out = NULL;
 	if (!mini->lex)
 		return (mini->error_code = -1, 1); // alloc fail
+	expand_all(mini);
+	//remove_quotes(mini); //
 	if (!check_heredoc(mini->lex))
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); // alloc fail
 	return (1);
