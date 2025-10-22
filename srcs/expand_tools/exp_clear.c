@@ -1,6 +1,6 @@
 #include "../header/minishell.h"
 
-void	exp_clear(t_expands **exp, char *(*del)(char *))
+void	exp_clear(t_expands **exp, void (*del)(void *))
 {
 	t_expands	*tmp;
 

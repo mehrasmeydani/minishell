@@ -1,6 +1,6 @@
 #include "../header/minishell.h"
 
-void	exp_delone(t_expands *exp, char *(*del)(char *))
+void	exp_delone(t_expands *exp, void (*del)(void *))
 {
 	if (exp && del)
 	{

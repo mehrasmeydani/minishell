@@ -6,8 +6,10 @@
 typedef struct s_expands
 {
 	char				*str;
+	char				**expanded;
 	int					quotes;
 	struct s_expands	*next;
+	struct s_expands	*prev;
 }	t_expands;
 
 typedef struct s_expand
@@ -18,8 +20,8 @@ typedef struct s_expand
 
 t_expands	*exp_new(char *in);
 t_expands	*exp_last(t_expands *exp);
-void		exp_delone(t_expands *exp, char *(*del)(char *));
-void		exp_clear(t_expands **exp, char *(*del)(char *));
+void		exp_delone(t_expands *exp, void (*del)(void *));
+void		exp_clear(t_expands **exp, void (*del)(void *));
 void		exp_addback(t_expands **exp, t_expands *new);
 char		**exp_split(char *in);
 

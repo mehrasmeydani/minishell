@@ -149,7 +149,33 @@ int	check_heredoc(t_lex *lex)
 	return (1);
 }
 
+void	free_exp(t_expand *exp)
+{
+	ssize_t	i;
 
+	i = -1;
+	while (++i < exp->len)
+		exp_clear(&(exp->exp[i]), free);
+	free(exp->exp);
+}
+
+t_expands	*create_exp(char **in)
+{
+	t_expands	*out;
+	t_expands	*tmp;
+	ssize_t		i;
+
+	i = -1;
+	out = NULL;
+	while (in[++i])
+	{
+		tmp = exp_new(in[i]);
+		if (!tmp)
+			return (exp_clear(&out, free), NULL);
+		exp_addback(&out, tmp);
+	}
+	return (out);
+}
 
 int	expand_tmp(t_lex *lex, t_expand *exp)
 {
@@ -161,6 +187,11 @@ int	expand_tmp(t_lex *lex, t_expand *exp)
 	while (lex->cmd[++i])
 	{
 		str	= exp_split(lex->cmd[i]);
+		if (!str)
+			return (free_exp(exp), 0);
+		exp->exp[i] = create_exp(str);
+		if (!exp->exp[i])
+			return (free_exp(exp), 0);
 	}
 	return (1);
 }
@@ -169,16 +200,16 @@ int	expand_all(t_minishell *mini) //change
 {
 	t_lex		*lex;
 	t_expand	exp;
-	//ssize_t		i;
+	ssize_t		i;
 
 	lex = mini->lex;
 	while (lex)
 	{
-		// i = ft_str_str_len(lex->cmd);
-		// exp.exp	= ft_calloc(i, sizeof(t_expands *));
-		// if (!exp.exp)
-		// 	return (0);
-		// exp.len = i;
+		i = ft_str_str_len(lex->cmd);
+		exp.exp	= ft_calloc(i, sizeof(t_expands *));
+		if (!exp.exp)
+			return (0);
+		exp.len = i;
 		if (!expand_tmp(lex, &exp))
 			return (0);
 		lex = lex->next;
