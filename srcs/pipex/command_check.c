@@ -6,7 +6,6 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	ssize_t	i;
 	char	*new_cmd;
 	
-	*errorcode = -1;
 	i = -1;
 	while(pathlist[++i] != NULL)
 	{
@@ -17,20 +16,16 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 			*errorcode = 1;
 		}
 		if (!new_cmd)
-		{
-		if (*errorcode != 1)
-				*errorcode = 0;
 			return (NULL);
-		}
-		// THIS ERROR CODE HANDLING!
-		if (access(new_cmd, F_OK) == 0 && access(new_cmd, X_OK) == 0)
-		{
-			*errorcode = 1;
-			return (new_cmd);
-		}
+		if (access(new_cmd, F_OK) == 0)
+			break ;
 		free(new_cmd);
+		if(pathlist[i+1] == NULL)
+			return (*errorcode = 127, NULL);
 	}
-	return (NULL);
+	if (access(new_cmd, X_OK) != 0)
+		return(free(new_cmd), *errorcode = 126, NULL);
+	return(new_cmd);
 }
 
 // actually, i think it's better to have each child check its own cmd, ensuring
