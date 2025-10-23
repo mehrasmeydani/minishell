@@ -19,7 +19,7 @@ typedef struct	s_exec
 
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode);
 void	freepaths(char **pathlist);
-char	**get_path_array(char **envp);
+char	**get_path_array(char **envp, bool *isemptypath);
 int		redirect_and_filecheck(t_redirect *head);
 void	spawn_children(t_minishell *mini);
 int		name_heredocs(t_minishell *mini);

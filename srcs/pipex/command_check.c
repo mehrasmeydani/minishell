@@ -1,13 +1,34 @@
 #include "../../header/execution.h"
 // NULL t_lext->cmd[0] means the command wont be run as it does not exist!
 // how we handle redirections without commands like " < test2 > test4 > test7  | ls"
+
+char	*get_cmd_absolute(char *cmd, int *errorcode)
+{
+	char	*new_cmd;
+
+	new_cmd = ft_strdup(cmd);
+	if (!new_cmd)
+		return(*errorcode = 1, (NULL));
+	if (access(new_cmd, F_OK) == 0)
+	{
+		if (access(new_cmd, X_OK) == 0)
+			return(new_cmd);
+		else
+			return(free(new_cmd), *errorcode = 126, NULL);
+	}
+	return(free(new_cmd), *errorcode = 127, NULL);
+}
+
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 {
 	ssize_t	i;
 	char	*new_cmd;
 	
 	i = -1;
-	while(pathlist[++i] != NULL)
+
+	if (ft_strchr(node->cmd[0], '/') != NULL) //free pathlist!!! rmember this might segfault if we quit heredoc as null is sent... but i think char
+		return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
+	while (pathlist[++i] != NULL)
 	{
 		new_cmd = ft_strjoin(pathlist[i], node->cmd[0]);
 		if (errno == ENOMEM)

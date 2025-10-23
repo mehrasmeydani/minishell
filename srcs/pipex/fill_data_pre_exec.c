@@ -35,15 +35,17 @@ static void	fill_file_fd(t_lex *head)
 int	fill_struct(t_exec *exec, t_minishell *mini)
 {
 	size_t	i;
+	bool	isemptypath;
 
 	i = -1;
+	isemptypath = false;
 	exec->status = 1;
 	fill_file_fd(mini->lex);
 	exec->children_count = count_cmds(mini->lex);
 	if (back_up_standardfds(exec, mini->lex) == -1)
 		return (perror("backup stdin/out"), -1);
-	exec->pathlist = get_path_array(mini->env.raw_var);
-	if (!exec->pathlist)
+	exec->pathlist = get_path_array(mini->env.raw_var, &isemptypath);
+	if (!exec->pathlist && isemptypath == false)
 		return (perror("paths not retrieved"), close_backups(exec), -1);
 	exec->pids = malloc(exec->children_count * sizeof(pid_t));
 	if (!exec->pids)

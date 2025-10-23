@@ -15,7 +15,6 @@ static int	isemptypath(char *path)
 	}
 	return (1);
 }
-
 static char	*findpath(char **envp)
 {
 	char	*path;
@@ -59,7 +58,7 @@ static char **sanitize_paths(char **pathlist)
 	}
 	return (pathlist);
 }
-static char	**emptysplit(void)
+/*static char	**emptysplit(void)
 {
 	char	**split;
 
@@ -75,22 +74,16 @@ static char	**emptysplit(void)
 	split[1] = NULL;
 	return (split);
 }
-
-char	**get_path_array(char **envp)
+*/
+char	**get_path_array(char **envp, bool *isemptypath)
 {
 	char	*envp_path;
-	char	*temp;
 	char	**pathlist;
 
-	// logic for builtins goes here
 	envp_path = findpath(envp);
 	if (!envp_path)
-		return (emptysplit());
-	temp = ft_strjoin(" :", envp_path);
-	if (!temp)
-		return (NULL);
-	pathlist = ft_split(temp, ':');
-	free(temp);
+		return (*isemptypath = true, NULL);
+	pathlist = ft_split(envp_path, ':');
 	if(!pathlist)
 		return (NULL);
 	pathlist = sanitize_paths(pathlist);
