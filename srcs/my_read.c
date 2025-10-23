@@ -169,7 +169,7 @@ t_expands	*create_exp(char **in)
 	out = NULL;
 	while (in[++i])
 	{
-		tmp = exp_new(in[i], 0, 0);
+		tmp = exp_new(in[i], 0, 0, (*in[i] == '\'' || *in[i] == '"'));
 		if (!tmp)
 			return (exp_clear(&out, free), NULL);
 		exp_addback(&out, tmp);
@@ -197,6 +197,7 @@ t_expands *reparse(char **in, char *org)
 {
 	ssize_t		i;
 	ssize_t		j;
+	ssize_t		k;
 	t_expands	*out;
 	t_expands	*tmp;
 
@@ -205,16 +206,17 @@ t_expands *reparse(char **in, char *org)
 	out = NULL;
 	while (org[++i])
 	{
-		if (org[i] == in[j][0])
+		if (in[j] && org[i] == in[j][0])
 		{
+			k = ft_strlen(in[j]);
 			tmp = exp_new(in[j],
 				((i > 0) && (ft_strchr("\t\n\r\v\f ", org[i - 1])))
-				, ((org[i + ft_strlen(in[j])])
-				&& (ft_strchr("\t\n\r\v\f ", org[i + ft_strlen(in[j])]))));
+				, ((org[i + k])
+				&& (ft_strchr("\t\n\r\v\f ", org[i + k]))), 0);
 			if (!tmp)
 				return (exp_clear(&out, free), NULL);
 			exp_addback(&out, tmp);
-			i += ft_strlen(in[j]) - 1;
+			i += k - 1;
 			j++;
 		}
 	}
@@ -233,34 +235,61 @@ int	expand_sub(t_minishell *mini, t_expands *exp)
 		tmp = expand(mini, exp->str, mini->env, 0);
 		if (!tmp)
 			return (0);
-		if (ft_strcmp(exp->str, tmp) && !(exp->quotes) && is_in(tmp, "\t\n\r\v\f "))
+		if (ft_strcmp(exp->str, tmp))
 		{
-			tmp2 = split_2(tmp, "\t\n\r\v\f ");
-			if (!tmp2)
-				return (free(tmp), NULL);
-			exp_tmp = reparse(tmp2, tmp);
-			if (exp_tmp)
-				return (ft_free(tmp2), free(exp), 0);
+			if (!(exp->quotes) && is_in(tmp, "\t\n\r\v\f "))
+			{
+				tmp2 = split_2(tmp, "\t\n\r\v\f ");
+				if (!tmp2)
+					return (free(tmp), 0);
+				exp_tmp = reparse(tmp2, tmp);
+				if (!exp_tmp)
+					return (ft_free(tmp2), free(exp), 0);
+				free(tmp);
+				free(tmp2);
+				exp_tmp2 = exp->next;
+				exp->next = NULL;
+				if (exp_tmp2)
+					exp_addback(&exp_tmp, exp_tmp2);
+				exp_addback(&exp, exp_tmp); //remove-current
+				exp = exp_tmp2;
+				continue ;
+			}
+			else
+			{
+				free(exp->str);
+				exp->str = tmp;
+			}
+		}
+		else
 			free(tmp);
-			free(tmp2);
-			exp_tmp2 = exp->next;
-			exp->next = NULL;
-			exp_addback(&exp_tmp, exp_tmp2);
-			exp_addback(&exp, exp_tmp);
-			exp = exp_tmp2;
-			continue ;
-		}// expand in quotes and change the logic of quotes else do nothing and free
 		exp = exp->next;
 	}
-	
+	return (1);
 }
 
 char	**expand_exp(t_minishell *mini, t_expands *exp)
 {
 	char	**out;
 
+	out = NULL;
+	t_expands *tmp = exp;
+	ft_putendl_fd("prev:", 1);
+	while (tmp)
+	{
+		ft_putendl_fd(tmp->str, 1);
+		tmp = tmp->next;
+	}
 	if (!expand_sub(mini, exp))
 		return (NULL);
+	tmp = exp;
+	ft_putendl_fd("\npost:", 1);
+	while (tmp)
+	{
+		ft_putendl_fd(tmp->str, 1);
+		tmp = tmp->next;
+	}
+	return (out);
 }
 
 int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
@@ -281,9 +310,9 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 		if (!exp->exp[i])
 			return (free_exp(exp), 0);
 		str = expand_exp(mini, exp->exp[i]);
-		if (!str)
-			return (free_exp(exp), 0);
-		str2 = ft_relocat2(str2, str);
+		// if (!str)
+		// 	return (free_exp(exp), 0);
+		//str2 = ft_relocat2(str2, str);
 	}
 	return (1);
 }

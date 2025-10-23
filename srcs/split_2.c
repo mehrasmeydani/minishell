@@ -69,21 +69,16 @@ char	**split_2(char *str, char *charset)
 	int		len;
 
 	if (!str)
-	{
-		out = (char **)malloc(1 * sizeof(char *));
-		out[0] = NULL;
-		return (out);
-	}
-	out = (char **)malloc((count(str, charset) + 1) * sizeof(char *));
+		return ((char **)ft_calloc(1, sizeof(char *)));
+	out = (char **)ft_calloc((count(str, charset) + 1), sizeof(char *));
 	i = -1;
 	tmp = str;
 	len = 0;
 	while (++i < count(str, charset))
 	{
 		tmp = skip(&tmp[len], charset, &len);
-		out[i] = (char *)malloc((len + 1) * sizeof(char));
+		out[i] = (char *)ft_calloc((len + 1), sizeof(char));
 		ft_strncpy(out[i], tmp, len);
 	}
-	out[i] = NULL;
 	return (out);
 }
