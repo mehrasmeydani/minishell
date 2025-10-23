@@ -16,7 +16,8 @@ BUILT_SRC	= env.c export.c
 SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c ft_duostrdup.c lexer.c\
 			${addprefix ${LEX_PRE}, ${LEX_SRC}} ${addprefix ${REDIR_PRE}, ${REDIR_SRC}}\
 			remove_quotes.c expand.c preset_var.c env_var.c ${addprefix ${PIPE_PRE}, ${PIPE_SRC}}\
-			${addprefix ${BUILT_PRE}, ${BUILT_SRC}} builtin.c ${addprefix ${EXPAND_PRE}, ${EXPAND_SRC}}
+			${addprefix ${BUILT_PRE}, ${BUILT_SRC}} builtin.c ${addprefix ${EXPAND_PRE}, ${EXPAND_SRC}}\
+			split_2.c
 SRCS		= ${addprefix ${PRE}, ${SRC}}
 PRE			= ./srcs/
 HEAD		= ./header/

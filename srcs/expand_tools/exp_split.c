@@ -1,6 +1,6 @@
 #include "../../header/minishell.h"
 
-static int	is_valid_env(char c, int j)
+int	is_valid_env(char c, int j)
 {
 	return (ft_isalpha(c) || c == '_' || (ft_isdigit(c) && j != 1));
 }
