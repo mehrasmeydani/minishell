@@ -26,7 +26,9 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	
 	i = -1;
 
-	if (ft_strchr(node->cmd[0], '/') != NULL) //free pathlist!!! rmember this might segfault if we quit heredoc as null is sent... but i think char
+	if (node->cmd[0] == NULL)
+		return (NULL);
+	if (ft_strchr(node->cmd[0], '/') != NULL)
 		return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
 	while (pathlist[++i] != NULL)
 	{
