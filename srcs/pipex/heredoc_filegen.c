@@ -1,31 +1,31 @@
 #include "../../header/minishell.h"
 
+
 void	gen_filename(t_redirect *file)
 {
-	char	*origin_str;
-	char	filename[23];
-	size_t	i;
+	ssize_t	i;
+	char	*num;
 
 	file->name = NULL;
-	origin_str = "/tmp/here_doc_00000000";
-	ft_bzero(filename, 23);
-	i = 14;
-	ft_strlcpy(filename, origin_str, 23);
+	num = NULL;
 	if (access("/tmp", F_OK | X_OK) == -1)
 		return ;
-	while (access(filename, F_OK) != -1)
+	i = -1;
+	while(++i <= 100000)
 	{
-		if (filename[i] != '9')
-			filename[i]++;
-		else
-			i++;
-		if (i == 21 && filename[21] == '9')
+		num = ft_itoa(i);
+		if (!num)
 			return ;
+		file->name = ft_strjoin("/tmp/here_doc_", num);
+		free(num);
+		if (!file->name)
+			return ;
+		if (access(file->name, F_OK) != 0)
+			return ;
+		free(file->name);
+		file->name = NULL;
 	}
-	file->name = ft_calloc(23, sizeof(char)); // remember to free when unlinking files
-	if (!file->name)
-		return ;
-	ft_strlcpy(file->name, filename, 23);
+	errno = EEXIST;
 }
 void	clear_heredoc_fns(t_lex *cmds)
 {
