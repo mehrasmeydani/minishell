@@ -7,8 +7,8 @@ typedef struct s_expands
 {
 	char				*str;
 	char				**expanded;
-	bool				back_space;
-	bool				front_space;
+	bool				behind_space;
+	bool				after_space;
 	int					quotes;
 	struct s_expands	*next;
 	struct s_expands	*prev;
@@ -28,5 +28,6 @@ void		exp_addback(t_expands **exp, t_expands *new);
 char		**exp_split(char *in);
 int			is_valid_env(char c, int j);
 char		**split_2(char *str, char *charset);
+void		exp_removeandinject(t_expands **_exp, t_expands *remove, t_expands *add);
 
 #endif

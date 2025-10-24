@@ -10,7 +10,8 @@ void	exp_addback(t_expands **exp, t_expands *new)
 		if (tmp)
 		{
 			(tmp)->next = new;
-			new->prev = tmp;
+			if (new)
+				new->prev = tmp;
 		}
 		else
 			*exp = new;

@@ -49,5 +49,6 @@ int		exec_builtin(char **cmd, t_minishell *mini);
 void	env(t_minishell *mini);
 int		export(t_minishell *mini, char **cmd);
 int		expand_all(t_minishell *mini); //change
+int		remove_quotes_2(char **in);
 
 #endif

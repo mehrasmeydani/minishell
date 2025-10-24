@@ -223,13 +223,26 @@ t_expands *reparse(char **in, char *org)
 	return (out);
 }
 
-int	expand_sub(t_minishell *mini, t_expands *exp)
+int	exp_remove_quotes(t_expands *exp)
+{
+	while (exp)
+	{
+		if (exp->quotes && !remove_quotes_2(&(exp->str)))
+			return (0);
+		exp = exp->next;
+	}
+	return (1);
+}
+
+int	expand_sub(t_minishell *mini, t_expands **_exp)
 {
 	char		*tmp;
 	char		**tmp2;
 	t_expands	*exp_tmp;
 	t_expands	*exp_tmp2;
+	t_expands	*exp;
 
+	exp = *_exp;
 	while (exp)
 	{
 		tmp = expand(mini, exp->str, mini->env, 0);
@@ -248,10 +261,7 @@ int	expand_sub(t_minishell *mini, t_expands *exp)
 				free(tmp);
 				free(tmp2);
 				exp_tmp2 = exp->next;
-				exp->next = NULL;
-				if (exp_tmp2)
-					exp_addback(&exp_tmp, exp_tmp2);
-				exp_addback(&exp, exp_tmp); //remove-current
+				exp_removeandinject(_exp, exp, exp_tmp); //false
 				exp = exp_tmp2;
 				continue ;
 			}
@@ -268,27 +278,58 @@ int	expand_sub(t_minishell *mini, t_expands *exp)
 	return (1);
 }
 
+int	exp_reconnect(t_expands **_exp)
+{
+	t_expands	*exp;
+	t_expands	*tmp;
+	//char		*str;
+
+	exp = *_exp;
+	tmp = exp->next;
+	while (tmp)
+	{
+		if (exp->after_space || tmp->behind_space)
+			exp = tmp;
+		else
+		{
+			exp->str = ft_relocat(exp->str, tmp->str);
+			free(tmp->str);
+			tmp->str = NULL;
+		}
+		tmp = tmp->next;
+	}
+	exp = *_exp;
+	tmp = exp->next;
+	while (tmp)
+	{
+		if (!tmp->str)
+		{
+			exp->next = NULL;
+			exp_addback(&exp, tmp->next);
+			exp_delone(tmp, free);
+			tmp = exp;
+		}
+		else
+		{
+			exp = tmp;
+		}
+		tmp = tmp->next;
+	}
+	return (1);
+}
+
+
 char	**expand_exp(t_minishell *mini, t_expands *exp)
 {
 	char	**out;
 
 	out = NULL;
-	t_expands *tmp = exp;
-	ft_putendl_fd("prev:", 1);
-	while (tmp)
-	{
-		ft_putendl_fd(tmp->str, 1);
-		tmp = tmp->next;
-	}
-	if (!expand_sub(mini, exp))
+	if (!expand_sub(mini, &exp))
 		return (NULL);
-	tmp = exp;
-	ft_putendl_fd("\npost:", 1);
-	while (tmp)
-	{
-		ft_putendl_fd(tmp->str, 1);
-		tmp = tmp->next;
-	}
+	if (!exp_remove_quotes(exp))
+		return (NULL);
+	if (!exp_reconnect(&exp))
+		return (NULL); // turn to char **
 	return (out);
 }
 
