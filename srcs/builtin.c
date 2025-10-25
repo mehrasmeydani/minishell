@@ -23,5 +23,7 @@ int		exec_builtin(char **cmd, t_minishell *mini)
 		return (exit(ft_atoi(cmd[1])), 1);
 	if (!ft_strcmp(cmd[0], "export"))
 		return (export(mini, cmd), 1);
+	if (!ft_strcmp(cmd[0], "echo"))
+		return(echo(cmd), 1);
 	return (1);
 }
