@@ -1,3 +1,11 @@
-#include "../../header/minishell.h"
+/*#include "../../header/minishell.h"
 
-int cd()
+int cd(t_minishell *mini)
+{
+	char	*currentdir;
+
+	currentdir = getcwd(NULL, 0);
+	if (!currentdir)
+		return(0);
+	if (!)
+}*/
