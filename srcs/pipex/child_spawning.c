@@ -50,12 +50,12 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 		return(exit_or_return(exec, mini, NULL, 2));
 	if (is_builtin(cmd->cmd))
 	{
-		if (!exec_builtin(cmd->cmd, mini))
+		if (!exec_builtin(cmd->cmd, mini, exec))
 		{
 			if (exec->children_count > 1)
-				return (close_exit(exec, mini, "builtin", 127));
+				return (close_exit(exec, mini, cmd->cmd[0], 1));
 			else
-				return ((void)(mini->error_code = 127));
+				return ((void)(perror(cmd->cmd[0]), mini->error_code = 1));
 		}
 		if (exec->children_count > 1)
 			close_exit(exec, mini, NULL, 0);

@@ -4,7 +4,7 @@
 # define FAIL -1
 
 # include "./minishell.h"
-#include <sys/wait.h>
+# include <sys/wait.h>
 
 typedef struct	s_exec
 {
@@ -32,7 +32,8 @@ void	close_all_pipes(int pipes[2][2]);
 void	close_exit(t_exec *exec, t_minishell *mini, char *error, int ex_code);
 void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg);
 int		fill_struct(t_exec *exec, t_minishell *mini);
-void my_pipe_dup(t_minishell *mini, t_exec *exec, size_t i);
+void	my_pipe_dup(t_minishell *mini, t_exec *exec, size_t i);
 void	my_pipe_dup_close(t_exec *exec, size_t i);
 void	exit_or_return(t_exec *exec, t_minishell *mini, char *error, int excd);
+int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec);
 #endif

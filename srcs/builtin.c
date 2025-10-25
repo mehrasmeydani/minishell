@@ -17,19 +17,20 @@ int	is_builtin(char **cmd)
 	return (0);
 }
 
-int		exec_builtin(char **cmd, t_minishell *mini)
+int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 {
 	if (!cmd || !*cmd)
 		return (0);
+	errno = 0;
 	if (!ft_strcmp(cmd[0], "env"))
 		return (env(mini), 1);
 	if (!ft_strcmp(cmd[0], "exit"))
-		return (exit(ft_atoi(cmd[1])), 1);
+		return (close_exit(exec, mini, NULL, ft_atoi(cmd[1])), 1);
 	if (!ft_strcmp(cmd[0], "export"))
-		return (export(mini, cmd), 1);
+		return (export(mini, cmd));
 	if (!ft_strcmp(cmd[0], "echo"))
 		return(echo(cmd), 1);
 	if (!ft_strcmp(cmd[0], "cd"))
-		return(cd(mini, cmd), 1);
+		return(cd(mini, cmd));
 	return (1);
 }

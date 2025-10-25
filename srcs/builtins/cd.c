@@ -70,7 +70,7 @@ int cd(t_minishell *mini, char **cmd)
 	char	*newdir;
 
 	if(!has_valid_args(cmd))
-		return (perror("hi"), 0);
+		return (0);
 	prevdir = getcwd(NULL, 0);
 	if (!prevdir)
 		return (0);
