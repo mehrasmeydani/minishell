@@ -10,6 +10,10 @@ int	is_builtin(char **cmd)
 		return (1);
 	if (!ft_strcmp(cmd[0], "export"))
 		return (1);
+	if (!ft_strcmp(cmd[0], "echo"))
+		return (1);
+	if (!ft_strcmp(cmd[0], "cd"))
+		return (1);
 	return (0);
 }
 
@@ -25,5 +29,7 @@ int		exec_builtin(char **cmd, t_minishell *mini)
 		return (export(mini, cmd), 1);
 	if (!ft_strcmp(cmd[0], "echo"))
 		return(echo(cmd), 1);
+	if (!ft_strcmp(cmd[0], "cd"))
+		return(cd(mini, cmd), 1);
 	return (1);
 }

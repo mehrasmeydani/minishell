@@ -51,5 +51,5 @@ int		export(t_minishell *mini, char **cmd);
 int		expand_all(t_minishell *mini); //change
 void	echo(char **cmd);
 int		remove_quotes_2(char **in);
-
+int cd(t_minishell *mini, char **cmd);
 #endif
