@@ -29,5 +29,6 @@ char		**exp_split(char *in);
 int			is_valid_env(char c, int j);
 char		**split_2(char *str, char *charset);
 void		exp_removeandinject(t_expands **_exp, t_expands *remove, t_expands *add);
+ssize_t		exp_len(t_expands *exp);
 
 #endif

@@ -41,7 +41,7 @@ int	main(int argc, char **argv, char **env)
 			return (free_env(&mini.env), mini.error_code);
 		if (!mini.lex)
 			continue ;
-		//execution(&mini);
+		execution(&mini);
 		lex_clear(&mini.lex, ft_free);
 	}
 }

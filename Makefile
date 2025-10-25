@@ -1,6 +1,6 @@
 EXPAND_PRE	= expand_tools/
 EXPAND_SRC	= exp_addback.c exp_clear.c exp_delone.c exp_last.c exp_new.c exp_split.c\
-			exp_removeinject.c
+			exp_removeinject.c exp_len.c
 
 REDIR_PRE	= redir_tools/
 REDIR_SRC	= redir_addback.c redir_clear.c redir_delone.c redir_last.c redir_new.c 

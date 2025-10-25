@@ -223,12 +223,33 @@ t_expands *reparse(char **in, char *org)
 	return (out);
 }
 
+void	ft_swap(char *a, char *b)
+{
+	char	why;
+
+	why = *a;
+	*a = *b;
+	*b = why;
+}
+
+void	remove_quotes_3(char *str)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (str[++i] && str[i + 1])
+	{
+		ft_swap(&(str[i]), &(str[i + 1]));
+	}
+	str[i - 1] = 0;
+}
+
 int	exp_remove_quotes(t_expands *exp)
 {
 	while (exp)
 	{
-		if (exp->quotes && !remove_quotes_2(&(exp->str)))
-			return (0);
+		if (exp->quotes)
+			remove_quotes_3(exp->str);
 		exp = exp->next;
 	}
 	return (1);
@@ -321,7 +342,8 @@ int	exp_reconnect(t_expands **_exp)
 
 char	**expand_exp(t_minishell *mini, t_expands *exp)
 {
-	char	**out;
+	char		**out;
+	ssize_t		i;
 
 	out = NULL;
 	if (!expand_sub(mini, &exp))
@@ -329,8 +351,60 @@ char	**expand_exp(t_minishell *mini, t_expands *exp)
 	if (!exp_remove_quotes(exp))
 		return (NULL);
 	if (!exp_reconnect(&exp))
-		return (NULL); // turn to char **
+		return (NULL);
+	out = ft_calloc(exp_len(exp) + 1, sizeof(char *));
+	if (!out)
+		return (NULL);
+	i = 0;
+	while (exp)
+	{
+		out[i] = exp->str;
+		exp->str = NULL;
+		i++;
+		exp = exp->next;
+	}
 	return (out);
+}
+
+void	ft_free_free(char ***str)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (str[++i])
+	{
+		ft_free(str[i]);
+	}
+	free (str);
+}
+
+int	replace_command(t_lex *lex, char ***str)
+{
+	char	**tmp;
+	ssize_t	i;
+	ssize_t	j;
+	ssize_t	k;
+
+	i = -1;
+	j = 0;
+	while (str[++i])
+		j += ft_str_str_len(str[i]);
+	tmp = ft_calloc(j + 1, sizeof(char *));
+	if (!tmp)
+		return (0);
+	i = -1;
+	k = -1;
+	while (str[++i])
+	{
+		j = -1;
+		while (str[i][++j])
+			tmp[++k] = str[i][j];
+		free(str[i]);
+	}
+	free(str);
+	ft_free(lex->cmd);
+	lex->cmd = tmp;
+	return (1);
 }
 
 int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
@@ -340,21 +414,25 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 	char	**str;
 
 	i = -1;
-	(void)exp;
-	str2 = NULL;
+	str2 =  (char ***)ft_calloc(ft_str_str_len(lex->cmd) + 1, sizeof(char **));
+	if (!str2)
+		return (0);
 	while (lex->cmd[++i])
 	{
 		str	= exp_split(lex->cmd[i]);
 		if (!str)
-			return (free_exp(exp), 0);
+			return (free(str2), free_exp(exp), 0);
 		exp->exp[i] = create_exp(str);
 		if (!exp->exp[i])
-			return (free_exp(exp), 0);
-		str = expand_exp(mini, exp->exp[i]);
-		// if (!str)
-		// 	return (free_exp(exp), 0);
-		//str2 = ft_relocat2(str2, str);
+			return (free(str2), free_exp(exp), 0);
+		free(str);
+		str2[i] = expand_exp(mini, exp->exp[i]);
+		if (!str2[i])
+			return (ft_free_free(str2), free_exp(exp), 0);
 	}
+	//;
+	if (!replace_command(lex, str2))
+		return (ft_free_free(str2), 0);
 	return (1);
 }
 
@@ -374,7 +452,7 @@ int	expand_all(t_minishell *mini) //change
 		exp.len = i;
 		if (!expand_tmp(mini, lex, &exp))
 			return (0);
-			
+		free_exp(&exp);
 		lex = lex->next;
 	}
 	return (1);
@@ -405,7 +483,6 @@ int	my_read(t_minishell *mini)
 	if (!mini->lex)
 		return (mini->error_code = -1, 1); // alloc fail
 	expand_all(mini);
-	//remove_quotes(mini); //
 	if (!check_heredoc(mini->lex))
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); // alloc fail
 	return (1);
