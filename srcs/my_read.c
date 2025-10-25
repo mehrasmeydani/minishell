@@ -452,7 +452,7 @@ int	expand_all(t_minishell *mini) //change
 		exp.len = i;
 		if (!expand_tmp(mini, lex, &exp))
 			return (0);
-		free_exp(&exp);
+		//free_exp(&exp);
 		lex = lex->next;
 	}
 	return (1);
