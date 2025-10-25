@@ -85,5 +85,7 @@ int cd(t_minishell *mini, char **cmd)
 	if (check_env_entry(mini->env.var_name, false) == 1)
 		if (!export_oldpwd(mini, prevdir))
 		   return (free(prevdir), free(newdir), 0);
+	free(prevdir);
+	free(newdir);
 	return (1);
 }
