@@ -80,10 +80,55 @@ int	has_quotes(char *in)
 	return (0);
 }
 
+int	here_docrl2(t_redirect *tmp, char *tmp_str)
+{
+	if (tmp->input)
+	{
+		tmp->input = ft_relocat(tmp->input, "\n");
+			if (!tmp->input)
+				return (free(tmp_str), 0);
+	}
+	tmp->input = ft_relocat(tmp->input, tmp_str);
+	free(tmp_str);
+	tmp_str = NULL;
+	if (!tmp->input)
+		return (0);
+	return (1);
+}
+
+int	here_docrl(t_redirect *tmp, char *tmp_str)
+{
+	if (has_quotes(tmp->name))
+	tmp->input_expand = 1;
+	if (!remove_quotes(&tmp->name))
+		return(0);
+	while (true)
+	{
+		tmp_str = readline(">");
+		if (!tmp_str)
+			return (-1);
+		if (!ft_strcmp(tmp->name, tmp_str))
+		{
+			free(tmp_str);
+			tmp_str = NULL;
+			free(tmp->name);
+			tmp->name = NULL;
+			tmp->input = ft_relocat(tmp->input, "\n");
+			if (!tmp->input)
+				return (0);
+			break;
+		}
+		if (!here_docrl2(tmp, tmp_str))
+			return (0);
+	}
+	return (1);
+}
+
 int	check_heredoc(t_lex *lex)
 {
 	t_redirect	*tmp;
 	char		*tmp_str;
+	int			err;
 
 	while (lex)
 	{
@@ -93,30 +138,9 @@ int	check_heredoc(t_lex *lex)
 			tmp_str = NULL;
 			if (tmp->level == HEREDOC)
 			{
-				if (has_quotes(tmp->name))
-					tmp->input_expand = 1;
-				if (!remove_quotes(&tmp->name))
-					return(0);
-				while (true)
-				{
-					tmp_str = readline(">");
-					if (!tmp_str)
-						return (0);
-					if (!ft_strcmp(tmp->name, tmp_str))
-					{
-						free(tmp_str);
-						tmp_str = NULL;
-						free(tmp->name);
-						tmp->name = NULL;
-						tmp->input = ft_relocat(tmp->input, "\n");
-						break;
-					}
-					if (tmp->input)
-						tmp->input = ft_relocat(tmp->input, "\n");
-					tmp->input = ft_relocat(tmp->input, tmp_str); //alloc check
-					free(tmp_str);
-					tmp_str = NULL;
-				}
+				err = here_docrl(tmp, tmp_str);
+				if (err == 0)
+					return (0);
 			}
 			tmp = tmp->next;
 		}
@@ -125,41 +149,318 @@ int	check_heredoc(t_lex *lex)
 	return (1);
 }
 
-int	expand_all(t_minishell *mini, t_lex *lex) //change
+void	free_exp(t_expand *exp)
 {
-	t_redirect	*red;
-	char		*tmp;
+	ssize_t	i;
+
+	i = -1;
+	while (++i < exp->len)
+		exp_clear(&(exp->exp[i]), free);
+	free(exp->exp);
+}
+
+t_expands	*create_exp(char **in)
+{
+	t_expands	*out;
+	t_expands	*tmp;
 	ssize_t		i;
 
-	red = lex->redic;
-	while (red)
-	{
-		if (red->level == HEREDOC && red->input_expand == 0)
-		{
-			tmp = expand(mini, red->input, mini->env, 1);
-			if (!tmp)
-				return (0);
-			free(red->input);
-			red->input = tmp;
-		}
-		red = red->next;
-	}
 	i = -1;
-	while (lex->cmd[++i])
+	out = NULL;
+	while (in[++i])
 	{
-		tmp = expand(mini, lex->cmd[i], mini->env, 0);
+		tmp = exp_new(in[i], 0, 0, (*in[i] == '\'' || *in[i] == '"'));
+		if (!tmp)
+			return (exp_clear(&out, free), NULL);
+		exp_addback(&out, tmp);
+	}
+	return (out);
+}
+
+int	is_in(char *str, char *set)
+{
+	ssize_t i;
+	ssize_t	j;
+
+	i = -1;
+	while (str && str[++i])
+	{
+		j = -1;
+		while (set && set[++j])
+			if (str[i] == set[j])
+				return (1);
+	}
+	return (0);
+}
+
+t_expands *reparse(char **in, char *org)
+{
+	ssize_t		i;
+	ssize_t		j;
+	ssize_t		k;
+	t_expands	*out;
+	t_expands	*tmp;
+
+	i = -1;
+	j = 0;
+	out = NULL;
+	while (org[++i])
+	{
+		if (in[j] && org[i] == in[j][0])
+		{
+			k = ft_strlen(in[j]);
+			tmp = exp_new(in[j],
+				((i > 0) && (ft_strchr("\t\n\r\v\f ", org[i - 1])))
+				, ((org[i + k])
+				&& (ft_strchr("\t\n\r\v\f ", org[i + k]))), 0);
+			if (!tmp)
+				return (exp_clear(&out, free), NULL);
+			exp_addback(&out, tmp);
+			i += k - 1;
+			j++;
+		}
+	}
+	return (out);
+}
+
+void	ft_swap(char *a, char *b)
+{
+	char	why;
+
+	why = *a;
+	*a = *b;
+	*b = why;
+}
+
+void	remove_quotes_3(char *str)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (str[++i] && str[i + 1])
+	{
+		ft_swap(&(str[i]), &(str[i + 1]));
+	}
+	str[i - 1] = 0;
+}
+
+int	exp_remove_quotes(t_expands *exp)
+{
+	while (exp)
+	{
+		if (exp->quotes)
+			remove_quotes_3(exp->str);
+		exp = exp->next;
+	}
+	return (1);
+}
+
+int	expand_sub(t_minishell *mini, t_expands **_exp)
+{
+	char		*tmp;
+	char		**tmp2;
+	t_expands	*exp_tmp;
+	t_expands	*exp_tmp2;
+	t_expands	*exp;
+
+	exp = *_exp;
+	while (exp)
+	{
+		tmp = expand(mini, exp->str, mini->env, 0);
 		if (!tmp)
 			return (0);
-		free(lex->cmd[i]);
-		lex->cmd[i] = tmp;
+		if (ft_strcmp(exp->str, tmp))
+		{
+			if (!(exp->quotes) && is_in(tmp, "\t\n\r\v\f "))
+			{
+				tmp2 = split_2(tmp, "\t\n\r\v\f ");
+				if (!tmp2)
+					return (free(tmp), 0);
+				exp_tmp = reparse(tmp2, tmp);
+				if (!exp_tmp)
+					return (ft_free(tmp2), free(exp), 0);
+				free(tmp);
+				free(tmp2);
+				exp_tmp2 = exp->next;
+				exp_removeandinject(_exp, exp, exp_tmp); //false
+				exp = exp_tmp2;
+				continue ;
+			}
+			else
+			{
+				free(exp->str);
+				exp->str = tmp;
+			}
+		}
+		else
+			free(tmp);
+		exp = exp->next;
+	}
+	return (1);
+}
+
+int	exp_reconnect(t_expands **_exp)
+{
+	t_expands	*exp;
+	t_expands	*tmp;
+	//char		*str;
+
+	exp = *_exp;
+	tmp = exp->next;
+	while (tmp)
+	{
+		if (exp->after_space || tmp->behind_space)
+			exp = tmp;
+		else
+		{
+			exp->str = ft_relocat(exp->str, tmp->str);
+			free(tmp->str);
+			tmp->str = NULL;
+		}
+		tmp = tmp->next;
+	}
+	exp = *_exp;
+	tmp = exp->next;
+	while (tmp)
+	{
+		if (!tmp->str)
+		{
+			exp->next = NULL;
+			exp_addback(&exp, tmp->next);
+			exp_delone(tmp, free);
+			tmp = exp;
+		}
+		else
+		{
+			exp = tmp;
+		}
+		tmp = tmp->next;
+	}
+	return (1);
+}
+
+
+char	**expand_exp(t_minishell *mini, t_expands *exp)
+{
+	char		**out;
+	ssize_t		i;
+
+	out = NULL;
+	if (!expand_sub(mini, &exp))
+		return (NULL);
+	if (!exp_remove_quotes(exp))
+		return (NULL);
+	if (!exp_reconnect(&exp))
+		return (NULL);
+	out = ft_calloc(exp_len(exp) + 1, sizeof(char *));
+	if (!out)
+		return (NULL);
+	i = 0;
+	while (exp)
+	{
+		out[i] = exp->str;
+		exp->str = NULL;
+		i++;
+		exp = exp->next;
+	}
+	return (out);
+}
+
+void	ft_free_free(char ***str)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (str[++i])
+	{
+		ft_free(str[i]);
+	}
+	free (str);
+}
+
+int	replace_command(t_lex *lex, char ***str)
+{
+	char	**tmp;
+	ssize_t	i;
+	ssize_t	j;
+	ssize_t	k;
+
+	i = -1;
+	j = 0;
+	while (str[++i])
+		j += ft_str_str_len(str[i]);
+	tmp = ft_calloc(j + 1, sizeof(char *));
+	if (!tmp)
+		return (0);
+	i = -1;
+	k = -1;
+	while (str[++i])
+	{
+		j = -1;
+		while (str[i][++j])
+			tmp[++k] = str[i][j];
+		free(str[i]);
+	}
+	free(str);
+	ft_free(lex->cmd);
+	lex->cmd = tmp;
+	return (1);
+}
+
+int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
+{
+	ssize_t	i;
+	char	***str2;
+	char	**str;
+
+	i = -1;
+	str2 =  (char ***)ft_calloc(ft_str_str_len(lex->cmd) + 1, sizeof(char **));
+	if (!str2)
+		return (0);
+	while (lex->cmd[++i])
+	{
+		str	= exp_split(lex->cmd[i]);
+		if (!str)
+			return (free(str2), free_exp(exp), 0);
+		exp->exp[i] = create_exp(str);
+		if (!exp->exp[i])
+			return (free(str2), free_exp(exp), 0);
+		free(str);
+		str2[i] = expand_exp(mini, exp->exp[i]);
+		if (!str2[i])
+			return (ft_free_free(str2), free_exp(exp), 0);
+	}
+	//;
+	if (!replace_command(lex, str2))
+		return (ft_free_free(str2), 0);
+	return (1);
+}
+
+int	expand_all(t_minishell *mini) //change
+{
+	t_lex		*lex;
+	t_expand	exp;
+	ssize_t		i;
+
+	lex = mini->lex;
+	while (lex)
+	{
+		i = ft_str_str_len(lex->cmd);
+		exp.exp	= ft_calloc(i, sizeof(t_expands *));
+		if (!exp.exp)
+			return (0);
+		exp.len = i;
+		if (!expand_tmp(mini, lex, &exp))
+			return (0);
+		free_exp(&exp);
+		lex = lex->next;
 	}
 	return (1);
 }
 
 int	my_read(t_minishell *mini)
 {
-	if (isatty(fileno(stdin)))
-		mini->in = readline("minishell>");
+	mini->in = readline("minishell>");
 	if (!mini->in)
 		return (0); //error
 	add_history(mini->in);
@@ -180,8 +481,9 @@ int	my_read(t_minishell *mini)
 	ft_free(mini->out);
 	mini->out = NULL;
 	if (!mini->lex)
-		return (mini->error_code = -1, 1);
+		return (mini->error_code = -1, 1); // alloc fail
+	expand_all(mini);
 	if (!check_heredoc(mini->lex))
-		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); //free and error for alloc
+		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); // alloc fail
 	return (1);
 }

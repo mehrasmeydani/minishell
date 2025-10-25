@@ -3,6 +3,10 @@
 	ex: export hi="  hi  hi  "
 	echo $hi -> 'hi hi'
 	echo c$hi -> 'c hi hi'
+	export hi="    ls"
+	$hi$USER -> error: lsmegardes: command not found
+	export hi="    ls     "
+	$hi$USER -> error: ls: cannot access 'megardes': No such file or directory
 ...
 
 2.	$_ env set in parent with no pipes

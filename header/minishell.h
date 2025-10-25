@@ -3,10 +3,6 @@
 
 # define __USE_POSIX 1
 
-# include "./libft.h"
-# include "./redirect.h"
-# include "./lexer.h"
-# include "./env.h"
 # include <stdbool.h>
 # include <fcntl.h>
 # include <stdio.h>
@@ -14,6 +10,11 @@
 # include <readline/history.h>
 # include <signal.h>
 # include <errno.h>
+# include "./libft.h"
+# include "./redirect.h"
+# include "./lexer.h"
+# include "./env.h"
+# include "./expand.h"
 
 # define SINGLE 1
 # define DOUBLE 2
@@ -21,11 +22,12 @@
 typedef unsigned int	t_ui;
 typedef struct s_minishell
 {
-	char	*in;
-	char	**out;
-	t_lex	*lex;
-	t_env	env;
-	int		error_code;
+	char		*in;
+	char		**out;
+	t_lex		*lex;
+	t_expand	expd;
+	t_env		env;
+	int			error_code;
 }	t_minishell;
 
 # include "./execution.h"
@@ -46,7 +48,8 @@ int		is_builtin(char **cmd);
 int		exec_builtin(char **cmd, t_minishell *mini);
 void	env(t_minishell *mini);
 int		export(t_minishell *mini, char **cmd);
-int		expand_all(t_minishell *mini, t_lex *lex); //change
+int		expand_all(t_minishell *mini); //change
 void	echo(char **cmd);
+int		remove_quotes_2(char **in);
 
 #endif

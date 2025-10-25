@@ -30,6 +30,8 @@ char	*expand(t_minishell *mini, char *in, t_env env, int here_doc)
 	i = 0;
 	out = NULL;
 	quotes_state = 0;
+	if (!in)
+		return (NULL);
 	while (in[i])
 	{
 		j = 1;
