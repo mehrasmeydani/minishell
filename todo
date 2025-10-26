@@ -29,3 +29,6 @@ exits minishell if redirection check fails due to line first if condition
 
 7. $? doesn't work, gets expanded into ? (Mehras)
 	Pending
+
+8. SIGPIPE handling, pwd | <<hi produces sigpipe and exec leaks.
+	PENDING

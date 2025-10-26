@@ -20,4 +20,4 @@ void	echo(char **cmd)
 	}
 	if (trailingn == true)
 		write(STDOUT_FILENO, "\n", 1);
-}
+} 
