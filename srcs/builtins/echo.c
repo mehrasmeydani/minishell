@@ -6,6 +6,8 @@ void	echo(char **cmd)
 
 	trailingn = true;
 	i = 1;
+	if (cmd[1] == NULL)
+		return ((void) write(STDOUT_FILENO, "\n", 1));
 	if (!ft_strcmp(cmd[1], "-n"))
 	{
 		i++;
