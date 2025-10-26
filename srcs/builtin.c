@@ -21,6 +21,8 @@ int	is_builtin(char **cmd)
 
 int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 {
+	if (exec->children_count != 1)
+		signal(SIGPIPE, SIG_IGN);
 	if (!cmd || !*cmd)
 		return (0);
 	errno = 0;
