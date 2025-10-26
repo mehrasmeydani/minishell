@@ -47,7 +47,7 @@ int	restore_stdin_stdout(t_exec *exec)
 	if (exec->backup_stdin != -1)
 	{
 		if (dup2(exec->backup_stdin, STDIN_FILENO) == -1)
-			return (perror("FATAL: error restoring STDIN"), 
+			return (perror("FATAL: error restoring STDIN"),
 				close_backups(exec), -1);
 	}
 	if (exec->backup_stdout != -1)

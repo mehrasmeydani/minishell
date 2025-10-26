@@ -41,7 +41,8 @@ void	clean_after_exec(t_exec *exec, t_minishell *mini, char *errormsg)
 	exec->pathlist = NULL;
 	if (errormsg != NULL)
 		perror(errormsg);
-	restore_stdin_stdout(exec);
+	if (restore_stdin_stdout(exec) == -1)
+		return ((void) close(STDIN_FILENO), close(STDOUT_FILENO), exit(1));
 }
 
 void	exit_or_return(t_exec *exec, t_minishell *mini, char *error, int excd)
