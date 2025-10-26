@@ -16,7 +16,8 @@ void	echo(char **cmd)
 	while (cmd[i] != NULL)
 	{
 		write(STDOUT_FILENO, cmd[i], ft_strlen(cmd[i]));
-		write(STDOUT_FILENO, " ", 1);
+		if(cmd[i + 1] != NULL)
+			write(STDOUT_FILENO, " ", 1);
 		i++;
 	}
 	if (trailingn == true)
