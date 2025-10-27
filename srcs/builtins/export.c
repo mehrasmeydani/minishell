@@ -87,7 +87,7 @@ ssize_t	var_exists(t_env *env, char	*input, char *tmp)
 	{
 		if (!tmp && !ft_strcmp(input, env->var_name[i]))
 			return (i);
-		else if (tmp && !ft_strncmp(input, env->var_name[i], tmp - input))
+		else if (tmp && !ft_strcmp(tmp, env->var_name[i]))
 			return (i);
 	}
 	return (-1);
@@ -107,11 +107,18 @@ int	add_var(t_minishell *mini, char **cmd)
 	while (cmd[++i])
 	{
 		tmp2 = ft_strchr(cmd[i], '=');
+		if (tmp2)
+		{
+			tmp2 = ft_substr(cmd[i], 0, tmp2 - cmd[i]);
+			if (!tmp2)
+				return (0);
+		}
 		k = var_exists(env, cmd[i], tmp2);
 		if (!tmp2 && k != -1)
 			return (1);
 		else if (tmp2 && k != -1)
 		{
+			free(tmp2);
 			tmp = ft_duostrdup(env->raw_var, ft_str_str_len(env->raw_var));
 			if (!tmp)
 				return (0); // maybe free?
@@ -127,6 +134,7 @@ int	add_var(t_minishell *mini, char **cmd)
 		}
 		else
 		{
+			free(tmp2);
 			j = ft_str_str_len(env->raw_var);
 			tmp = ft_duostrdup(env->raw_var, j + 1);
 			if (!tmp)

@@ -52,4 +52,7 @@ void	echo(char **cmd);
 int		remove_quotes_2(char **in);
 int		cd(t_minishell *mini, char **cmd);
 int		pwd(void);
+ssize_t	var_exists(t_env *env, char	*input, char *tmp);
+int		unset(t_minishell *mini, char **cmd);
+
 #endif

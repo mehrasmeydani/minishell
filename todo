@@ -32,3 +32,6 @@ exits minishell if redirection check fails due to line first if condition
 
 8. SIGPIPE handling, pwd | <<hi produces sigpipe and exec leaks.
 	PENDING
+
+9. free segfault after unset PATH
+	PENDING

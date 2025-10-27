@@ -16,6 +16,8 @@ int	is_builtin(char **cmd)
 		return (1);
 	if (!ft_strcmp(cmd[0], "pwd"))
 		return (1);
+	if (!ft_strcmp(cmd[0], "unset"))
+		return (1);
 	return (0);
 }
 
@@ -38,5 +40,7 @@ int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 		return(cd(mini, cmd));
 	if (!ft_strcmp(cmd[0], "pwd"))
 		return(pwd());
+	if (!ft_strcmp(cmd[0], "unset"))
+		return (unset(mini, cmd));
 	return (1);
 }

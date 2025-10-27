@@ -6,7 +6,6 @@
 typedef struct s_expands
 {
 	char				*str;
-	char				**expanded;
 	bool				behind_space;
 	bool				after_space;
 	int					quotes;
