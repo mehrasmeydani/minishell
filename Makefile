@@ -13,7 +13,7 @@ PIPE_SRC	= child_spawning.c command_check.c file_check.c free_paths.c path_const
 			heredoc_filegen.c backup_fds.c close_and_exit.c fill_data_pre_exec.c pipe_dup.c
 
 BUILT_PRE	= builtins/
-BUILT_SRC	= env.c export.c echo.c
+BUILT_SRC	= env.c export.c echo.c cd.c pwd.c
 
 SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c ft_duostrdup.c lexer.c\
 			${addprefix ${LEX_PRE}, ${LEX_SRC}} ${addprefix ${REDIR_PRE}, ${REDIR_SRC}}\

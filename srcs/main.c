@@ -2,8 +2,9 @@
 
 void	sigint(int sig)
 {
-	ft_putendl_fd("", 1);
 	rl_on_new_line();
+	ft_putendl_fd("", 1);
+	rl_replace_line("", 0);
 	rl_redisplay();
 	(void)sig;
 }
