@@ -6,7 +6,7 @@ static int	state_set(char c, char *str)
 
 	i = -1;
 	while (str[++i])
-		if (str[i] == c)
+		if (str[i] == c || (ft_iswhitespace(str[i]) && ft_iswhitespace(c)))
 			return (i + 3);
 	return (-1);
 }
@@ -18,7 +18,7 @@ static void	skip(char **str, ssize_t *i)
 	int	quotes_stat;
 
 	quotes_stat = 0;
-	while ((*str)[(*i)] == ' ')
+	while (ft_iswhitespace((*str)[(*i)]))
 		(*str)++;
 	state = state_set((*str)[(*i)], "<|> ");
 	prev_state = state;
@@ -44,7 +44,7 @@ static ssize_t	count(char *str)
 	while (str[i])
 	{
 		skip(&str, &i);
-		while (str[i] == ' ')
+		while (ft_iswhitespace(str[i]))
 			str++;
 		tokens++;
 	}
