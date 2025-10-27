@@ -44,16 +44,23 @@ char	*expand(t_minishell *mini, char *in, t_env env, int here_doc)
 			{
 				tmp2 = ft_itoa(mini->error_code);
 				if (!tmp2)
-					return (NULL);
+					return (free(out), NULL);
 				tmp_var = tmp2;
 				j++;
 			}
 			else
 			{
-				while (in[i + j] && !ft_iswhitespace(in[i + j]) && in[i + j] != '"' && in[i + j] != '\''&& in[i + j] != '$') //add_whitespaces
+				while (in[i + j] && is_valid_env(in[i + j], j)) //add_whitespaces
 					j++;
 				if (!find_var(&tmp_var, in + i + 1, j - 1, env))
 					return (free(out), NULL);
+			}
+			if (j == 1)
+			{
+				tmp2 = ft_strdup("$");
+				if (!tmp2)
+					return (free(out), NULL);
+				tmp_var = tmp2;
 			}
 			tmp = ft_substr(in, 0, i);
 			if (!tmp)

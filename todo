@@ -38,3 +38,17 @@ exits minishell if redirection check fails due to line first if condition
 
 9. free segfault after unset PATH
 	PENDING
+
+10. open fd 1
+	export test="arg1	arg2"
+	echo 'echo $1' > tmp_test_sh
+	bash tmp_test_sh $test
+	echo 'echo $2' > tmp_test_sh
+	bash tmp_test_sh $test
+	rm -f tmp_test_sh
+	PENDING
+
+11. file exist check shoulf be before heredoc
+	echo segfault <"<<<"<<amazing
+	-> should error: <<< doesnt exist
+	PENDING

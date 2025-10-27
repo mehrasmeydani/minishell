@@ -69,6 +69,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	free(cmd->cmd[0]);
 	cmd->cmd[0] = tmp;
 	free(exec->pids);
+	exec->pids = NULL;
 	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
 		return (close_exit(exec, mini, "execution", 1));
 }

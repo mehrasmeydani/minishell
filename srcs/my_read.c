@@ -273,16 +273,20 @@ int	expand_sub(t_minishell *mini, t_expands **_exp)
 		{
 			if (!(exp->quotes) && is_in(tmp, "\t\n\r\v\f "))
 			{
+				exp_tmp = NULL;
 				tmp2 = split_2(tmp, "\t\n\r\v\f ");
 				if (!tmp2)
 					return (free(tmp), 0);
-				exp_tmp = reparse(tmp2, tmp);
-				if (!exp_tmp)
-					return (ft_free(tmp2), free(exp), 0);
+				if (*tmp2)
+				{
+					exp_tmp = reparse(tmp2, tmp);
+					if (!exp_tmp)
+						return (ft_free(tmp2), free(tmp), 0);
+				}
 				free(tmp);
 				free(tmp2);
 				exp_tmp2 = exp->next;
-				exp_removeandinject(_exp, exp, exp_tmp); //false
+				exp_removeandinject(_exp, exp, exp_tmp);
 				exp = exp_tmp2;
 				continue ;
 			}
@@ -306,6 +310,8 @@ int	exp_reconnect(t_expands **_exp)
 	//char		*str;
 
 	exp = *_exp;
+	if (!exp)
+		return (1);
 	tmp = exp->next;
 	while (tmp)
 	{
