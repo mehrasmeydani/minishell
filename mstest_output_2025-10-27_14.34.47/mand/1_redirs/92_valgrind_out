@@ -1,0 +1,54 @@
+==1190081== Memcheck, a memory error detector
+==1190081== Copyright (C) 2002-2017, and GNU GPL'd, by Julian Seward et al.
+==1190081== Using Valgrind-3.18.1 and LibVEX; rerun with -h for copyright info
+==1190081== Command: /home/megardes/minishell/minishell
+==1190081== Parent PID: 1190080
+==1190081== 
+==1190081== 
+==1190081== FILE DESCRIPTORS: 8 open (3 std) at exit.
+==1190081== Open file descriptor 103: /usr/share/code/v8_context_snapshot.bin
+==1190081==    <inherited from parent>
+==1190081== 
+==1190081== Open file descriptor 43: /home/megardes/.config/Code/logs/20251027T142509/ptyhost.log
+==1190081==    <inherited from parent>
+==1190081== 
+==1190081== Open pf-16 socket 37:
+==1190081==    <inherited from parent>
+==1190081== 
+==1190081== Open file descriptor 35:
+==1190081==    <inherited from parent>
+==1190081== 
+==1190081== Open file descriptor 3: /tmp/tmp.mb3lm6OSCA/tmp_valgrind_out
+==1190081==    <inherited from parent>
+==1190081== 
+==1190081== Open file descriptor 2: /dev/null
+==1190081==    <inherited from parent>
+==1190081== 
+==1190081== Open file descriptor 1: /dev/null
+==1190081==    at 0x49DF08B: dup2 (syscall-template.S:120)
+==1190081==    by 0x406358: restore_stdin_stdout (backup_fds.c:55)
+==1190081==    by 0x40654D: clean_after_exec (close_and_exit.c:44)
+==1190081==    by 0x405429: spawn_children (child_spawning.c:127)
+==1190081==    by 0x40130B: execution (main.c:16)
+==1190081==    by 0x401406: main (main.c:48)
+==1190081== 
+==1190081== Open file descriptor 0:
+==1190081==    <inherited from parent>
+==1190081== 
+==1190081== 
+==1190081== HEAP SUMMARY:
+==1190081==     in use at exit: 4,177 bytes in 10 blocks
+==1190081==   total heap usage: 438 allocs, 428 frees, 20,138 bytes allocated
+==1190081== 
+==1190081== LEAK SUMMARY:
+==1190081==    definitely lost: 0 bytes in 0 blocks
+==1190081==    indirectly lost: 0 bytes in 0 blocks
+==1190081==      possibly lost: 0 bytes in 0 blocks
+==1190081==    still reachable: 0 bytes in 0 blocks
+==1190081==         suppressed: 4,177 bytes in 10 blocks
+==1190081== 
+==1190081== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 4 from 4)
+--1190081-- 
+--1190081-- used_suppression:      4 libreadline /home/megardes/42_minishell_tester/utils/minishell.supp:2 suppressed: 4,177 bytes in 10 blocks
+==1190081== 
+==1190081== ERROR SUMMARY: 0 errors from 0 contexts (suppressed: 4 from 4)

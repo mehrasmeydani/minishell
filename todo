@@ -52,3 +52,6 @@ exits minishell if redirection check fails due to line first if condition
 	echo segfault <"<<<"<<amazing
 	-> should error: <<< doesnt exist
 	PENDING
+
+12. echo -n-n whateve
+	should print -n-n
