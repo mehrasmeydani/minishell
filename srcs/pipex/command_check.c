@@ -26,29 +26,28 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	
 	i = -1;
 
+	new_cmd = NULL;
+	errno = 0;
 	if (node->cmd[0] == NULL)
 		return (NULL);
 	if (ft_strchr(node->cmd[0], '/') != NULL)
 		return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
+	if (!pathlist)
+		return (*errorcode = 127, errno = ENOENT, NULL);
 	while (pathlist[++i] != NULL)
 	{
 		new_cmd = ft_strjoin(pathlist[i], node->cmd[0]);
-		if (errno == ENOMEM)
-		{
-			perror("cmd allocation");
-			*errorcode = 1;
-		}
 		if (!new_cmd)
-			return (NULL);
+			return (*errorcode = 1, perror("command alloc"), NULL);
 		if (access(new_cmd, F_OK) == 0)
 			break ;
 		free(new_cmd);
 		if(pathlist[i+1] == NULL)
 			return (*errorcode = 127, NULL);
 	}
-	if (access(new_cmd, X_OK) != 0)
-		return(free(new_cmd), *errorcode = 126, NULL);
-	return(new_cmd);
+		if (access(new_cmd, X_OK) != 0)
+			return(free(new_cmd), *errorcode = 126, NULL);
+		return(new_cmd);
 }
 
 // actually, i think it's better to have each child check its own cmd, ensuring

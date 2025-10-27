@@ -2,7 +2,7 @@
 
 #include "../../header/execution.h"
 
-static int	isemptypath(char *path)
+/*static int	isemptypath(char *path)
 {
 	size_t	i;
 
@@ -14,7 +14,7 @@ static int	isemptypath(char *path)
 		i++;
 	}
 	return (1);
-}
+}*/
 static char	*findpath(char **envp)
 {
 	char	*path;
@@ -39,22 +39,11 @@ static char **sanitize_paths(char **pathlist)
 	i = -1;
 	while(pathlist[++i] != NULL)
 	{
-		if (isemptypath(pathlist[i]) == 0)
-		{
-			temp = ft_strjoin(pathlist[i], "/");
-			if (!temp)
-				return (freepaths(pathlist), NULL);
-			free(pathlist[i]);
-			pathlist[i] = temp;
-		}
-		else
-		{
-			temp = ft_strdup("");
-			if (!temp)
-				return (freepaths(pathlist), NULL);
-			free(pathlist[i]);
-			pathlist[i] = temp;
-		}
+		temp = ft_strjoin(pathlist[i], "/");
+		if (!temp)
+			return (freepaths(pathlist), NULL);
+		free(pathlist[i]);
+		pathlist[i] = temp;
 	}
 	return (pathlist);
 }
