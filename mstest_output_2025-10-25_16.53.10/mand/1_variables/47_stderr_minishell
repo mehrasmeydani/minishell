@@ -1,0 +1,2 @@
+free(): invalid pointer
+/home/megardes/42_minishell_tester/tester.sh: line 635: 877466 Aborted                 (core dumped) LD_PRELOAD=/home/megardes/42_minishell_tester/utils/libintercept/libintercept.so /home/megardes/minishell/minishell

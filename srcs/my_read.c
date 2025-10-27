@@ -40,7 +40,7 @@ static int	check_syntax(t_minishell *mini, char **in)
 			state_two = state_set(in[i + 1][0], "<>|");
 		if (((state_one == 3 || state_one == 4) && (ft_strlen(in[i]) > 2
 					|| !in[i + 1] || (in[i + 1] && state_two != -1)))
-			|| (state_one == 5 && (ft_strlen(in[i]) > 1 || !in[i + 1])))
+			|| (state_one == 5 && (ft_strlen(in[i]) > 1 || !in[i + 1] || i == 0)))
 			return (0);
 	}
 	return (1);
@@ -340,28 +340,30 @@ int	exp_reconnect(t_expands **_exp)
 }
 
 
-char	**expand_exp(t_minishell *mini, t_expands *exp)
+char	**expand_exp(t_minishell *mini, t_expands **exp)
 {
 	char		**out;
+	t_expands	*tmp;
 	ssize_t		i;
 
 	out = NULL;
-	if (!expand_sub(mini, &exp))
+	if (!expand_sub(mini, exp))
 		return (NULL);
-	if (!exp_remove_quotes(exp))
+	if (!exp_remove_quotes(*exp))
 		return (NULL);
-	if (!exp_reconnect(&exp))
+	if (!exp_reconnect(exp))
 		return (NULL);
-	out = ft_calloc(exp_len(exp) + 1, sizeof(char *));
+	out = ft_calloc(exp_len(*exp) + 1, sizeof(char *));
 	if (!out)
 		return (NULL);
 	i = 0;
-	while (exp)
+	tmp = *exp;
+	while (tmp)
 	{
-		out[i] = exp->str;
-		exp->str = NULL;
+		out[i] = tmp->str;
+		tmp->str = NULL;
 		i++;
-		exp = exp->next;
+		tmp = tmp->next;
 	}
 	return (out);
 }
@@ -426,7 +428,7 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 		if (!exp->exp[i])
 			return (free(str2), free_exp(exp), 0);
 		free(str);
-		str2[i] = expand_exp(mini, exp->exp[i]);
+		str2[i] = expand_exp(mini, &(exp->exp[i]));
 		if (!str2[i])
 			return (ft_free_free(str2), free_exp(exp), 0);
 	}
@@ -452,7 +454,7 @@ int	expand_all(t_minishell *mini) //change
 		exp.len = i;
 		if (!expand_tmp(mini, lex, &exp))
 			return (0);
-		//free_exp(&exp);
+		free_exp(&exp);
 		lex = lex->next;
 	}
 	return (1);
@@ -476,7 +478,7 @@ int	my_read(t_minishell *mini)
 		return (1); //error
 	if (!check_syntax(mini, mini->out))
 		return (ft_free(mini->out), mini->out = NULL
-			, ft_putendl_fd("Syntax error", 2), mini->error_code = 2, 1); //syntax error
+			, ft_putendl_fd("syntax error", 2), mini->error_code = 2, 1); //syntax error
 	mini->lex = lexer(mini->out);
 	ft_free(mini->out);
 	mini->out = NULL;

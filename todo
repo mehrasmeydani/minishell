@@ -7,13 +7,16 @@
 	$hi$USER -> error: lsmegardes: command not found
 	export hi="    ls     "
 	$hi$USER -> error: ls: cannot access 'megardes': No such file or directory
-...
+... FIXED!
 
 2.	$_ env set in parent with no pipes
 ...
 
 
 3.	export change value and printing
+	export hi=""
+	export hii=""
+	hi is over written and vice versa
 ... SEMI
 
 4.	set_var add must be variables SHLVL
