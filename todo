@@ -55,3 +55,4 @@ exits minishell if redirection check fails due to line first if condition
 
 12. echo -n-n whateve
 	should print -n-n
+	FIXED!
