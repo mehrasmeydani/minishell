@@ -10,14 +10,14 @@
 ... FIXED!
 
 2.	$_ env set in parent with no pipes
-...
+... NOT NEEDED!
 
 
 3.	export change value and printing
 	export hi=""
 	export hii=""
 	hi is over written and vice versa
-... SEMI
+... FIXED!
 
 4.	set_var add must be variables SHLVL
 ... FIXED!
