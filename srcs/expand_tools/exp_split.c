@@ -2,7 +2,7 @@
 
 int	is_valid_env(char c, int j)
 {
-	return (ft_isalpha(c) || c == '_' || (ft_isdigit(c) && j != 1));
+	return (ft_isalpha(c) || c == '_' || (ft_isdigit(c) && j != 1 ));
 }
 
 static int	quotes2(char c, int *state)
@@ -48,15 +48,16 @@ static ssize_t	count(char *in)
 		else if (in[i] == '$')
 		{
 			j = 1;
-			while (in[i + j] && is_valid_env(in[i + j], j))
+			if (j == 1 && in[j + i] == '?')
 				j++;
+			else
+				while (in[i + j] && is_valid_env(in[i + j], j))
+					j++;
 			i += j;
 		}
 		else
-		{
 			while (in[i] && in[i] != '\'' && in[i] != '"' && in[i] != '$')
 				i++;
-		}
 		num++;
 	}
 	return (num);
@@ -89,15 +90,16 @@ char	*str(char **in)
 	else if ((*in)[i] == '$')
 	{
 		j = 1;
-		while ((*in)[i + j] && is_valid_env((*in)[i + j], j))
+		if (j == 1 && (*in)[i + j] == '?')
 			j++;
+		else
+			while ((*in)[i + j] && is_valid_env((*in)[i + j], j))
+				j++;
 		i += j;
 	}
 	else
-	{
 		while ((*in)[i] && (*in)[i] != '\'' && (*in)[i] != '"' && (*in)[i] != '$')
 			i++;
-	}
 	out = ft_substr(*in, 0, i);
 	*in = *in + i;
 	return (out);
