@@ -1,5 +1,6 @@
 #include "../../header/execution.h"
 
+extern int g_signaln;
 /*
 UNUSED: Redirs are closed on duping.
 void	close_redirs(t_lex *cmds)
@@ -36,6 +37,13 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	return (temp);
 }
 
+void	sig_handler_parent(int sig)
+{
+	g_signaln = sig;
+	rl_on_new_line();
+	ft_putendl_fd("", 0);
+	rl_replace_line("", 0);
+}
 
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
@@ -77,7 +85,10 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 void	set_exit_status(t_minishell *mini, int status)
 {
 	if (WIFEXITED(status))
+	{
 		mini->error_code = WEXITSTATUS(status);
+		g_signaln = 0;
+	}
 	else
 		mini->error_code = EXIT_FAILURE;
 }
@@ -107,6 +118,7 @@ void	spawn_children(t_minishell *mini)
 	if (fill_struct(&exec, mini) == -1)
 		return ;
 	i = -1;
+	g_signaln = 0;
 	while(++i < exec.children_count)
 	{
 		exec.pids[i] = -2;
@@ -122,8 +134,15 @@ void	spawn_children(t_minishell *mini)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 	}
+	
+	if (mini->lex->cmd[0] && !ft_strcmp(mini->lex->cmd[0], "./minishell"))
+		signal(SIGINT, SIG_IGN);
+	else
+		signal(SIGINT, sig_handler_parent);
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
 	clean_after_exec(&exec, mini, NULL);
+	if (g_signaln != 0)
+		mini->error_code = 128 + g_signaln; 
 }
 

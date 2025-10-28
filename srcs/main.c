@@ -1,12 +1,14 @@
 #include "../header/minishell.h"
 
+int g_signaln = 0;
+
 void	sigint(int sig)
 {
 	rl_on_new_line();
 	ft_putendl_fd("", 1);
 	rl_replace_line("", 0);
 	rl_redisplay();
-	(void)sig;
+	g_signaln = sig;
 }
 
 void	execution(t_minishell *mini)
@@ -38,7 +40,7 @@ int	main(int argc, char **argv, char **env)
 	set_var(&mini, env, 1);
 	while (true)
 	{
-		signal(SIGQUIT, SIG_IGN); //
+		//signal(SIGQUIT, SIG_IGN); //
 		signal(SIGINT, sigint);
 		set_zero(&mini);
 		if (!my_read(&mini))

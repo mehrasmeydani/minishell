@@ -1,6 +1,8 @@
 #include "../header/minishell.h"
 #include <unistd.h>
 
+extern int g_signaln;
+
 static int	check_quotes(char *in)
 {
 	ssize_t	i;
@@ -480,6 +482,8 @@ int	my_read(t_minishell *mini)
 	mini->in = readline("minishell>");
 	if (!mini->in)
 		return (0); //error
+	if (g_signaln != 0)
+		mini->error_code = 128 + g_signaln;
 	add_history(mini->in);
 	if (!*(mini->in))
 		return (free(mini->in), mini->in = NULL, 1);
