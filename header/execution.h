@@ -36,4 +36,6 @@ void	my_pipe_dup(t_minishell *mini, t_exec *exec, size_t i);
 void	my_pipe_dup_close(t_exec *exec, size_t i);
 void	exit_or_return(t_exec *exec, t_minishell *mini, char *error, int excd);
 int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec);
+void	builtin_exit(t_exec *exec, t_minishell *mini, char *error, char **cmd);
+
 #endif

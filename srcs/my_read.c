@@ -1,4 +1,5 @@
 #include "../header/minishell.h"
+#include <unistd.h>
 
 static int	check_quotes(char *in)
 {
@@ -100,13 +101,13 @@ int	here_docrl(t_redirect *tmp, char *tmp_str)
 {
 	if (has_quotes(tmp->name))
 		tmp->input_expand = 1;
-	if (!remove_quotes(&tmp->name))
+	if (!remove_quotes_2(&tmp->name))
 		return(0);
 	while (true)
 	{
 		tmp_str = readline(">");
 		if (!tmp_str)
-			return (-1);
+			return (free(tmp->name), tmp->name = NULL, -1);
 		if (!ft_strcmp(tmp->name, tmp_str))
 		{
 			free(tmp_str);
@@ -458,6 +459,7 @@ int	expand_all(t_minishell *mini) //change
 	t_redirect	*red;
 	t_expand	exp;
 	ssize_t		i;
+	char		*tmp;
 
 	lex = mini->lex;
 	errno = 0;
@@ -482,9 +484,11 @@ int	expand_all(t_minishell *mini) //change
 			}
 			else if (red->level != HEREDOC)
 			{
-				red->name = expand(mini, red->name, mini->env, 0);
-				if (!red->name)
+				tmp = expand(mini, red->name, mini->env, 0);
+				if (!tmp)
 					return (0);
+				free(red->name);
+				red->name = tmp;
 				if (!has_quotes(red->name) && is_in(red->name, "\t\n\r\v\f "))
 					return (errno = 1, perror("ambiguous redirect"), 0);
 				if (!remove_quotes(&red->name))

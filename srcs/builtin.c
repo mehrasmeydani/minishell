@@ -1,4 +1,5 @@
 #include "../header/minishell.h"
+#include <unistd.h>
 
 int	is_builtin(char **cmd)
 {
@@ -31,7 +32,7 @@ int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 	if (!ft_strcmp(cmd[0], "env"))
 		return (env(mini), 1);
 	if (!ft_strcmp(cmd[0], "exit"))
-		return (close_exit(exec, mini, NULL, ft_atoi(cmd[1])), 1);
+		return (builtin_exit(exec, mini, NULL, cmd), 1);
 	if (!ft_strcmp(cmd[0], "export"))
 		return (export(mini, cmd));
 	if (!ft_strcmp(cmd[0], "echo"))

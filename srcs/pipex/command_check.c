@@ -1,4 +1,5 @@
 #include "../../header/execution.h"
+#include <unistd.h>
 // NULL t_lext->cmd[0] means the command wont be run as it does not exist!
 // how we handle redirections without commands like " < test2 > test4 > test7  | ls"
 
@@ -25,7 +26,6 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	char	*new_cmd;
 	
 	i = -1;
-
 	new_cmd = NULL;
 	errno = 0;
 	if (node->cmd[0] == NULL)
@@ -33,8 +33,8 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	if (ft_strchr(node->cmd[0], '/') != NULL)
 		return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
 	if (!pathlist)
-		return (*errorcode = 127, errno = ENOENT, NULL);
-	while (pathlist[++i] != NULL)
+		return (*errorcode = 126, errno = ENOENT, NULL);
+	while (pathlist && pathlist[++i] != NULL)
 	{
 		new_cmd = ft_strjoin(pathlist[i], node->cmd[0]);
 		if (!new_cmd)
@@ -42,12 +42,15 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 		if (access(new_cmd, F_OK) == 0)
 			break ;
 		free(new_cmd);
+		new_cmd = NULL;
 		if(pathlist[i+1] == NULL)
 			return (*errorcode = 127, NULL);
 	}
-		if (access(new_cmd, X_OK) != 0)
-			return(free(new_cmd), *errorcode = 126, NULL);
-		return(new_cmd);
+	if (!*pathlist)
+		return (*errorcode = 127, errno = ENOENT, NULL);
+	if (new_cmd && access(new_cmd, X_OK) != 0)
+		return(free(new_cmd), *errorcode = 126, NULL);
+	return(new_cmd);
 }
 
 // actually, i think it's better to have each child check its own cmd, ensuring

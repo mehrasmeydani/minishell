@@ -15,6 +15,7 @@
 # include "./lexer.h"
 # include "./env.h"
 # include "./expand.h"
+# include <limits.h>
 
 # define SINGLE 1
 # define DOUBLE 2

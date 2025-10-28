@@ -1,5 +1,6 @@
 #include "../header/minishell.h"
 #include "../header/redirect.h"
+#include <unistd.h>
 
 static t_lex	*lex_pipes(char **in, ssize_t i)
 {
@@ -103,6 +104,8 @@ t_lex	*lex_redir(t_lex *lex)
 			if (tmp->cmd[i][0] == '<' || tmp->cmd[i][0] == '>')
 			{
 				tmp_str = ft_strdup(tmp->cmd[i + 1]);
+				if (!tmp_str)
+					return (lex_clear(&lex, ft_free), NULL);
 				redir = redirect_new(tmp_str, find_type(tmp->cmd[i++]));
 				if (!redir)
 					return (lex_clear(&lex, ft_free), free(tmp_str), NULL);

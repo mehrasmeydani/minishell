@@ -47,6 +47,7 @@ clean:
 fclean: 	clean
 			@(${LIBFT} && make fclean)
 			${RM} ${NAME}
+			rm -rf mstest*
 
 re:			fclean all clean
 			
