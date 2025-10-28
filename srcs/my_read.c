@@ -1,6 +1,4 @@
 #include "../header/minishell.h"
-#include <readline/chardefs.h>
-#include <unistd.h>
 
 static int	check_quotes(char *in)
 {
@@ -462,6 +460,7 @@ int	expand_all(t_minishell *mini) //change
 	ssize_t		i;
 
 	lex = mini->lex;
+	errno = 0;
 	while (lex)
 	{
 		i = ft_str_str_len(lex->cmd);
@@ -486,6 +485,8 @@ int	expand_all(t_minishell *mini) //change
 				red->name = expand(mini, red->name, mini->env, 0);
 				if (!red->name)
 					return (0);
+				if (!has_quotes(red->name) && is_in(red->name, "\t\n\r\v\f "))
+					return (errno = 1, perror("ambiguous redirect"), 0);
 				if (!remove_quotes(&red->name))
 					return (0);
 			}
