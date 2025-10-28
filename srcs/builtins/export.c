@@ -1,4 +1,5 @@
 #include "../../header/minishell.h"
+#include <readline/chardefs.h>
 
 char *min_str(char **in)
 {
@@ -93,6 +94,11 @@ ssize_t	var_exists(t_env *env, char	*input, char *tmp)
 	return (-1);
 }
 
+int	is_valid_env2(char c, int j)
+{
+	return (ft_isalpha(c) || c == '_' || (ft_isdigit(c) && j != 0));
+}
+
 int	add_var(t_minishell *mini, char **cmd)
 {
 	t_env	*env;
@@ -109,9 +115,22 @@ int	add_var(t_minishell *mini, char **cmd)
 		tmp2 = ft_strchr(cmd[i], '=');
 		if (tmp2)
 		{
+			if (tmp2 == cmd[i])
+				return (0);
 			tmp2 = ft_substr(cmd[i], 0, tmp2 - cmd[i]);
 			if (!tmp2)
 				return (0);
+			j = -1;
+			while (i == 1 && tmp2[++j])
+				if (!is_valid_env2(tmp2[j], j))
+					return (free(tmp2), 0);
+		}
+		else
+		{
+			j = -1;
+			while (i == 1 && cmd[i][++j])
+				if (!is_valid_env2(cmd[i][j], j))
+					return (0);
 		}
 		k = var_exists(env, cmd[i], tmp2);
 		if (!tmp2 && k != -1)
