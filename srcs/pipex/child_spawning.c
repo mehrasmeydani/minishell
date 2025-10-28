@@ -47,7 +47,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	my_pipe_dup(mini, exec, i);
 	close_all_pipes(exec->pipe);
 	if (redirect_and_filecheck(cur) == -1)
-		return(exit_or_return(exec, mini, NULL, 2));
+		return(exit_or_return(exec, mini, NULL, 1));
 	if (is_builtin(cmd->cmd))
 	{
 		if (!exec_builtin(cmd->cmd, mini, exec))

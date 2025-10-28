@@ -1,4 +1,5 @@
 #include "../header/minishell.h"
+#include <unistd.h>
 
 static int	check_quotes(char *in)
 {
@@ -322,6 +323,8 @@ int	exp_reconnect(t_expands **_exp)
 			exp->str = ft_relocat(exp->str, tmp->str);
 			free(tmp->str);
 			tmp->str = NULL;
+			if (tmp->quotes)
+				exp->quotes = 1;
 		}
 		tmp = tmp->next;
 	}
@@ -337,9 +340,7 @@ int	exp_reconnect(t_expands **_exp)
 			tmp = exp;
 		}
 		else
-		{
 			exp = tmp;
-		}
 		tmp = tmp->next;
 	}
 	return (1);
@@ -366,9 +367,17 @@ char	**expand_exp(t_minishell *mini, t_expands **exp)
 	tmp = *exp;
 	while (tmp)
 	{
-		out[i] = tmp->str;
-		tmp->str = NULL;
-		i++;
+		if ((tmp->str && *tmp->str) || tmp->quotes)
+		{
+			out[i] = tmp->str;
+			tmp->str = NULL;
+			i++;
+		}
+		else
+		{
+			free(tmp->str);
+			tmp->str = NULL;
+		}
 		tmp = tmp->next;
 	}
 	return (out);
