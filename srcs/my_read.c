@@ -1,4 +1,5 @@
 #include "../header/minishell.h"
+#include <readline/chardefs.h>
 #include <unistd.h>
 
 static int	check_quotes(char *in)
@@ -100,7 +101,7 @@ int	here_docrl2(t_redirect *tmp, char *tmp_str)
 int	here_docrl(t_redirect *tmp, char *tmp_str)
 {
 	if (has_quotes(tmp->name))
-	tmp->input_expand = 1;
+		tmp->input_expand = 1;
 	if (!remove_quotes(&tmp->name))
 		return(0);
 	while (true)
@@ -456,6 +457,7 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 int	expand_all(t_minishell *mini) //change
 {
 	t_lex		*lex;
+	t_redirect	*red;
 	t_expand	exp;
 	ssize_t		i;
 
@@ -470,6 +472,25 @@ int	expand_all(t_minishell *mini) //change
 		if (!expand_tmp(mini, lex, &exp))
 			return (0);
 		free_exp(&exp);
+		red = lex->redic;
+		while (red)
+		{
+			if (red->level == HEREDOC && red->input_expand)
+			{
+				red->input = expand(mini, red->input, mini->env, 1);
+				if (!red->input)
+					return (0);
+			}
+			else if (red->level != HEREDOC)
+			{
+				red->name = expand(mini, red->name, mini->env, 0);
+				if (!red->name)
+					return (0);
+				if (!remove_quotes(&red->name))
+					return (0);
+			}
+			red = red->next;
+		}
 		lex = lex->next;
 	}
 	return (1);
