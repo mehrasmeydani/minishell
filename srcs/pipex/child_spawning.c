@@ -38,6 +38,25 @@ void	sig_handler_quit_parent(int sig)
 	ft_putendl_fd("", 0);
 	rl_replace_line("", 0);
 }
+/*
+int	run_builtin (t_minishell *mini, t_exec *exec, t_lex *cmd)
+{
+	if (is_builtin(cmd->cmd))
+	{
+		if (!exec_builtin(cmd->cmd, mini, exec))
+		{
+			if (exec->children_count > 1)
+				return (close_exit(exec, mini, cmd->cmd[0], 1), 0);
+			else
+				return ((void)(perror(cmd->cmd[0]), mini->error_code = 1), 0);
+		}
+		if (exec->children_count > 1)
+			close_exit(exec, mini, NULL, 0);
+	}
+		return (mini->error_code = 0, 1);
+
+}
+*/
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
