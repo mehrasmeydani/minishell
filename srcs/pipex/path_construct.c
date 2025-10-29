@@ -1,20 +1,5 @@
-// returns the path of arrays
-
 #include "../../header/execution.h"
 
-/*static int	isemptypath(char *path)
-{
-	size_t	i;
-
-	i = 0;
-	while (path[i])
-	{
-		if (path[i] != ' ')
-			return (0);
-		i++;
-	}
-	return (1);
-}*/
 static char	*findpath(char **envp)
 {
 	char	*path;
@@ -47,23 +32,7 @@ static char **sanitize_paths(char **pathlist)
 	}
 	return (pathlist);
 }
-/*static char	**emptysplit(void)
-{
-	char	**split;
 
-	split = malloc(2 * sizeof(char *));
-	if (!split)
-		return (NULL);
-	split[0] = ft_strdup("");
-	if (!split[0])
-	{
-		free(split);
-		return (NULL);
-	}
-	split[1] = NULL;
-	return (split);
-}
-*/
 char	**get_path_array(char **envp, bool *isemptypath)
 {
 	char	*envp_path;
