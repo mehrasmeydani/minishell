@@ -1,29 +1,6 @@
 #include "../../header/execution.h"
 
 extern int g_signaln;
-/*
-UNUSED: Redirs are closed on duping.
-void	close_redirs(t_lex *cmds)
-{
-	t_redirect	*redir;
-	
-	while (cmds != NULL)
-	{
-		redir = cmds->redic;
-		while (redir != NULL)
-		{
-			if (redir->fd != -1)
-			{
-				close(redir->fd);
-				redir->fd = -1;
-			}
-			redir = redir->next;
-		}
-		cmds = cmds->next;
-	}
-
-}
-*/
 
 t_lex	*find_current_cmd(t_lex *head, size_t pos)
 {
@@ -37,7 +14,7 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	return (temp);
 }
 
-void	sig_handler_parent(int sig)
+void	sig_handler_int_parent(int sig)
 {
 	g_signaln = sig;
 	rl_on_new_line();
@@ -45,6 +22,22 @@ void	sig_handler_parent(int sig)
 	rl_replace_line("", 0);
 }
 
+void	sig_handler_quit(int sig)
+{
+	g_signaln = sig;
+	rl_on_new_line();
+	ft_putendl_fd("", 0);
+	rl_replace_line("", 0);
+	exit(sig + 128);
+}
+
+void	sig_handler_quit_parent(int sig)
+{
+	(void)sig;
+	rl_on_new_line();
+	ft_putendl_fd("", 0);
+	rl_replace_line("", 0);
+}
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
@@ -69,6 +62,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 			close_exit(exec, mini, NULL, 0);
 		return ((void)(mini->error_code = 0));
 	}
+	signal(SIGQUIT, sig_handler_quit);
 	tmp = check_against_cmd(cmd, exec->pathlist, &mini->error_code);
 	if (!tmp)
 		close_exit(exec, mini, cmd->cmd[0], mini->error_code);
@@ -87,6 +81,11 @@ void	set_exit_status(t_minishell *mini, int status)
 	if (WIFEXITED(status))
 	{
 		mini->error_code = WEXITSTATUS(status);
+		g_signaln = 0;
+	}
+	if (WIFSIGNALED(status))
+	{
+		mini->error_code = WTERMSIG(status) + 128;
 		g_signaln = 0;
 	}
 	else
@@ -134,15 +133,13 @@ void	spawn_children(t_minishell *mini)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 	}
-	
+	signal(SIGQUIT, sig_handler_quit_parent);
 	if (mini->lex->cmd[0] && !ft_strcmp(mini->lex->cmd[0], "./minishell"))
 		signal(SIGINT, SIG_IGN);
 	else
-		signal(SIGINT, sig_handler_parent);
+		signal(SIGINT, sig_handler_int_parent);
 	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, &exec);
 	clean_after_exec(&exec, mini, NULL);
-	if (g_signaln != 0)
-		mini->error_code = 128 + g_signaln; 
 }
 

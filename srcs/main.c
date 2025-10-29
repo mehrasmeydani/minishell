@@ -40,7 +40,7 @@ int	main(int argc, char **argv, char **env)
 	set_var(&mini, env, 1);
 	while (true)
 	{
-		//signal(SIGQUIT, SIG_IGN); //
+		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, sigint);
 		set_zero(&mini);
 		if (!my_read(&mini))
