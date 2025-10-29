@@ -15,7 +15,7 @@
 long	ft_atol(const char *nptr)
 {
 	long		out;
-	ssize_t	j;
+	ssize_t		j;
 	long		sign;
 
 	if (!nptr)

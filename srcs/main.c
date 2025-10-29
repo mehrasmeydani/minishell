@@ -12,7 +12,7 @@ void	sigint(int sig)
 void	execution(t_minishell *mini)
 {
 	if (name_heredocs(mini) == -1)
-		return ; //failure, freeing and deleting handled
+		return ;
 	spawn_children(mini);
 	clear_heredoc_fns(mini->lex);
 }
@@ -38,7 +38,7 @@ int	main(int argc, char **argv, char **env)
 	set_var(&mini, env, 1);
 	while (true)
 	{
-		signal(SIGQUIT, SIG_IGN); //
+		signal(SIGQUIT, SIG_IGN);
 		signal(SIGINT, sigint);
 		set_zero(&mini);
 		if (!my_read(&mini))

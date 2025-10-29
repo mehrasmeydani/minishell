@@ -16,6 +16,7 @@
 # include "./env.h"
 # include "./expand.h"
 # include <limits.h>
+# include "./execution.h"
 
 # define SINGLE 1
 # define DOUBLE 2
@@ -30,8 +31,6 @@ typedef struct s_minishell
 	t_env		env;
 	int			error_code;
 }	t_minishell;
-
-# include "./execution.h"
 
 int		my_read(t_minishell *mini);
 char	**mini_split(char *in);

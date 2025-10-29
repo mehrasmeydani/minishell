@@ -1,6 +1,4 @@
 #include "../header/minishell.h"
-#include "../header/redirect.h"
-#include <unistd.h>
 
 static t_lex	*lex_pipes(char **in, ssize_t i)
 {
@@ -47,7 +45,7 @@ static int	find_type(char *str)
 
 int	clean_rest(t_lex *lex)
 {
-	t_lex 	*tmp;
+	t_lex	*tmp;
 	ssize_t	i;
 	ssize_t	str_len;
 	char	**tmp_str;

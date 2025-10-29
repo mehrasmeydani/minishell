@@ -8,6 +8,7 @@ static void	ft_swap(char **a, char **b)
 	*a = *b;
 	*b = why;
 }
+
 void	ft_sort_string_tab(char **tab)
 {
 	ssize_t		i;

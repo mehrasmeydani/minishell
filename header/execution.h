@@ -6,16 +6,18 @@
 # include "./minishell.h"
 # include <sys/wait.h>
 
-typedef struct	s_exec
+typedef struct s_minishell	t_minishell;
+
+typedef struct s_exec
 {
 	char	**pathlist;
-	size_t children_count;
+	size_t	children_count;
 	pid_t	*pids;
 	int		pipe[2][2];
 	int		status;
 	int		backup_stdin;
 	int		backup_stdout;
-}				t_exec;
+}	t_exec;
 
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode);
 void	freepaths(char **pathlist);
