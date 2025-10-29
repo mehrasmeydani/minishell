@@ -1,6 +1,66 @@
 #include "../header/minishell.h"
 #include <unistd.h>
 
+#define BUFFER_SIZE 42
+
+void	left(char *in, char left[BUFFER_SIZE + 1])
+{
+	char	*tmp;
+
+	tmp = ft_strchr(in, '\n') + 1;
+	left[0] = 0;
+	ft_strlcat(left, tmp, ft_strlen(tmp) + 1);
+	free(in);
+}
+
+char	*readfile(int fd, char *red)
+{
+	char		*buff;
+	ssize_t		r;
+
+	buff = (char *)ft_calloc(BUFFER_SIZE + 1, 1);
+	if (!buff)
+		return (free(red), NULL);
+	while (!red || !ft_strchr(red, '\n'))
+	{
+		r = read(fd, buff, BUFFER_SIZE);
+		if (r == -1)
+			return (free(red), free(buff), NULL);
+		if (r == 0)
+			break ;
+		buff[r] = 0;
+		red = ft_relocat(red, buff);
+		if (!red)
+			return (free(buff), NULL);
+	}
+	free(buff);
+	return (red);
+}
+
+char	*get_next_line(int fd)
+{
+	static char	red[BUFFER_SIZE + 1] = {};
+	char		*out;
+	char		*tmp;
+
+	tmp = ft_substr(red, 0, ft_strlen(red));
+	out = NULL;
+	if (fd < 0)
+		return (NULL);
+	tmp = readfile(fd, tmp);
+	if (!tmp)
+		return (red[0] = 0, NULL);
+	if (ft_strchr(tmp, '\n'))
+	{
+		out = ft_substr(tmp, 0, ft_strchr(tmp, '\n') - tmp + 1);
+		if (!out)
+			return (red[0] = 0, free(tmp), NULL);
+		left(tmp, red);
+		return (out);
+	}
+	return (red[0] = 0, out = tmp, out);
+}
+
 static int	check_quotes(char *in)
 {
 	ssize_t	i;
@@ -433,7 +493,7 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 	i = -1;
 	str2 =  (char ***)ft_calloc(ft_str_str_len(lex->cmd) + 1, sizeof(char **));
 	if (!str2)
-		return (0);
+		return (free_exp(exp), 0);
 	while (lex->cmd[++i])
 	{
 		str	= exp_split(lex->cmd[i]);
@@ -441,15 +501,14 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 			return (free(str2), free_exp(exp), 0);
 		exp->exp[i] = create_exp(str);
 		if (!exp->exp[i])
-			return (free(str2), free_exp(exp), 0);
+			return (ft_free(str), free(str2), free_exp(exp), 0);
 		free(str);
 		str2[i] = expand_exp(mini, &(exp->exp[i]));
 		if (!str2[i])
 			return (ft_free_free(str2), free_exp(exp), 0);
 	}
-	//;
 	if (!replace_command(lex, str2))
-		return (ft_free_free(str2), 0);
+		return (ft_free_free(str2), free_exp(exp),  0);
 	return (1);
 }
 
@@ -525,7 +584,8 @@ int	my_read(t_minishell *mini)
 	mini->out = NULL;
 	if (!mini->lex)
 		return (mini->error_code = -1, 1); // alloc fail
-	expand_all(mini);
+	if (!expand_all(mini))
+		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
 	if (!check_heredoc(mini->lex))
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); // alloc fail
 	return (1);
