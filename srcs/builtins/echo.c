@@ -1,21 +1,5 @@
 #include "../../header/minishell.h"
 
-static int	is_in(char *str, char *set)
-{
-	ssize_t i;
-	ssize_t	j;
-
-	i = -1;
-	while (str && str[++i])
-	{
-		j = -1;
-		while (set && set[++j])
-			if (str[i] == set[j])
-				return (1);
-	}
-	return (0);
-}
-
 void	echo(char **cmd)
 {
 	size_t	i;

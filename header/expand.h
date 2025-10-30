@@ -3,6 +3,7 @@
 
 # include "minishell.h"
 
+typedef struct s_minishell	t_minishell;
 typedef struct s_expands
 {
 	char				*str;
@@ -30,5 +31,17 @@ char		**split_2(char *str, char *charset);
 void		exp_removeandinject(t_expands **_exp, t_expands *remove,
 				t_expands *add);
 ssize_t		exp_len(t_expands *exp);
+int			redirect_exp(t_minishell *mini, t_redirect *red);
+int			exp_reconnect(t_expands **_exp);
+int			expand_sub(t_minishell *mini, t_expands **_exp);
+t_expands	*create_exp(char **in);
+int			exp_remove_quotes(t_expands *exp);
+void		ft_free_free(char ***str);
+void		free_exp(t_expand *exp);
+t_expands	*reparse(char **in, char *org);
+int			has_quotes(char *in);
+int			is_in(char *str, char *set);
+void		remove_quotes_3(char *str);
+void		ft_swap(char *a, char *b);
 
 #endif

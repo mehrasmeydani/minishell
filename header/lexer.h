@@ -17,5 +17,8 @@ t_lex	*lex_last(t_lex *lex);
 void	lex_addback(t_lex **lex, t_lex *new);
 t_lex	*lex_new(char **in);
 t_lex	*lexer(char **in);
+ssize_t	clean_rest_helper(t_lex *tmp);
+int		clean_rest_helper2(t_lex *tmp, char **tmp_str);
+int		lex_redir_helper(t_lex *lex, t_lex	*tmp, ssize_t i);
 
 #endif

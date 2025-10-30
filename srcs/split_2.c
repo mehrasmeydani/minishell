@@ -1,6 +1,6 @@
 #include "../header/minishell.h"
 
-static int	is_in(char c, char *base)
+static int	is_in2(char c, char *base)
 {
 	int	i;
 
@@ -22,13 +22,13 @@ static int	count(char *str, char *charset)
 	i = 0;
 	while (str[len_sub + len_sep])
 	{
-		while (is_in(str[len_sub + len_sep], charset)
+		while (is_in2(str[len_sub + len_sep], charset)
 			&& str[len_sub + len_sep])
 			len_sep++;
-		if (!is_in(str[len_sub + len_sep], charset)
+		if (!is_in2(str[len_sub + len_sep], charset)
 			&& str[len_sub + len_sep])
 			i++;
-		while (!is_in(str[len_sub + len_sep], charset)
+		while (!is_in2(str[len_sub + len_sep], charset)
 			&& str[len_sub + len_sep])
 			len_sub++;
 	}
@@ -41,9 +41,9 @@ static char	*skip(char *str, char *charset, int *len)
 
 	i = -1;
 	*len = 0;
-	while (is_in(*str, charset) && *str)
+	while (is_in2(*str, charset) && *str)
 		str++;
-	while (!is_in(str[++i], charset) && str[i])
+	while (!is_in2(str[++i], charset) && str[i])
 		*len = *len + 1;
 	return (str);
 }
