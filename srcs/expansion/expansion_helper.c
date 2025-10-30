@@ -2,7 +2,7 @@
 
 int	is_in(char *str, char *set)
 {
-	ssize_t i;
+	ssize_t	i;
 	ssize_t	j;
 
 	i = -1;
@@ -64,13 +64,13 @@ int	exp_reconnect(t_expands **_exp)
 	return (1);
 }
 
-int	sub_helper(t_expands **_exp, t_expands *exp, char *tmp)
+int	sub_helper(t_expands **_exp, t_expands **exp, char *tmp)
 {
 	char		**tmp2;
 	t_expands	*exp_tmp2;
 	t_expands	*exp_tmp;
 
-	if (!(exp->quotes) && is_in(tmp, "\t\n\r\v\f "))
+	if (!((*exp)->quotes) && is_in(tmp, "\t\n\r\v\f "))
 	{
 		tmp2 = split_2(tmp, "\t\n\r\v\f ");
 		if (!tmp2)
@@ -83,13 +83,13 @@ int	sub_helper(t_expands **_exp, t_expands *exp, char *tmp)
 		}
 		free(tmp);
 		free(tmp2);
-		exp_tmp2 = exp->next;
-		exp_removeandinject(_exp, exp, exp_tmp);
-		exp = exp_tmp2;
+		exp_tmp2 = (*exp)->next;
+		exp_removeandinject(_exp, (*exp), exp_tmp);
+		(*exp) = exp_tmp2;
 		return (-1);
 	}
-	free(exp->str);
-	exp->str = tmp;
+	free((*exp)->str);
+	(*exp)->str = tmp;
 	return (1);
 }
 
@@ -113,12 +113,12 @@ int	expand_sub(t_minishell *mini, t_expands **_exp)
 	exp = *_exp;
 	while (exp)
 	{
-		tmp = expand(mini, exp->str, mini->env, 0);
+		tmp = expand(mini, exp->str, 0);
 		if (!tmp)
 			return (0);
 		if (ft_strcmp(exp->str, tmp))
 		{
-			out = sub_helper(_exp, exp, tmp);
+			out = sub_helper(_exp, &exp, tmp);
 			if (!out)
 				return (0);
 			else if (out == -1)

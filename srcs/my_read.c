@@ -1,5 +1,4 @@
 #include "../header/minishell.h"
-#include <unistd.h>
 
 static int	check_quotes(char *in)
 {

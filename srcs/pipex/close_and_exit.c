@@ -1,7 +1,5 @@
 #include "../../header/execution.h"
-#include <limits.h>
-#include <readline/chardefs.h>
-#include <stdio.h>
+
 
 void	safe_close_fd(int *fd)
 {

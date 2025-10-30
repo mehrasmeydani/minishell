@@ -1,7 +1,6 @@
 #include "../../header/minishell.h"
-#include <readline/chardefs.h>
 
-char *min_str(char **in)
+char	*min_str(char **in)
 {
 	char	*out;
 	ssize_t	i;
@@ -14,7 +13,7 @@ char *min_str(char **in)
 	return (out);
 }
 
-char *max_str(char **in)
+char	*max_str(char **in)
 {
 	char	*out;
 	ssize_t	i;
@@ -71,7 +70,8 @@ void	print_export(t_minishell *mini)
 		print = max_str(env->var_name);
 		while (++j < env->allocated_l)
 		{
-			if (ft_strcmp(env->var_name[j], print) < 0 && ft_strcmp(env->var_name[j], last) > 0)
+			if (ft_strcmp(env->var_name[j], print) < 0
+				&& ft_strcmp(env->var_name[j], last) > 0)
 				print = env->var_name[j];
 		}
 		print_export2(print, env);
@@ -140,10 +140,10 @@ int	add_var(t_minishell *mini, char **cmd)
 			free(tmp2);
 			tmp = ft_duostrdup(env->raw_var, ft_str_str_len(env->raw_var));
 			if (!tmp)
-				return (0); // maybe free?
+				return (0);
 			tmp2 = ft_strdup(cmd[i]);
 			if (!tmp2)
-				return ft_free(tmp), (0); // maybe free?
+				return (ft_free(tmp), 0);
 			free(tmp[k]);
 			tmp[k] = tmp2;
 			free_env(env);
@@ -157,7 +157,7 @@ int	add_var(t_minishell *mini, char **cmd)
 			j = ft_str_str_len(env->raw_var);
 			tmp = ft_duostrdup(env->raw_var, j + 1);
 			if (!tmp)
-				return (0); // maybe free?
+				return (0);
 			tmp[ft_str_str_len(env->raw_var)] = ft_strdup(cmd[i]);
 			if (!tmp[ft_str_str_len(env->raw_var)])
 				return (ft_free(tmp), 0);

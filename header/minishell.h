@@ -59,7 +59,7 @@ char	**mini_split(char *in);
 /*********************expansion*********************/
 
 int		expand_all(t_minishell *mini);
-char	*expand(t_minishell *mini, char *in, t_env env, int here_doc);
+char	*expand(t_minishell *mini, char *in, int here_doc);
 
 /**********************env var**********************/
 

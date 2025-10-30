@@ -20,6 +20,17 @@ typedef struct s_expand
 	ssize_t		len;
 }	t_expand;
 
+typedef struct s_expansion
+{
+	ssize_t	i;
+	ssize_t	j;
+	char	*out;
+	char	*tmp;
+	char	*tmp_var;
+	int		quotes_state;
+	char	*tmp2;
+}	t_expansion;
+
 t_expands	*exp_new(char *in, bool back_space, bool front_space, int quotes);
 t_expands	*exp_last(t_expands *exp);
 void		exp_delone(t_expands *exp, void (*del)(void *));

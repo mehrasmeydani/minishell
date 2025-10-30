@@ -9,24 +9,11 @@ void	ft_swap(char *a, char *b)
 	*b = why;
 }
 
-char	**expand_exp(t_minishell *mini, t_expands **exp)
+void	exp_exp(t_expands *tmp, char **out)
 {
-	char		**out;
-	t_expands	*tmp;
-	ssize_t		i;
+	ssize_t	i;
 
-	out = NULL;
-	if (!expand_sub(mini, exp))
-		return (NULL);
-	if (!exp_remove_quotes(*exp))
-		return (NULL);
-	if (!exp_reconnect(exp))
-		return (NULL);
-	out = ft_calloc(exp_len(*exp) + 1, sizeof(char *));
-	if (!out)
-		return (NULL);
 	i = 0;
-	tmp = *exp;
 	while (tmp)
 	{
 		if ((tmp->str && *tmp->str) || tmp->quotes)
@@ -42,6 +29,23 @@ char	**expand_exp(t_minishell *mini, t_expands **exp)
 		}
 		tmp = tmp->next;
 	}
+}
+
+char	**expand_exp(t_minishell *mini, t_expands **exp)
+{
+	char		**out;
+
+	out = NULL;
+	if (!expand_sub(mini, exp))
+		return (NULL);
+	if (!exp_remove_quotes(*exp))
+		return (NULL);
+	if (!exp_reconnect(exp))
+		return (NULL);
+	out = ft_calloc(exp_len(*exp) + 1, sizeof(char *));
+	if (!out)
+		return (NULL);
+	exp_exp(*exp, out);
 	return (out);
 }
 
@@ -81,12 +85,12 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 	char	**str;
 
 	i = -1;
-	str2 =  (char ***)ft_calloc(ft_str_str_len(lex->cmd) + 1, sizeof(char **));
+	str2 = (char ***)ft_calloc(ft_str_str_len(lex->cmd) + 1, sizeof(char **));
 	if (!str2)
 		return (free_exp(exp), 0);
 	while (lex->cmd[++i])
 	{
-		str	= exp_split(lex->cmd[i]);
+		str = exp_split(lex->cmd[i]);
 		if (!str)
 			return (free(str2), free_exp(exp), 0);
 		exp->exp[i] = create_exp(str);
@@ -98,7 +102,7 @@ int	expand_tmp(t_minishell *mini, t_lex *lex, t_expand *exp)
 			return (ft_free_free(str2), free_exp(exp), 0);
 	}
 	if (!replace_command(lex, str2))
-		return (ft_free_free(str2), free_exp(exp),  0);
+		return (ft_free_free(str2), free_exp(exp), 0);
 	return (1);
 }
 
@@ -113,7 +117,7 @@ int	expand_all(t_minishell *mini)
 	while (lex)
 	{
 		i = ft_str_str_len(lex->cmd);
-		exp.exp	= ft_calloc(i, sizeof(t_expands *));
+		exp.exp = ft_calloc(i, sizeof(t_expands *));
 		if (!exp.exp)
 			return (0);
 		exp.len = i;

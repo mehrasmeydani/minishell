@@ -1,5 +1,4 @@
 #include "../../header/execution.h"
-#include <unistd.h>
 // NULL t_lext->cmd[0] means the command wont be run as it does not exist!
 // how we handle redirections without commands like " < test2 > test4 > test7  | ls"
 

@@ -28,7 +28,7 @@ t_expands	*create_exp(char **in)
 	return (out);
 }
 
-t_expands *reparse(char **in, char *org)
+t_expands	*reparse(char **in, char *org)
 {
 	ssize_t		i;
 	ssize_t		j;
@@ -44,10 +44,9 @@ t_expands *reparse(char **in, char *org)
 		if (in[j] && org[i] == in[j][0])
 		{
 			k = ft_strlen(in[j]);
-			tmp = exp_new(in[j],
-				((i > 0) && (ft_strchr("\t\n\r\v\f ", org[i - 1])))
-				, ((org[i + k])
-				&& (ft_strchr("\t\n\r\v\f ", org[i + k]))), 0);
+			tmp = exp_new(in[j], ((i > 0) && (ft_strchr("\t\n\r\v\f ",
+								org[i - 1]))), ((org[i + k])
+						&& (ft_strchr("\t\n\r\v\f ", org[i + k]))), 0);
 			if (!tmp)
 				return (exp_clear(&out, free), NULL);
 			exp_addback(&out, tmp);
@@ -66,13 +65,13 @@ int	redirect_exp(t_minishell *mini, t_redirect *red)
 	{
 		if (red->level == HEREDOC && red->input_expand)
 		{
-			red->input = expand(mini, red->input, mini->env, 1);
+			red->input = expand(mini, red->input, 1);
 			if (!red->input)
 				return (0);
 		}
 		else if (red->level != HEREDOC)
 		{
-			tmp = expand(mini, red->name, mini->env, 0);
+			tmp = expand(mini, red->name, 0);
 			if (!tmp)
 				return (0);
 			free(red->name);
