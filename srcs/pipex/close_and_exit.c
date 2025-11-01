@@ -31,11 +31,11 @@ void	builtin_exit(t_exec *exec, t_minishell *mini, char *error, char **cmd)
 		if ((i == 0 && !ft_isdigit(cmd[1][i]) && cmd[1][i] != '-' && cmd[1][i] != '+') || (i > 0 && !ft_isdigit(cmd[1][i])))
 			return (close_exit(exec, mini, error, 2));
 	}
-	if (!cmd[1][0] || ft_atol(cmd[1]) != ft_atoi(cmd[1]))
+	if (!cmd[1][0])
 		return (close_exit(exec, mini, error, 2));
 	if (j > 2)
 		return (close_exit(exec, mini, error, 1));
-	return (close_exit(exec, mini, error, ft_atoi(cmd[1])));
+	return (close_exit(exec, mini, error, (unsigned char)ft_atoi(cmd[1])));
 }
 
 void	close_exit(t_exec *exec, t_minishell *mini, char *error, int ex_code)

@@ -27,7 +27,6 @@ int	exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 		signal(SIGPIPE, SIG_IGN);
 	if (!cmd || !*cmd)
 		return (0);
-	errno = 0;
 	if (!ft_strcmp(cmd[0], "env"))
 		return (env(mini), 1);
 	if (!ft_strcmp(cmd[0], "exit"))

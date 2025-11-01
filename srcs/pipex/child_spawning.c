@@ -10,7 +10,7 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	temp = head;
 	i = -1;
 	while(++i < pos)
-	temp = temp->next;
+		temp = temp->next;
 	return (temp);
 }
 
@@ -158,7 +158,7 @@ void	spawn_children(t_minishell *mini)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 	}
-	signal(SIGQUIT, sig_handler_quit_parent);
+	signal(SIGQUIT, SIG_IGN);
 	if (mini->lex->cmd[0] && !ft_strcmp(mini->lex->cmd[0], "./minishell"))
 		signal(SIGINT, SIG_IGN);
 	else

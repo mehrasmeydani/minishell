@@ -7,7 +7,7 @@
 	$hi$USER -> error: lsmegardes: command not found
 	export hi="    ls     "
 	$hi$USER -> error: ls: cannot access 'megardes': No such file or directory
-... FIXED!
+... PENDING
 
 2.	$_ env set in parent with no pipes
 ... NOT NEEDED!
@@ -56,3 +56,9 @@ exits minishell if redirection check fails due to line first if condition
 12. echo -n-n whateve
 	should print -n-n
 	FIXED!
+
+13. unset PATH
+	cd /bin
+	ls
+	->should work and try an exec in cur dir
+	PENDING

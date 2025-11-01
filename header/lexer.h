@@ -3,6 +3,7 @@
 
 # include "redirect.h"
 # include <stdio.h>
+
 typedef struct s_lex
 {
 	char			**cmd;

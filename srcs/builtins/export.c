@@ -108,6 +108,7 @@ int	add_var(t_minishell *mini, char **cmd)
 	ssize_t	j;
 	ssize_t	k;
 
+	errno = 0;
 	env = &(mini->env);
 	i = 0;
 	while (cmd[++i])
@@ -116,21 +117,21 @@ int	add_var(t_minishell *mini, char **cmd)
 		if (tmp2)
 		{
 			if (tmp2 == cmd[i])
-				return (0);
+				return (errno = EINVAL, 0);
 			tmp2 = ft_substr(cmd[i], 0, tmp2 - cmd[i]);
 			if (!tmp2)
 				return (0);
 			j = -1;
 			while (i == 1 && tmp2[++j])
 				if (!is_valid_env2(tmp2[j], j))
-					return (free(tmp2), 0);
+					return (free(tmp2), errno = EINVAL, 0);
 		}
 		else
 		{
 			j = -1;
 			while (i == 1 && cmd[i][++j])
 				if (!is_valid_env2(cmd[i][j], j))
-					return (0);
+					return (errno = EINVAL, 0);
 		}
 		k = var_exists(env, cmd[i], tmp2);
 		if (!tmp2 && k != -1)
