@@ -21,7 +21,7 @@ void	close_exit(t_exec *exec, t_minishell *mini, char *error, int ex_code)
 	freepaths(exec->pathlist);
 	exec->pathlist = NULL;
 	close_all_pipes(exec->pipe);
-	if (error != NULL) // null when no error, pass a str for error.
+	if (error != NULL)
 		perror(error);
 	close(STDOUT_FILENO);
 	close(STDIN_FILENO);

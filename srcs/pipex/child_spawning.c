@@ -10,7 +10,7 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	temp = head;
 	i = -1;
 	while(++i < pos)
-		temp = temp->next;
+	temp = temp->next;
 	return (temp);
 }
 
@@ -57,6 +57,13 @@ int	run_builtin (t_minishell *mini, t_exec *exec, t_lex *cmd)
 
 }
 */
+
+void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec)
+{
+	execve(cmd_args[0], cmd_args, mini->env.var_pass_to_exec);
+	close_exit(exec, mini, "execution", 1);
+
+}
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
@@ -91,8 +98,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	cmd->cmd[0] = tmp;
 	free(exec->pids);
 	exec->pids = NULL;
-	if (execve(cmd->cmd[0], cmd->cmd, mini->env.var_pass_to_exec) == -1)
-		return (close_exit(exec, mini, "execution", 1));
+	execve_wrapper(cmd->cmd, mini, exec);
 }
 
 void	set_exit_status(t_minishell *mini, int status)
@@ -102,7 +108,7 @@ void	set_exit_status(t_minishell *mini, int status)
 		mini->error_code = WEXITSTATUS(status);
 		g_signaln = 0;
 	}
-	if (WIFSIGNALED(status))
+	else if (WIFSIGNALED(status))
 	{
 		mini->error_code = WTERMSIG(status) + 128;
 		g_signaln = 0;
@@ -120,7 +126,7 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 	i = -1;
 	while(++i < exec->children_count)
 	{
-		if (exec->pids[i] != -1)
+		if (exec->pids[i] != -1 && exec->pids[i] != -2)
 			waitpid(exec->pids[i], &status, 0);
 	}
 	set_exit_status(mini, status);
@@ -142,12 +148,12 @@ void	spawn_children(t_minishell *mini)
 		exec.pids[i] = -2;
 		current = mini->lex->redic;
 		if (pipe(exec.pipe[i % 2]) < 0)
-			return (clean_after_exec(&exec, mini, "pipe"),
-			wait_for_death(mini, &exec));
+			return (wait_for_death(mini, &exec),
+		   clean_after_exec(&exec, mini, "pipe"));
 		if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
 			if ((exec.pids[i] = fork()) == -1)
-				return (clean_after_exec(&exec, mini, "fork"),
-				wait_for_death(mini, &exec));// i should also wait here for all the previous commands!
+				return (wait_for_death(mini, &exec),
+				clean_after_exec(&exec, mini, "fork"));// i should also wait here for all the previous commands!
 		if (exec.pids[i] == 0 || exec.pids[i] == -2)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);

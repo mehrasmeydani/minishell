@@ -502,7 +502,7 @@ int	my_read(t_minishell *mini)
 	ft_free(mini->out);
 	mini->out = NULL;
 	if (!mini->lex)
-		return (mini->error_code = -1, 1); // alloc fail
+		return (mini->error_code = 1, 1); // alloc fail
 	expand_all(mini);
 	if (!check_heredoc(mini->lex))
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1); // alloc fail
