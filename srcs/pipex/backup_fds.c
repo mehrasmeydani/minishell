@@ -1,4 +1,5 @@
 #include "../../header/execution.h"
+
 void close_backups(t_exec *exec)
 {
 	safe_close_fd(&(exec->backup_stdin));

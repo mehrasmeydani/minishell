@@ -1,4 +1,4 @@
-#include "../header/minishell.h"
+#include "../header/expand.h"
 
 static int	is_in2(char c, char *base)
 {

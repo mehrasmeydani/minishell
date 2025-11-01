@@ -49,10 +49,16 @@ static int	check_syntax(t_minishell *mini, char **in)
 
 int	my_read2(t_minishell *mini)
 {
+	int	i;
+
 	if (!expand_all(mini))
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
-	if (!check_heredoc(mini->lex))
+	i = check_heredoc(mini->lex);
+	if (!i)
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
+	if (i == -1)
+		return (lex_clear(&(mini->lex), ft_free),
+			mini->lex = NULL, mini->error_code = 0, 1);
 	return (1);
 }
 

@@ -1,4 +1,5 @@
 #include "../../header/execution.h"
+#include "../../header/minishell.h"
 
 static size_t	count_cmds(t_lex *lex)
 {
@@ -53,7 +54,7 @@ int	fill_struct(t_exec *exec, t_minishell *mini)
 			exec->pathlist = NULL, close_backups(exec), -1);
 	while (++i < exec->children_count)
 		exec->pids[i] = -1;
- 	exec->pipe[0][0] = -1;
+	exec->pipe[0][0] = -1;
 	exec->pipe[0][1] = -1;
 	exec->pipe[1][0] = -1;
 	exec->pipe[1][1] = -1;

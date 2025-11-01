@@ -3,8 +3,13 @@
 
 # define FAIL -1
 
-# include "./minishell.h"
+# include "redirect.h"
+# include "lexer.h"
 # include <sys/wait.h>
+# include <stdbool.h>
+# include "libft.h"
+# include <fcntl.h>
+# include <errno.h>
 
 typedef struct s_minishell	t_minishell;
 
@@ -39,5 +44,8 @@ void	my_pipe_dup_close(t_exec *exec, size_t i);
 void	exit_or_return(t_exec *exec, t_minishell *mini, char *error, int excd);
 int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec);
 void	builtin_exit(t_exec *exec, t_minishell *mini, char *error, char **cmd);
+int		is_builtin(char **cmd);
+void	ft_free_free(char ***str);
+size_t	ft_str_str_len(char **in);
 
 #endif

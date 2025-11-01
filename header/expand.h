@@ -1,7 +1,11 @@
 #ifndef EXPAND_H
 # define EXPAND_H
 
-# include "minishell.h"
+# include "redirect.h"
+# include <stdio.h>
+# include <stdlib.h>
+# include <stdbool.h>
+# include "libft.h"
 
 typedef struct s_minishell	t_minishell;
 typedef struct s_expands
@@ -35,7 +39,7 @@ t_expands	*exp_new(char *in, bool back_space, bool front_space, int quotes);
 t_expands	*exp_last(t_expands *exp);
 void		exp_delone(t_expands *exp, void (*del)(void *));
 void		exp_clear(t_expands **exp, void (*del)(void *));
-void		exp_addback(t_expands **exp, t_expands *new);
+void		exp_addback(t_expands **exp, t_expands *add);
 char		**exp_split(char *in);
 int			is_valid_env(char c, int j);
 char		**split_2(char *str, char *charset);

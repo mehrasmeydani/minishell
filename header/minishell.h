@@ -47,7 +47,7 @@ int		cd(t_minishell *mini, char **cmd);
 int		pwd(void);
 void	echo(char **cmd);
 void	env(t_minishell *mini);
-int		export(t_minishell *mini, char **cmd);
+int		my_export(t_minishell *mini, char **cmd);
 int		is_builtin(char **cmd);
 int		unset(t_minishell *mini, char **cmd);
 

@@ -6,4 +6,5 @@
 		"stdio.h": "c",
 		"history.h": "c"
 	}
+	"clangd.inlayHints.enable": false
 }

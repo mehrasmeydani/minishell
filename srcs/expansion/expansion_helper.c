@@ -70,6 +70,7 @@ int	sub_helper(t_expands **_exp, t_expands **exp, char *tmp)
 	t_expands	*exp_tmp2;
 	t_expands	*exp_tmp;
 
+	exp_tmp = NULL;
 	if (!((*exp)->quotes) && is_in(tmp, "\t\n\r\v\f "))
 	{
 		tmp2 = split_2(tmp, "\t\n\r\v\f ");

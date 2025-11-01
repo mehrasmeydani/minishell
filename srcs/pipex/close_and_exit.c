@@ -1,5 +1,5 @@
 #include "../../header/execution.h"
-
+#include "../../header/minishell.h"
 
 void	safe_close_fd(int *fd)
 {

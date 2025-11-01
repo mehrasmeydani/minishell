@@ -1,4 +1,4 @@
-#include "../../header/minishell.h"
+#include "../../header/expand.h"
 
 void	exp_removeandinject(t_expands **_exp, t_expands *remove, t_expands *add)
 {

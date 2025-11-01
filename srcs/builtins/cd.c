@@ -25,7 +25,7 @@ static int	export_pwd(t_minishell *mini, char *dir)
 	free(cmd);
 	if (!exporting)
 		return (0);
-	if (export(mini, exporting) != 1)
+	if (my_export(mini, exporting) != 1)
 		return (ft_free(exporting), 0);
 	return (ft_free(exporting), 1);
 }
@@ -42,7 +42,7 @@ static int	export_oldpwd(t_minishell *mini, char *dir)
 	free(cmd);
 	if (!exporting)
 		return (0);
-	if (export(mini, exporting) != 1)
+	if (my_export(mini, exporting) != 1)
 		return (ft_free(exporting), 0);
 	return (ft_free(exporting), 1);
 }
