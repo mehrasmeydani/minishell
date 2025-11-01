@@ -25,7 +25,7 @@ int	heredoc_eof(t_redirect *tmp)
 			return (0);
 	}
 	return (ft_putendl_fd("Warning: EOF!", 2),
-			free(tmp->name), tmp->name = NULL, -1);
+		free(tmp->name), tmp->name = NULL, -1);
 }
 
 int	here_docrl(t_redirect *tmp, char *tmp_str)

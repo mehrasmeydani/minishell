@@ -7,7 +7,7 @@ static int	has_valid_args(char **cmd)
 	i = -1;
 	while (cmd[++i] != NULL)
 		if (i > 1)
-			return(errno = E2BIG, 0);
+			return (errno = E2BIG, 0);
 	if (i != 2)
 		return (errno = EINVAL, 0);
 	return (1);
@@ -55,16 +55,16 @@ static int	check_env_entry(char **var_name, bool ispwd)
 	while (var_name[++i] != NULL)
 	{
 		if (ispwd == true)
-			if(!ft_strcmp(var_name[i], "PWD"))
+			if (!ft_strcmp(var_name[i], "PWD"))
 				return (1);
 		if (ispwd == false)
-			if(!ft_strcmp(var_name[i], "OLDPWD"))
+			if (!ft_strcmp(var_name[i], "OLDPWD"))
 				return (1);
 	}
 	return (0);
 }
 
-int cd(t_minishell *mini, char **cmd)
+int	cd(t_minishell *mini, char **cmd)
 {
 	char	*prevdir;
 	char	*newdir;
@@ -84,7 +84,7 @@ int cd(t_minishell *mini, char **cmd)
 			return (free(prevdir), free(newdir), 0);
 	if (check_env_entry(mini->env.var_name, false) == 1)
 		if (!export_oldpwd(mini, prevdir))
-		   return (free(prevdir), free(newdir), 0);
+			return (free(prevdir), free(newdir), 0);
 	free(prevdir);
 	free(newdir);
 	return (1);
