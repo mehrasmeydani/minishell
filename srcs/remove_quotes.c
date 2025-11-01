@@ -1,5 +1,17 @@
 #include "../header/minishell.h"
 
+void	remove_quotes_3(char *str)
+{
+	ssize_t	i;
+
+	i = -1;
+	while (str[++i] && str[i + 1])
+	{
+		ft_swap(&(str[i]), &(str[i + 1]));
+	}
+	str[i - 1] = 0;
+}
+
 static ssize_t	count(char *in)
 {
 	ssize_t	i;
@@ -14,10 +26,10 @@ static ssize_t	count(char *in)
 		if (quotes(in[i + j], &quotes_status) && quotes_status)
 		{
 			j++;
-			while(quotes(in[i + j], &quotes_status) && quotes_status)
+			while (quotes(in[i + j], &quotes_status) && quotes_status)
 				i++;
 			j++;
-			continue;
+			continue ;
 		}
 		i++;
 	}
@@ -39,13 +51,13 @@ static char	*str(char *in, ssize_t i, int quotes_status)
 		if (quotes(in[i + j], &quotes_status) && quotes_status)
 		{
 			j++;
-			while(quotes(in[i + j], &quotes_status) && quotes_status)
+			while (quotes(in[i + j], &quotes_status) && quotes_status)
 			{
 				tmp[i] = in[j + i];
 				i++;
 			}
 			j++;
-			continue;
+			continue ;
 		}
 		tmp[i] = in[j + i];
 		i++;
@@ -69,7 +81,7 @@ int	remove_quotes_2(char **in)
 
 int	remove_quotes(char **in)
 {
-	ssize_t i;
+	ssize_t	i;
 
 	i = -1;
 	while (in && in[++i])

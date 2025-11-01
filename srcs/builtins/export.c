@@ -1,6 +1,6 @@
 #include "../../header/minishell.h"
 
-char *min_str(char **in)
+char	*min_str(char **in)
 {
 	char	*out;
 	ssize_t	i;
@@ -13,7 +13,7 @@ char *min_str(char **in)
 	return (out);
 }
 
-char *max_str(char **in)
+char	*max_str(char **in)
 {
 	char	*out;
 	ssize_t	i;
@@ -70,7 +70,8 @@ void	print_export(t_minishell *mini)
 		print = max_str(env->var_name);
 		while (++j < env->allocated_l)
 		{
-			if (ft_strcmp(env->var_name[j], print) < 0 && ft_strcmp(env->var_name[j], last) > 0)
+			if (ft_strcmp(env->var_name[j], print) < 0
+				&& ft_strcmp(env->var_name[j], last) > 0)
 				print = env->var_name[j];
 		}
 		print_export2(print, env);
@@ -93,6 +94,11 @@ ssize_t	var_exists(t_env *env, char	*input, char *tmp)
 	return (-1);
 }
 
+int	is_valid_env2(char c, int j)
+{
+	return (ft_isalpha(c) || c == '_' || (ft_isdigit(c) && j != 0));
+}
+
 int	add_var(t_minishell *mini, char **cmd)
 {
 	t_env	*env;
@@ -109,9 +115,22 @@ int	add_var(t_minishell *mini, char **cmd)
 		tmp2 = ft_strchr(cmd[i], '=');
 		if (tmp2)
 		{
+			if (tmp2 == cmd[i])
+				return (0);
 			tmp2 = ft_substr(cmd[i], 0, tmp2 - cmd[i]);
 			if (!tmp2)
 				return (0);
+			j = -1;
+			while (i == 1 && tmp2[++j])
+				if (!is_valid_env2(tmp2[j], j))
+					return (free(tmp2), 0);
+		}
+		else
+		{
+			j = -1;
+			while (i == 1 && cmd[i][++j])
+				if (!is_valid_env2(cmd[i][j], j))
+					return (0);
 		}
 		k = var_exists(env, cmd[i], tmp2);
 		if (!tmp2 && k != -1)
@@ -121,10 +140,10 @@ int	add_var(t_minishell *mini, char **cmd)
 			free(tmp2);
 			tmp = ft_duostrdup(env->raw_var, ft_str_str_len(env->raw_var));
 			if (!tmp)
-				return (0); // maybe free?
+				return (0);
 			tmp2 = ft_strdup(cmd[i]);
 			if (!tmp2)
-				return ft_free(tmp), (0); // maybe free?
+				return (ft_free(tmp), 0);
 			free(tmp[k]);
 			tmp[k] = tmp2;
 			free_env(env);
@@ -138,7 +157,7 @@ int	add_var(t_minishell *mini, char **cmd)
 			j = ft_str_str_len(env->raw_var);
 			tmp = ft_duostrdup(env->raw_var, j + 1);
 			if (!tmp)
-				return (0); // maybe free?
+				return (0);
 			tmp[ft_str_str_len(env->raw_var)] = ft_strdup(cmd[i]);
 			if (!tmp[ft_str_str_len(env->raw_var)])
 				return (ft_free(tmp), 0);
@@ -151,7 +170,7 @@ int	add_var(t_minishell *mini, char **cmd)
 	return (1);
 }
 
-int	export(t_minishell *mini, char **cmd)
+int	my_export(t_minishell *mini, char **cmd)
 {
 	if (ft_str_str_len(cmd) > 1)
 		return (add_var(mini, cmd));

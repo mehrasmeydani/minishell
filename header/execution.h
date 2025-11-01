@@ -3,19 +3,26 @@
 
 # define FAIL -1
 
-# include "./minishell.h"
+# include "redirect.h"
+# include "lexer.h"
 # include <sys/wait.h>
+# include <stdbool.h>
+# include "libft.h"
+# include <fcntl.h>
+# include <errno.h>
 
-typedef struct	s_exec
+typedef struct s_minishell	t_minishell;
+
+typedef struct s_exec
 {
 	char	**pathlist;
-	size_t children_count;
+	size_t	children_count;
 	pid_t	*pids;
 	int		pipe[2][2];
 	int		status;
 	int		backup_stdin;
 	int		backup_stdout;
-}				t_exec;
+}	t_exec;
 
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode);
 void	freepaths(char **pathlist);
@@ -36,4 +43,9 @@ void	my_pipe_dup(t_minishell *mini, t_exec *exec, size_t i);
 void	my_pipe_dup_close(t_exec *exec, size_t i);
 void	exit_or_return(t_exec *exec, t_minishell *mini, char *error, int excd);
 int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec);
+void	builtin_exit(t_exec *exec, t_minishell *mini, char *error, char **cmd);
+int		is_builtin(char **cmd);
+void	ft_free_free(char ***str);
+size_t	ft_str_str_len(char **in);
+
 #endif

@@ -1,4 +1,5 @@
 #include "../../header/execution.h" // cahnge to the header folder on merge
+
 static void	check_infile(t_redirect *file)
 {
 	if (access(file->name, F_OK) == -1)
@@ -86,11 +87,28 @@ static void	dup_redirs(t_redirect *file)
 	}
 }
 
+// static int	is_in(char *str, char *set)
+// {
+// 	ssize_t i;
+// 	ssize_t	j;
+
+// 	i = -1;
+// 	while (str && str[++i])
+// 	{
+// 		j = -1;
+// 		while (set && set[++j])
+// 			if (str[i] == set[j])
+// 				return (1);
+// 	}
+// 	return (0);
+// }
+
 int	redirect_and_filecheck(t_redirect *head)
 {
 	t_redirect	*temp;
 	
 	temp = head;
+	errno = 0;
 	while(temp != NULL)
 	{
 		if (temp->level == INFILE || temp->level == HEREDOC)

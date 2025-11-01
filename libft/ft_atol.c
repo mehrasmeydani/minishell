@@ -1,35 +1,34 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_memmove.c                                       :+:      :+:    :+:   */
+/*   ft_atol.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/04/16 17:30:48 by mehras            #+#    #+#             */
-/*   Updated: 2025/11/01 16:37:12 by megardes         ###   ########.fr       */
+/*   Updated: 2025/10/28 23:48:40 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../header/libft.h"
 
-void	*ft_memmove(void *dest, const void *src, size_t n)
+long	ft_atol(const char *nptr)
 {
-	unsigned char	*ptr1;
-	unsigned char	*ptr2;
+	long		out;
+	ssize_t		j;
+	long		sign;
 
-	if (!(char *)src && !(char *)dest)
-		return (NULL);
-	ptr1 = (unsigned char *)dest;
-	ptr2 = (unsigned char *)src;
-	if (ptr1 < ptr2)
-		while (n--)
-			*ptr1++ = *ptr2++;
-	else
-	{
-		ptr1 = ptr1 + (n - 1);
-		ptr2 = ptr2 + (n - 1);
-		while (n--)
-			*ptr1-- = *ptr2--;
-	}
-	return (dest);
+	if (!nptr)
+		return (0);
+	out = 0;
+	j = -1;
+	sign = 1;
+	while (nptr[++j] == 32 || (nptr[j] >= 9 && nptr[j] <= 13))
+		;
+	if ((nptr[j] == '-' || nptr[j] == '+') && ++j)
+		if (nptr[j - 1] == '-')
+			sign = -1;
+	while (nptr[j] >= '0' && nptr[j] <= '9')
+		out = out * 10 + nptr[j++] - '0';
+	return (out * sign);
 }

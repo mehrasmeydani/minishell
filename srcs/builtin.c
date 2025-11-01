@@ -21,7 +21,7 @@ int	is_builtin(char **cmd)
 	return (0);
 }
 
-int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
+int	exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 {
 	if (exec->children_count != 1)
 		signal(SIGPIPE, SIG_IGN);
@@ -31,15 +31,15 @@ int		exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 	if (!ft_strcmp(cmd[0], "env"))
 		return (env(mini), 1);
 	if (!ft_strcmp(cmd[0], "exit"))
-		return (close_exit(exec, mini, NULL, ft_atoi(cmd[1])), 1);
+		return (builtin_exit(exec, mini, NULL, cmd), 1);
 	if (!ft_strcmp(cmd[0], "export"))
-		return (export(mini, cmd));
+		return (my_export(mini, cmd));
 	if (!ft_strcmp(cmd[0], "echo"))
-		return(echo(cmd), 1);
+		return (echo(cmd), 1);
 	if (!ft_strcmp(cmd[0], "cd"))
-		return(cd(mini, cmd));
+		return (cd(mini, cmd));
 	if (!ft_strcmp(cmd[0], "pwd"))
-		return(pwd());
+		return (pwd());
 	if (!ft_strcmp(cmd[0], "unset"))
 		return (unset(mini, cmd));
 	return (1);

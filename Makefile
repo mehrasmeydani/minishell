@@ -1,3 +1,6 @@
+EXPAND2_PRE	= expansion/
+EXPAND2_SRC	= expansion.c expansion_helper.c redirect_expansion.c
+
 EXPAND_PRE	= expand_tools/
 EXPAND_SRC	= exp_addback.c exp_clear.c exp_delone.c exp_last.c exp_new.c exp_split.c\
 			exp_removeinject.c exp_len.c
@@ -19,7 +22,8 @@ SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c ft_duostrdup.c lexer.c\
 			${addprefix ${LEX_PRE}, ${LEX_SRC}} ${addprefix ${REDIR_PRE}, ${REDIR_SRC}}\
 			remove_quotes.c expand.c preset_var.c env_var.c ${addprefix ${PIPE_PRE}, ${PIPE_SRC}}\
 			${addprefix ${BUILT_PRE}, ${BUILT_SRC}} builtin.c ${addprefix ${EXPAND_PRE}, ${EXPAND_SRC}}\
-			split_2.c
+			split_2.c lexer_helper.c ${addprefix ${EXPAND2_PRE}, ${EXPAND2_SRC}} ft_relocat.c\
+			heredoc.c ft_free_free.c env_var_helper.c
 SRCS		= ${addprefix ${PRE}, ${SRC}}
 PRE			= ./srcs/
 HEAD		= ./header/
@@ -47,6 +51,7 @@ clean:
 fclean: 	clean
 			@(${LIBFT} && make fclean)
 			${RM} ${NAME}
+			rm -rf mstest*
 
 re:			fclean all clean
 			

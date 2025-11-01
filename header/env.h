@@ -10,4 +10,8 @@ typedef struct s_env
 	ssize_t	allocated_l;
 }	t_env;
 
+int	set_pass_to_exec(t_env *env);
+int	shlvl_i(t_env *env, int lvl, ssize_t i);
+int	set_name_value(t_env *env, int start);
+
 #endif
