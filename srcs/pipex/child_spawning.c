@@ -11,7 +11,7 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	i = -1;
 	while(++i < pos)
 	temp = temp->next;
-	return (temp);
+return (temp);
 }
 
 void	sig_handler_int_parent(int sig)
@@ -62,8 +62,8 @@ void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec)
 {
 	execve(cmd_args[0], cmd_args, mini->env.var_pass_to_exec);
 	close_exit(exec, mini, "execution", 1);
-
 }
+
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
