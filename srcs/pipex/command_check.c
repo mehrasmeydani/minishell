@@ -54,8 +54,16 @@ int	is_a_dir(char *cmd, int *errorcode)
 		return (*errorcode = 1, -1);
 	if (S_ISDIR(stats.st_mode))
 		return (*errorcode = 126, errno = EISDIR, 1);
-	return 0;
+	return (0);
 }
+
+char	*absolute_cmd_or_dir(char *cmd, int *errorcode)
+{
+	if (!is_a_dir(cmd, errorcode))
+		return (get_cmd_absolute(cmd, errorcode));
+	return (NULL);
+}
+
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 {
 	ssize_t	i;
@@ -65,11 +73,7 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	if (node->cmd[0] == NULL)
 		return (NULL);
 	if (ft_strchr(node->cmd[0], '/') != NULL)
-	{
-		if (!is_a_dir(node->cmd[0], errorcode))
-			return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
-		return (NULL);
-	}
+		return (absolute_cmd_or_dir(node->cmd[0], errorcode));
 	if (!pathlist)
 		return (unset_path_cmd(node->cmd[0], errorcode));
 	while (pathlist && pathlist[++i] != NULL)
