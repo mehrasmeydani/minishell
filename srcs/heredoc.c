@@ -16,6 +16,18 @@ int	here_docrl2(t_redirect *tmp, char *tmp_str)
 	return (1);
 }
 
+int	heredoc_eof(t_redirect *tmp)
+{
+	if (tmp->input)
+	{
+		tmp->input = ft_relocat(tmp->input, "\n");
+		if (!tmp->input)
+			return (0);
+	}
+	return (ft_putendl_fd("Warning: EOF!", 2),
+			free(tmp->name), tmp->name = NULL, -1);
+}
+
 int	here_docrl(t_redirect *tmp, char *tmp_str)
 {
 	if (has_quotes(tmp->name))
@@ -26,7 +38,7 @@ int	here_docrl(t_redirect *tmp, char *tmp_str)
 	{
 		tmp_str = readline(">");
 		if (!tmp_str)
-			return (free(tmp->name), tmp->name = NULL, -1);
+			return (heredoc_eof(tmp));
 		if (!ft_strcmp(tmp->name, tmp_str))
 		{
 			free(tmp_str);
