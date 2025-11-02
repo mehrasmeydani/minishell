@@ -128,7 +128,7 @@ int	export_syntax(char **cmd, ssize_t i, char **tmp2)
 
 int	add_var1(t_minishell *mini, char *tmp2, char *cmd, ssize_t k)
 {
-	char **tmp;
+	char	**tmp;
 
 	free(tmp2);
 	tmp = ft_duostrdup(mini->env.raw_var, ft_str_str_len(mini->env.raw_var));

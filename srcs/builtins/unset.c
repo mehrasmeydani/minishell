@@ -2,7 +2,7 @@
 
 static void	ft_swap2(char **a, char **b)
 {
-	char *why;
+	char	*why;
 
 	why = *a;
 	*a = *b;
@@ -26,7 +26,7 @@ int	unset_helper(t_env *env, char *cmd)
 	return (1);
 }
 
-int		unset(t_minishell *mini, char **cmd)
+int	unset(t_minishell *mini, char **cmd)
 {
 	ssize_t	i;
 	char	**tmp;

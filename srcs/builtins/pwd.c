@@ -1,5 +1,6 @@
 #include "../../header/minishell.h"
-int	pwd()
+
+int	pwd(void)
 {
 	char	*currdir;
 

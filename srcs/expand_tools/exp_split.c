@@ -2,7 +2,7 @@
 
 int	is_valid_env(char c, int j)
 {
-	return (ft_isalpha(c) || c == '_' || (ft_isdigit(c) && j != 1 ));
+	return (ft_isalpha(c) || c == '_' || (ft_isdigit(c) && j != 1));
 }
 
 static int	quotes2(char c, int *state)
@@ -98,7 +98,8 @@ char	*str(char **in)
 		i += j;
 	}
 	else
-		while ((*in)[i] && (*in)[i] != '\'' && (*in)[i] != '"' && (*in)[i] != '$')
+		while ((*in)[i] && (*in)[i] != '\''
+			&& (*in)[i] != '"' && (*in)[i] != '$')
 			i++;
 	out = ft_substr(*in, 0, i);
 	*in = *in + i;
@@ -111,7 +112,7 @@ char	**exp_split(char *in)
 	ssize_t	num;
 	ssize_t	i;
 
-	num	= count(in);
+	num = count(in);
 	out = ft_calloc(num + 1, sizeof(char *));
 	if (!out)
 		return (NULL);
