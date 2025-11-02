@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   my_read.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:46:33 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 17:46:33 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/11/02 18:54:06 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ int	my_read(t_minishell *mini)
 		mini->error_code = 128 + g_signaln;
 		g_signaln = 0;
 	}
-	//add_history(mini->in);
+	add_history(mini->in);
 	if (!*(mini->in))
 		return (free(mini->in), mini->in = NULL, 1);
 	if (!check_quotes(mini->in))

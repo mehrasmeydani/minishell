@@ -6,11 +6,11 @@
 /*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:46:42 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 18:52:40 by megardes         ###   ########.fr       */
+/*   Updated: 2025/11/02 18:53:42 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../header/expand.h"
+#include "../header/minishell.h"
 
 static int	is_in2(char c, char *base)
 {
