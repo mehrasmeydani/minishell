@@ -50,5 +50,7 @@ size_t	ft_str_str_len(char **in);
 void	sig_handler_int_parent(int sig);
 void	sig_handler_quit(int sig);
 void	sig_handler_quit_parent(int sig);
+void	wait_for_death(t_minishell *mini, t_exec *exec);
+void	run_builtin(char **cmd_args, t_minishell *mini, t_exec *exec);
 
 #endif
