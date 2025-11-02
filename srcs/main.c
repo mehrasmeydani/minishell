@@ -1,6 +1,6 @@
 #include "../header/minishell.h"
 
-int g_signaln = 0;
+int	g_signaln = 0;
 
 void	sigint(int sig)
 {
@@ -44,7 +44,8 @@ int	main(int argc, char **argv, char **env)
 		signal(SIGINT, sigint);
 		set_zero(&mini);
 		if (!my_read(&mini))
-			return (rl_clear_history(), free_env(&mini.env), close(1),close(0),  mini.error_code);
+			return (rl_clear_history(), free_env(&mini.env),
+				close(1), close(0), mini.error_code);
 		if (!mini.lex)
 			continue ;
 		execution(&mini);

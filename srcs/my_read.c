@@ -1,6 +1,6 @@
 #include "../header/minishell.h"
 
-extern int g_signaln;
+extern int	g_signaln;
 
 static int	check_quotes(char *in)
 {
@@ -53,6 +53,10 @@ int	my_read2(t_minishell *mini)
 {
 	int	i;
 
+	ft_free(mini->out);
+	mini->out = NULL;
+	if (!mini->lex)
+		return (mini->error_code = 1, 1);
 	i = check_heredoc(mini->lex, mini);
 	if (!i)
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
@@ -60,7 +64,8 @@ int	my_read2(t_minishell *mini)
 		return (lex_clear(&(mini->lex), ft_free),
 			mini->lex = NULL, mini->error_code = 0, 1);
 	if (i == 2)
-		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, mini->error_code = 130, 1);
+		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL,
+			mini->error_code = 130, 1);
 	if (!expand_all(mini))
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
 	return (1);
@@ -91,9 +96,5 @@ int	my_read(t_minishell *mini)
 		return (ft_free(mini->out), mini->out = NULL
 			, ft_putendl_fd("syntax error", 2), mini->error_code = 2, 1);
 	mini->lex = lexer(mini->out);
-	ft_free(mini->out);
-	mini->out = NULL;
-	if (!mini->lex)
-		return (mini->error_code = 1, 1);
 	return (my_read2(mini));
 }
