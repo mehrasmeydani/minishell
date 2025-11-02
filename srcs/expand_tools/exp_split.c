@@ -31,8 +31,6 @@ static ssize_t	count(char *in)
 	return (num);
 }
 
-
-
 char	*str(char **in)
 {
 	ssize_t	i;
