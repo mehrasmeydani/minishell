@@ -63,11 +63,13 @@ int	redirect_exp(t_minishell *mini, t_redirect *red)
 
 	while (red)
 	{
-		if (red->level == HEREDOC && red->input_expand)
+		if (red->level == HEREDOC && red->input_expand != 1)
 		{
-			red->input = expand(mini, red->input, 1);
-			if (!red->input)
+			tmp = expand(mini, red->input, 1);
+			if (!tmp)
 				return (0);
+			free(red->input);
+			red->input = tmp;
 		}
 		else if (red->level != HEREDOC)
 		{
