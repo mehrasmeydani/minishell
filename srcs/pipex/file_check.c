@@ -1,4 +1,4 @@
-#include "../../header/execution.h" // cahnge to the header folder on merge
+#include "../../header/execution.h"
 
 static void	check_infile(t_redirect *file)
 {
@@ -19,7 +19,7 @@ static void	check_infile(t_redirect *file)
 
 static void	check_outfile(t_redirect *file)
 {
-	if(access(file->name, F_OK) == -1)
+	if (access(file->name, F_OK) == -1)
 		file->fd = open(file->name, O_WRONLY | O_CREAT, 0644);
 	else if (access(file->name, W_OK) == 0)
 		file->fd = open(file->name, O_WRONLY | O_TRUNC);
@@ -32,7 +32,7 @@ static void	check_outfile(t_redirect *file)
 
 static void	check_append(t_redirect *file)
 {
-	if(access(file->name, F_OK) == -1)
+	if (access(file->name, F_OK) == -1)
 		file->fd = open(file->name, O_WRONLY | O_CREAT, 0644);
 	else if (access(file->name, W_OK) == 0)
 		file->fd = open(file->name, O_WRONLY | O_APPEND);
@@ -43,35 +43,15 @@ static void	check_append(t_redirect *file)
 	}
 }
 
-
-/*static void	check_heredoc(t_redirect *file) // filenames need to be generated in the temp name
-{
-	
-	file->fd = open("test", O_CREAT | O_RDWR, 0600);
-	if (file->fd == -1)
-	{
-		perror("heredoc");
-		return ;
-	}
-	write(file->fd, file->input, ft_strlen(file->input));
-	close(file->fd);
-	file->fd = open("test", O_RDONLY);
-	if (file->fd == -1)
-	{
-		perror("heredoc");
-		return ;
-	}
-}
-*/
 static void	dup_redirs(t_redirect *file)
 {
-	if (file->level == INFILE || file->level == HEREDOC) // or heredoc
+	if (file->level == INFILE || file->level == HEREDOC)
 	{
 		if (dup2(file->fd, STDIN_FILENO) == -1)
 		{
-				close(file->fd);
-				file->fd = FAIL;
-				return ;
+			close(file->fd);
+			file->fd = FAIL;
+			return ;
 		}
 		close(file->fd);
 	}
@@ -87,29 +67,13 @@ static void	dup_redirs(t_redirect *file)
 	}
 }
 
-// static int	is_in(char *str, char *set)
-// {
-// 	ssize_t i;
-// 	ssize_t	j;
-
-// 	i = -1;
-// 	while (str && str[++i])
-// 	{
-// 		j = -1;
-// 		while (set && set[++j])
-// 			if (str[i] == set[j])
-// 				return (1);
-// 	}
-// 	return (0);
-// }
-
 int	redirect_and_filecheck(t_redirect *head)
 {
 	t_redirect	*temp;
-	
+
 	temp = head;
 	errno = 0;
-	while(temp != NULL)
+	while (temp != NULL)
 	{
 		if (temp->level == INFILE || temp->level == HEREDOC)
 			check_infile(temp);
@@ -118,12 +82,11 @@ int	redirect_and_filecheck(t_redirect *head)
 		else if (temp->level == APPEND)
 			check_append(temp);
 		if (temp->fd == FAIL)
-			return (-1); // child should be cleaned of memory, fds, etc.take into account this might be in parent
+			return (-1);
 		dup_redirs(temp);
 		if (temp->fd == FAIL)
-			return(perror("dup redirections"), -1);
+			return (perror("dup redirections"), -1);
 		temp = temp->next;
 	}
 	return (1);
 }
-

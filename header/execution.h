@@ -52,5 +52,8 @@ void	sig_handler_quit(int sig);
 void	sig_handler_quit_parent(int sig);
 void	wait_for_death(t_minishell *mini, t_exec *exec);
 void	run_builtin(char **cmd_args, t_minishell *mini, t_exec *exec);
+void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec);
+int		fork_wrapper(t_exec *exec, size_t i);
+char	*get_cmd_with_slashes(t_lex *node, int *errorcode);
 
 #endif

@@ -1,6 +1,6 @@
 #include "../../header/minishell.h"
 
-extern int g_signaln;
+extern int	g_signaln;
 
 void	sig_handler_int_parent(int sig)
 {
@@ -26,4 +26,3 @@ void	sig_handler_quit_parent(int sig)
 	ft_putendl_fd("", 0);
 	rl_replace_line("", 0);
 }
-

@@ -1,4 +1,5 @@
 #include "../../header/execution.h"
+
 void	freepaths(char **pathlist)
 {
 	size_t	i;
@@ -14,4 +15,3 @@ void	freepaths(char **pathlist)
 	}
 	free(pathlist);
 }
-

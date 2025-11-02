@@ -16,13 +16,13 @@ static char	*findpath(char **envp)
 	return (NULL);
 }
 
-static char **sanitize_paths(char **pathlist)
+static char	**sanitize_paths(char **pathlist)
 {
 	ssize_t	i;
 	char	*temp;
 
 	i = -1;
-	while(pathlist[++i] != NULL)
+	while (pathlist[++i] != NULL)
 	{
 		temp = ft_strjoin(pathlist[i], "/");
 		if (!temp)
@@ -42,7 +42,7 @@ char	**get_path_array(char **envp, bool *isemptypath)
 	if (!envp_path)
 		return (*isemptypath = true, NULL);
 	pathlist = ft_split(envp_path, ':');
-	if(!pathlist)
+	if (!pathlist)
 		return (NULL);
 	pathlist = sanitize_paths(pathlist);
 	return (pathlist);

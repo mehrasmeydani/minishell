@@ -14,12 +14,6 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	return (temp);
 }
 
-void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec)
-{
-	execve(cmd_args[0], cmd_args, mini->env.var_pass_to_exec);
-	close_exit(exec, mini, "execution", 1);
-}
-
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
@@ -56,14 +50,6 @@ void	parent_post_child_cleanup(t_minishell *mini, t_exec *exec)
 	if (exec->children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, exec);
 	clean_after_exec(exec, mini, NULL);
-}
-
-int	fork_wrapper(t_exec *exec, size_t i)
-{
-	exec->pids[i] = fork();
-	if (exec->pids[i] == -1)
-		return (-1);
-	return (1);
 }
 
 void	spawn_children(t_minishell *mini)

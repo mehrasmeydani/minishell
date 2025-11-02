@@ -1,6 +1,5 @@
 #include "../../header/minishell.h"
 
-
 void	gen_filename(t_redirect *file)
 {
 	ssize_t	i;
@@ -11,7 +10,7 @@ void	gen_filename(t_redirect *file)
 	if (access("/tmp", F_OK | X_OK) == -1)
 		return ;
 	i = -1;
-	while(++i <= 100000)
+	while (++i <= 100000)
 	{
 		num = ft_itoa(i);
 		if (!num)
@@ -27,13 +26,15 @@ void	gen_filename(t_redirect *file)
 	}
 	errno = EEXIST;
 }
+
 void	clear_heredoc_fns(t_lex *cmds)
 {
-	t_redirect *files;
-	while(cmds != NULL)
+	t_redirect	*files;
+
+	while (cmds != NULL)
 	{
 		files = cmds->redic;
-		while(files != NULL)
+		while (files != NULL)
 		{
 			if (files->level == HEREDOC && files->name != NULL)
 			{
@@ -47,9 +48,11 @@ void	clear_heredoc_fns(t_lex *cmds)
 		cmds = cmds->next;
 	}
 }
+
 int	cpy_heredoc(t_redirect *file)
 {
 	int	fd;
+
 	fd = open(file->name, O_WRONLY | O_CREAT, 0644);
 	if (fd == -1)
 		return (0);
@@ -58,24 +61,25 @@ int	cpy_heredoc(t_redirect *file)
 	close(fd);
 	return (1);
 }
+
 int	name_heredocs(t_minishell *mini)
 {
-	t_lex	*cmds;
+	t_lex		*cmds;
 	t_redirect	*files;
-	cmds = mini->lex;
 
-	while(cmds != NULL)
+	cmds = mini->lex;
+	while (cmds != NULL)
 	{
 		files = cmds->redic;
-		while(files != NULL)
+		while (files != NULL)
 		{
-			if(files->level == HEREDOC)
+			if (files->level == HEREDOC)
 			{
 				gen_filename(files);
 				if (files->name == NULL)
 					return (clear_heredoc_fns(mini->lex),
 						perror("heredoc name"), -1);
-				if(!cpy_heredoc(files))
+				if (!cpy_heredoc(files))
 					return (clear_heredoc_fns(mini->lex),
 						perror("heredoc copy"), -1);
 			}
@@ -85,4 +89,3 @@ int	name_heredocs(t_minishell *mini)
 	}
 	return (1);
 }
-
