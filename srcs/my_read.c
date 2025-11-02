@@ -81,7 +81,7 @@ int	my_read(t_minishell *mini)
 		mini->error_code = 128 + g_signaln;
 		g_signaln = 0;
 	}
-	add_history(mini->in);
+	//add_history(mini->in);
 	if (!*(mini->in))
 		return (free(mini->in), mini->in = NULL, 1);
 	if (!check_quotes(mini->in))

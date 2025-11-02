@@ -1,5 +1,5 @@
 EXPAND2_PRE	= expansion/
-EXPAND2_SRC	= expansion.c expansion_helper.c redirect_expansion.c expansion_helper2.c
+EXPAND2_SRC	= expansion.c expansion_helper.c redirect_expansion.c expansion_helper2.c redric_helper.c
 
 EXPAND_PRE	= expand_tools/
 EXPAND_SRC	= exp_addback.c exp_clear.c exp_delone.c exp_last.c exp_new.c exp_split.c\

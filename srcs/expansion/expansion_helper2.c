@@ -55,7 +55,7 @@ int	sub_helper(t_expands **_exp, t_expands **exp, char *tmp)
 		else if (!(*tmp2) && !sub_helper_helper(&exp_tmp, tmp2, tmp, 2))
 			return (0);
 		free(tmp);
-		free(tmp2);
+		ft_free(tmp2);
 		exp_tmp2 = (*exp)->next;
 		exp_removeandinject(_exp, (*exp), exp_tmp);
 		(*exp) = exp_tmp2;

@@ -44,9 +44,7 @@ t_expands	*reparse(char **in, char *org)
 		if (in[j] && org[i] == in[j][0])
 		{
 			k = ft_strlen(in[j]);
-			tmp = exp_new(in[j], ((i > 0) && (ft_strchr("\t\n\r\v\f ",
-								org[i - 1]))), ((org[i + k])
-						&& (ft_strchr("\t\n\r\v\f ", org[i + k]))), 0);
+			tmp = reparse_help(in[j], i, k, org);
 			if (!tmp)
 				return (exp_clear(&out, free), NULL);
 			exp_addback(&out, tmp);

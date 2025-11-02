@@ -1,4 +1,4 @@
-#include "../header/expand.h"
+#include "../header/minishell.h"
 
 static int	is_in2(char c, char *base)
 {
@@ -71,6 +71,8 @@ char	**split_2(char *str, char *charset)
 	if (!str)
 		return ((char **)ft_calloc(1, sizeof(char *)));
 	out = (char **)ft_calloc((count(str, charset) + 1), sizeof(char *));
+	if (!out)
+		return (NULL);
 	i = -1;
 	tmp = str;
 	len = 0;
@@ -78,6 +80,8 @@ char	**split_2(char *str, char *charset)
 	{
 		tmp = skip(&tmp[len], charset, &len);
 		out[i] = (char *)ft_calloc((len + 1), sizeof(char));
+		if (!out[i])
+			return (ft_free(out));
 		ft_strncpy(out[i], tmp, len);
 	}
 	return (out);

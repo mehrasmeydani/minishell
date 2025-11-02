@@ -37,7 +37,8 @@ int	main(int argc, char **argv, char **env)
 	(void)argv;
 	(void)env;
 	ft_bzero(&mini, sizeof(mini));
-	set_var(&mini, env, 1);
+	if (!set_var(&mini, env, 1))
+		return (1);
 	while (true)
 	{
 		signal(SIGQUIT, SIG_IGN);

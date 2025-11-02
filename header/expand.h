@@ -58,5 +58,6 @@ void		remove_quotes_3(char *str);
 void		ft_swap(char *a, char *b);
 void		exp_exp(t_expands *tmp, char **out);
 int			sub_helper(t_expands **_exp, t_expands **exp, char *tmp);
+t_expands	*reparse_help(char *in, ssize_t i, ssize_t k, char *org);
 
 #endif
