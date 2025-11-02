@@ -112,8 +112,8 @@ int	export_syntax(char **cmd, ssize_t i, char **tmp2)
 		if (!*tmp2)
 			return (0);
 		j = -1;
-		while (i == 1 && *tmp2[++j])
-			if (!is_valid_env2(*tmp2[j], j))
+		while (i == 1 && (*tmp2)[++j])
+			if (!is_valid_env2((*tmp2)[j], j))
 				return (free(*tmp2), errno = EINVAL, 0);
 	}
 	else
