@@ -47,5 +47,8 @@ void	builtin_exit(t_exec *exec, t_minishell *mini, char *error, char **cmd);
 int		is_builtin(char **cmd);
 void	ft_free_free(char ***str);
 size_t	ft_str_str_len(char **in);
+void	sig_handler_int_parent(int sig);
+void	sig_handler_quit(int sig);
+void	sig_handler_quit_parent(int sig);
 
 #endif

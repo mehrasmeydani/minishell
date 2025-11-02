@@ -14,30 +14,6 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	return (temp);
 }
 
-void	sig_handler_int_parent(int sig)
-{
-	g_signaln = sig;
-	rl_on_new_line();
-	ft_putendl_fd("", 0);
-	rl_replace_line("", 0);
-}
-
-void	sig_handler_quit(int sig)
-{
-	g_signaln = sig;
-	rl_on_new_line();
-	ft_putendl_fd("", 0);
-	rl_replace_line("", 0);
-	exit(sig + 128);
-}
-
-void	sig_handler_quit_parent(int sig)
-{
-	(void)sig;
-	rl_on_new_line();
-	ft_putendl_fd("", 0);
-	rl_replace_line("", 0);
-}
 /*
 int	run_builtin (t_minishell *mini, t_exec *exec, t_lex *cmd)
 {
@@ -64,6 +40,22 @@ void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec)
 	close_exit(exec, mini, "execution", 1);
 }
 
+void	end_builtin(t_exec *exec, t_minishell *mini, char *cmd) 
+{
+	if (exec->children_count > 1)
+		return (close_exit(exec, mini, cmd, 1));
+	else
+		return ((void)(perror(cmd), mini->error_code = 1));
+}
+
+void	run_builtin(char **cmd_args, t_minishell *mini, t_exec *exec)
+{
+	if (!exec_builtin(cmd_args, mini, exec))
+		return (end_builtin(exec, mini, cmd_args[0]));
+	if (exec->children_count > 1)
+		close_exit(exec, mini, NULL, 0);
+	return((void)(mini->error_code = 0));
+}
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;
@@ -76,18 +68,7 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 	if (redirect_and_filecheck(cur) == -1)
 		return(exit_or_return(exec, mini, NULL, 1));
 	if (is_builtin(cmd->cmd))
-	{
-		if (!exec_builtin(cmd->cmd, mini, exec))
-		{
-			if (exec->children_count > 1)
-				return (close_exit(exec, mini, cmd->cmd[0], 1));
-			else
-				return ((void)(perror(cmd->cmd[0]), mini->error_code = 1));
-		}
-		if (exec->children_count > 1)
-			close_exit(exec, mini, NULL, 0);
-		return ((void)(mini->error_code = 0));
-	}
+		return (run_builtin(cmd->cmd, mini, exec));
 	signal(SIGQUIT, sig_handler_quit);
 	tmp = check_against_cmd(cmd, exec->pathlist, &mini->error_code);
 	if (!tmp)
@@ -132,12 +113,23 @@ void	wait_for_death(t_minishell *mini, t_exec *exec)
 	set_exit_status(mini, status);
 }
 
+void	parent_post_child_cleanup(t_minishell *mini, t_exec *exec)
+{
+	signal(SIGQUIT, SIG_IGN);
+	if (mini->lex->cmd[0] && !ft_strcmp(mini->lex->cmd[0], "./minishell"))
+		signal(SIGINT, SIG_IGN);
+	else
+		signal(SIGINT, sig_handler_int_parent);
+	if (exec->children_count != 1 || !is_builtin(mini->lex->cmd))
+		wait_for_death(mini, exec);
+	clean_after_exec(exec, mini, NULL);
+
+}
 void	spawn_children(t_minishell *mini)
 {
 	size_t	i;
 	t_exec		exec;
 	t_redirect	*current;
-	//t_lex	*cmd;
 
 	if (fill_struct(&exec, mini) == -1)
 		return ;
@@ -158,13 +150,6 @@ void	spawn_children(t_minishell *mini)
 			executor(mini, &exec, i, current);
 		my_pipe_dup_close(&exec, i);
 	}
-	signal(SIGQUIT, SIG_IGN);
-	if (mini->lex->cmd[0] && !ft_strcmp(mini->lex->cmd[0], "./minishell"))
-		signal(SIGINT, SIG_IGN);
-	else
-		signal(SIGINT, sig_handler_int_parent);
-	if (exec.children_count != 1 || !is_builtin(mini->lex->cmd))
-		wait_for_death(mini, &exec);
-	clean_after_exec(&exec, mini, NULL);
+	parent_post_child_cleanup(mini, &exec);
 }
 

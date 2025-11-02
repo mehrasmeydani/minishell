@@ -32,13 +32,10 @@ int	heredoc_eof(t_redirect *tmp)
 
 void	heredoc_sig(int sig)
 {
-	//ft_putendl_fd("", 1);
 	if (ioctl(STDIN_FILENO, TIOCSTI, "\n") == -1)
-		exit(2);
-	//rl_replace_line("", 0);
+		perror("ioctl");
 	rl_done = 1;
 	rl_on_new_line();
-	//rl_redisplay();
 	g_signaln = sig;
 }
 int	here_docrl(t_redirect *tmp, char *tmp_str)
