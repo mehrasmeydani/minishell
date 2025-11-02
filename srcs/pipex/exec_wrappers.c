@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exec_wrappers.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/02 17:41:53 by alvcampo          #+#    #+#             */
+/*   Updated: 2025/11/02 17:41:55 by alvcampo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../header/minishell.h"
 
 void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec)

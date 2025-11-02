@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   run_builtin.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/11/02 17:42:23 by alvcampo          #+#    #+#             */
+/*   Updated: 2025/11/02 17:42:24 by alvcampo         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../../header/minishell.h"
 
 static void	end_builtin(t_exec *exec, t_minishell *mini, char *cmd)
