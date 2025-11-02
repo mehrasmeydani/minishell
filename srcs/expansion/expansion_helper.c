@@ -72,7 +72,7 @@ int	sub_helper_helper(t_expands **exp_tmp, char **tmp2, char *tmp, int mode)
 		if (!*exp_tmp)
 			return (ft_free(tmp2), free(tmp), 0);
 	}
-	else
+	else if (mode == 2)
 	{
 		*exp_tmp = exp_new(NULL, 1, 1, 0);
 		if (!*exp_tmp)
@@ -94,7 +94,7 @@ int	sub_helper(t_expands **_exp, t_expands **exp, char *tmp)
 			return (free(tmp), 0);
 		if (*tmp2 && !sub_helper_helper(&exp_tmp, tmp2, tmp, 1))
 			return (0);
-		else if (!*tmp && !sub_helper_helper(&exp_tmp, tmp2, tmp, 2))
+		else if (!(*tmp2) && !sub_helper_helper(&exp_tmp, tmp2, tmp, 2))
 			return (0);
 		free(tmp);
 		free(tmp2);
