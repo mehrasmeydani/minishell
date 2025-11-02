@@ -1,6 +1,6 @@
 #include "../../header/minishell.h"
 
-extern int g_signaln;
+extern int	g_signaln;
 
 static void	set_exit_status(t_minishell *mini, int status)
 {
@@ -21,11 +21,11 @@ static void	set_exit_status(t_minishell *mini, int status)
 void	wait_for_death(t_minishell *mini, t_exec *exec)
 {
 	size_t	i;
-	int status;
+	int		status;
 
 	status = 0;
 	i = -1;
-	while(++i < exec->children_count)
+	while (++i < exec->children_count)
 	{
 		if (exec->pids[i] != -1 && exec->pids[i] != -2)
 			waitpid(exec->pids[i], &status, 0);

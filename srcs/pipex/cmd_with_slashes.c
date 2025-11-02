@@ -36,7 +36,6 @@ static char	*get_cmd_absolute(char *cmd, int *errorcode)
 char	*get_cmd_with_slashes(t_lex *node, int *errorcode)
 {
 	if (!is_a_dir(node->cmd[0], errorcode))
-			return (get_cmd_absolute(node->cmd[0], errorcode));
-		return (NULL);
+		return (get_cmd_absolute(node->cmd[0], errorcode));
+	return (NULL);
 }
-
