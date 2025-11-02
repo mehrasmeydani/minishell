@@ -14,26 +14,6 @@ t_lex	*find_current_cmd(t_lex *head, size_t pos)
 	return (temp);
 }
 
-/*
-int	run_builtin (t_minishell *mini, t_exec *exec, t_lex *cmd)
-{
-	if (is_builtin(cmd->cmd))
-	{
-		if (!exec_builtin(cmd->cmd, mini, exec))
-		{
-			if (exec->children_count > 1)
-				return (close_exit(exec, mini, cmd->cmd[0], 1), 0);
-			else
-				return ((void)(perror(cmd->cmd[0]), mini->error_code = 1), 0);
-		}
-		if (exec->children_count > 1)
-			close_exit(exec, mini, NULL, 0);
-	}
-		return (mini->error_code = 0, 1);
-
-}
-*/
-
 void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec)
 {
 	execve(cmd_args[0], cmd_args, mini->env.var_pass_to_exec);
