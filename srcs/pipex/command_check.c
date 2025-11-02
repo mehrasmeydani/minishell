@@ -6,7 +6,7 @@
 /*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 17:03:15 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 01:30:04 by megardes         ###   ########.fr       */
+/*   Updated: 2025/11/02 00:53:14 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,16 +59,8 @@ int	is_a_dir(char *cmd, int *errorcode)
 	}
 	if (S_ISDIR(stats.st_mode))
 		return (*errorcode = 126, errno = EISDIR, 1);
-	return (0);
+	return 0;
 }
-
-char	*absolute_cmd_or_dir(char *cmd, int *errorcode)
-{
-	if (!is_a_dir(cmd, errorcode))
-		return (get_cmd_absolute(cmd, errorcode));
-	return (NULL);
-}
-
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 {
 	ssize_t	i;
@@ -81,7 +73,11 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	if (!ft_strcmp(node->cmd[0], ".") || !ft_strcmp(node->cmd[0], ".."))
 		return (errno = ENOENT, *errorcode = 127, NULL);
 	if (ft_strchr(node->cmd[0], '/') != NULL)
-		return (absolute_cmd_or_dir(node->cmd[0], errorcode));
+	{
+		if (!is_a_dir(node->cmd[0], errorcode))
+			return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
+		return (NULL);
+	}
 	if (!pathlist)
 		return (unset_path_cmd(node->cmd[0], errorcode));
 	while (pathlist && pathlist[++i] != NULL)

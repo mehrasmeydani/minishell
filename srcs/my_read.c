@@ -53,16 +53,14 @@ int	my_read2(t_minishell *mini)
 {
 	int	i;
 
-	if (!expand_all(mini))
-		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
-	i = check_heredoc(mini->lex, mini);
+	i = check_heredoc(mini->lex);
 	if (!i)
 		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
 	if (i == -1)
 		return (lex_clear(&(mini->lex), ft_free),
 			mini->lex = NULL, mini->error_code = 0, 1);
-	if (i == 2)
-		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, mini->error_code = 130, 1);
+	if (!expand_all(mini))
+		return (lex_clear(&(mini->lex), ft_free), mini->lex = NULL, 1);
 	return (1);
 }
 
@@ -72,10 +70,7 @@ int	my_read(t_minishell *mini)
 	if (!mini->in)
 		return (0);
 	if (g_signaln != 0)
-	{
 		mini->error_code = 128 + g_signaln;
-		g_signaln = 0;
-	}
 	add_history(mini->in);
 	if (!*(mini->in))
 		return (free(mini->in), mini->in = NULL, 1);

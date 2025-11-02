@@ -15,34 +15,36 @@ static int	has_valid_args(char **cmd)
 
 static int	export_pwd(t_minishell *mini, char *dir)
 {
-	char	*exporting[3];
+	char	*cmd;
+	char	**exporting;
 
-	exporting[0] = ft_strdup("export");
-	if (!exporting[0])
+	cmd = ft_strjoin("export PWD=", dir);
+	if (!cmd)
 		return (0);
-	exporting[1] = ft_strjoin("PWD=", dir);
-	if (!exporting[1])
-		return (free(exporting[0]), 0);
-	exporting[2] = NULL;
+	exporting = ft_split(cmd, ' ');
+	free(cmd);
+	if (!exporting)
+		return (0);
 	if (my_export(mini, exporting) != 1)
-		return (free(exporting[0]), free(exporting[1]), 0);
-	return (free(exporting[0]), free(exporting[1]), 1);
+		return (ft_free(exporting), 0);
+	return (ft_free(exporting), 1);
 }
 
 static int	export_oldpwd(t_minishell *mini, char *dir)
 {
-	char	*exporting[3];
+	char	*cmd;
+	char	**exporting;
 
-	exporting[0] = ft_strdup("export");
-	if (!exporting[0])
+	cmd = ft_strjoin("export OLDPWD=", dir);
+	if (!cmd)
 		return (0);
-	exporting[1] = ft_strjoin("OLDPWD=", dir);
-	if (!exporting[1])
-		return (free(exporting[0]), 0);
-	exporting[2] = NULL;
+	exporting = ft_split(cmd, ' ');
+	free(cmd);
+	if (!exporting)
+		return (0);
 	if (my_export(mini, exporting) != 1)
-		return (free(exporting[0]), free(exporting[1]), 0);
-	return (free(exporting[0]), free(exporting[1]), 1);
+		return (ft_free(exporting), 0);
+	return (ft_free(exporting), 1);
 }
 
 static int	check_env_entry(char **var_name, bool ispwd)
