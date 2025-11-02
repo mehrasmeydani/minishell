@@ -11,8 +11,8 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/stat.h>
-typedef struct s_minishell	t_minishell;
 
+typedef struct s_minishell	t_minishell;
 typedef struct s_exec
 {
 	char	**pathlist;

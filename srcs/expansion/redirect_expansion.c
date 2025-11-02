@@ -57,6 +57,22 @@ t_expands	*reparse(char **in, char *org)
 	return (out);
 }
 
+int	redirect_exp2(t_minishell *mini, t_redirect *red)
+{
+	char	*tmp;
+
+	tmp = expand(mini, red->name, 0);
+	if (!tmp)
+		return (0);
+	free(red->name);
+	red->name = tmp;
+	if (!has_quotes(red->name) && is_in(red->name, "\t\n\r\v\f "))
+		return (errno = 1, perror("ambiguous redirect"), 0);
+	if (!remove_quotes(&red->name))
+		return (0);
+	return (1);
+}
+
 int	redirect_exp(t_minishell *mini, t_redirect *red)
 {
 	char	*tmp;
@@ -72,17 +88,8 @@ int	redirect_exp(t_minishell *mini, t_redirect *red)
 			red->input = tmp;
 		}
 		else if (red->level != HEREDOC)
-		{
-			tmp = expand(mini, red->name, 0);
-			if (!tmp)
+			if (!redirect_exp2(mini, red))
 				return (0);
-			free(red->name);
-			red->name = tmp;
-			if (!has_quotes(red->name) && is_in(red->name, "\t\n\r\v\f "))
-				return (errno = 1, perror("ambiguous redirect"), 0);
-			if (!remove_quotes(&red->name))
-				return (0);
-		}
 		red = red->next;
 	}
 	return (1);
