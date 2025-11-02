@@ -12,6 +12,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <sys/ioctl.h>
+# include <limits.h>
 
 # define SINGLE 1
 # define DOUBLE 2
@@ -35,6 +36,8 @@ char	**ft_duostrdup(char **in, ssize_t len);
 char	**ft_free(char **in);
 size_t	ft_str_str_len(char **in);
 int		check_heredoc(t_lex *lex, t_minishell *mini);
+int		find_var(char **var, char *in, ssize_t len, t_env env);
+int		heredoc_eof(t_redirect *tmp);
 
 /*********************built ins*********************/
 
@@ -45,6 +48,9 @@ void	env(t_minishell *mini);
 int		my_export(t_minishell *mini, char **cmd);
 int		is_builtin(char **cmd);
 int		unset(t_minishell *mini, char **cmd);
+void	builtin_exit(t_exec *exec, t_minishell *mini, char **cmd);
+void	print_export(t_minishell *mini);
+int		add_var(t_minishell *mini, char **cmd);
 
 /********************readfile***********************/
 
@@ -62,5 +68,13 @@ int		set_var(t_minishell *mini, char **env_var, bool first);
 int		preset_var(t_env *env);
 ssize_t	var_exists(t_env *env, char	*input, char *tmp);
 void	free_env(t_env *env);
+
+/*********************split exp*********************/
+
+void	str_helper1(char **in, ssize_t *i, int *q_s, int *prev_status);
+void	str_helper2(char **in, ssize_t *i);
+void	count_helper2(char *in, ssize_t *i);
+void	count_helper(char *in, ssize_t *i, int *q_s, int *prev);
+int		quotes2(char c, int *state);
 
 #endif

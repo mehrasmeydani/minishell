@@ -18,18 +18,6 @@ int	here_docrl2(t_redirect *tmp, char *tmp_str)
 	return (1);
 }
 
-int	heredoc_eof(t_redirect *tmp)
-{
-	if (tmp->input)
-	{
-		tmp->input = ft_relocat(tmp->input, "\n");
-		if (!tmp->input)
-			return (0);
-	}
-	return (ft_putendl_fd("Warning: EOF!", 2),
-		free(tmp->name), tmp->name = NULL, -1);
-}
-
 void	heredoc_sig(int sig)
 {
 	if (ioctl(STDIN_FILENO, TIOCSTI, "\n") == -1)

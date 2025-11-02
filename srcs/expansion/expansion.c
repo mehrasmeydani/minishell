@@ -9,28 +9,6 @@ void	ft_swap(char *a, char *b)
 	*b = why;
 }
 
-void	exp_exp(t_expands *tmp, char **out)
-{
-	ssize_t	i;
-
-	i = 0;
-	while (tmp)
-	{
-		if ((tmp->str && *tmp->str) || tmp->quotes)
-		{
-			out[i] = tmp->str;
-			tmp->str = NULL;
-			i++;
-		}
-		else
-		{
-			free(tmp->str);
-			tmp->str = NULL;
-		}
-		tmp = tmp->next;
-	}
-}
-
 char	**expand_exp(t_minishell *mini, t_expands **exp)
 {
 	char		**out;
