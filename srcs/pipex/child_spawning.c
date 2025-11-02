@@ -62,8 +62,8 @@ void	execve_wrapper(char **cmd_args, t_minishell *mini, t_exec *exec)
 {
 	execve(cmd_args[0], cmd_args, mini->env.var_pass_to_exec);
 	close_exit(exec, mini, "execution", 1);
-
 }
+
 void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 {
 	t_lex	*cmd;

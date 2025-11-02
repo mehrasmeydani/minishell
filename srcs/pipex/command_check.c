@@ -6,7 +6,7 @@
 /*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/01 17:03:15 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/01 20:10:13 by megardes         ###   ########.fr       */
+/*   Updated: 2025/11/02 00:53:14 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,57 @@ char	*get_cmd_absolute(char *cmd, int *errorcode)
 	return (free(new_cmd), *errorcode = 127, NULL);
 }
 
+char	*unset_path_cmd(char *cmd, int *errorcode)
+{
+	char *new_cmd;
+
+	new_cmd = ft_strjoin("./", cmd);
+	if (!new_cmd)
+		return (*errorcode = 1, (NULL));
+	if (access(new_cmd, F_OK) == 0)
+	{
+		if (access(new_cmd, X_OK) == 0)
+			return (new_cmd);
+		else
+			return (free(new_cmd), *errorcode = 126, NULL);
+	}
+	return (free(new_cmd), *errorcode = 127, NULL);
+}
+
+int	is_a_dir(char *cmd, int *errorcode)
+{
+	struct stat	stats;
+
+	if (stat(cmd, &stats) == -1)
+	{
+		if (errno == ENOENT)
+			return (*errorcode = 127, -1);
+		else
+			return (*errorcode = 1, -1);
+	}
+	if (S_ISDIR(stats.st_mode))
+		return (*errorcode = 126, errno = EISDIR, 1);
+	return 0;
+}
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 {
 	ssize_t	i;
 	char	*new_cmd;
 
 	i = -1;
+	new_cmd = NULL;
 	if (node->cmd[0] == NULL)
 		return (NULL);
+	if (!ft_strcmp(node->cmd[0], ".") || !ft_strcmp(node->cmd[0], ".."))
+		return (errno = ENOENT, *errorcode = 127, NULL);
 	if (ft_strchr(node->cmd[0], '/') != NULL)
-		return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
+	{
+		if (!is_a_dir(node->cmd[0], errorcode))
+			return (new_cmd = get_cmd_absolute(node->cmd[0], errorcode));
+		return (NULL);
+	}
 	if (!pathlist)
-		return (*errorcode = 126, errno = ENOENT, NULL);
+		return (unset_path_cmd(node->cmd[0], errorcode));
 	while (pathlist && pathlist[++i] != NULL)
 	{
 		new_cmd = ft_strjoin(pathlist[i], node->cmd[0]);
@@ -53,8 +92,8 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 		if(pathlist[i+1] == NULL)
 			return (*errorcode = 127, NULL);
 	}
-	if (!*pathlist)
-		return (*errorcode = 127, errno = ENOENT, NULL);
+	if (!*pathlist || !*node->cmd[0])
+		return (free(new_cmd), *errorcode = 127, errno = ENOENT, NULL);
 	if (new_cmd && access(new_cmd, X_OK) != 0)
 		return(free(new_cmd), *errorcode = 126, NULL);
 	return(new_cmd);

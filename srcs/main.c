@@ -44,7 +44,7 @@ int	main(int argc, char **argv, char **env)
 		signal(SIGINT, sigint);
 		set_zero(&mini);
 		if (!my_read(&mini))
-			return (rl_clear_history(), free_env(&mini.env), mini.error_code);
+			return (rl_clear_history(), free_env(&mini.env), close(1),close(0),  mini.error_code);
 		if (!mini.lex)
 			continue ;
 		execution(&mini);
