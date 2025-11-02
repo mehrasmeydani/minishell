@@ -4,20 +4,14 @@
 # define __USE_POSIX 1
 
 # include <sys/ioctl.h>
-# include <stdbool.h>
-# include <fcntl.h>
-# include <stdio.h>
-# include <readline/readline.h>
-# include <readline/history.h>
-# include <signal.h>
-# include <errno.h>
 # include "./libft.h"
 # include "./redirect.h"
 # include "./lexer.h"
 # include "./env.h"
 # include "./expand.h"
-# include <limits.h>
 # include "./execution.h"
+# include <readline/readline.h>
+# include <readline/history.h>
 
 # define SINGLE 1
 # define DOUBLE 2
