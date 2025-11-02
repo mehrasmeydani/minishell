@@ -95,4 +95,3 @@ int	add_var(t_minishell *mini, char **cmd)
 	}
 	return (1);
 }
-

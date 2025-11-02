@@ -56,5 +56,7 @@ int			has_quotes(char *in);
 int			is_in(char *str, char *set);
 void		remove_quotes_3(char *str);
 void		ft_swap(char *a, char *b);
+void		exp_exp(t_expands *tmp, char **out);
+int			sub_helper(t_expands **_exp, t_expands **exp, char *tmp);
 
 #endif

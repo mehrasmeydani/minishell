@@ -50,7 +50,7 @@ int		is_builtin(char **cmd);
 int		unset(t_minishell *mini, char **cmd);
 void	builtin_exit(t_exec *exec, t_minishell *mini, char **cmd);
 void	print_export(t_minishell *mini);
-int	add_var(t_minishell *mini, char **cmd);
+int		add_var(t_minishell *mini, char **cmd);
 
 /********************readfile***********************/
 
@@ -68,5 +68,13 @@ int		set_var(t_minishell *mini, char **env_var, bool first);
 int		preset_var(t_env *env);
 ssize_t	var_exists(t_env *env, char	*input, char *tmp);
 void	free_env(t_env *env);
+
+/*********************split exp*********************/
+
+void	str_helper1(char **in, ssize_t *i, int *q_s, int *prev_status);
+void	str_helper2(char **in, ssize_t *i);
+void	count_helper2(char *in, ssize_t *i);
+void	count_helper(char *in, ssize_t *i, int *q_s, int *prev);
+int		quotes2(char c, int *state);
 
 #endif

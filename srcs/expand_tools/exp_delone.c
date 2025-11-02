@@ -1,4 +1,4 @@
-#include "../header/minishell.h"
+#include "../../header/minishell.h"
 
 void	exp_delone(t_expands *exp, void (*del)(void *))
 {
