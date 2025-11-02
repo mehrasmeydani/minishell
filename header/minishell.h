@@ -11,6 +11,7 @@
 # include "./execution.h"
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <sys/ioctl.h>
 
 # define SINGLE 1
 # define DOUBLE 2
@@ -33,7 +34,7 @@ int		remove_quotes_2(char **in);
 char	**ft_duostrdup(char **in, ssize_t len);
 char	**ft_free(char **in);
 size_t	ft_str_str_len(char **in);
-int		check_heredoc(t_lex *lex);
+int		check_heredoc(t_lex *lex, t_minishell *mini);
 
 /*********************built ins*********************/
 
