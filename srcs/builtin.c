@@ -30,7 +30,7 @@ int	exec_builtin(char **cmd, t_minishell *mini, t_exec *exec)
 	if (!ft_strcmp(cmd[0], "env"))
 		return (env(mini), 1);
 	if (!ft_strcmp(cmd[0], "exit"))
-		return (builtin_exit(exec, mini, NULL, cmd), 1);
+		return (builtin_exit(exec, mini, cmd), 1);
 	if (!ft_strcmp(cmd[0], "export"))
 		return (my_export(mini, cmd));
 	if (!ft_strcmp(cmd[0], "echo"))

@@ -17,14 +17,14 @@ PIPE_SRC	= child_spawning.c command_check.c file_check.c free_paths.c path_const
 			exec_signals.c wait_for_death.c run_builtin.c
 
 BUILT_PRE	= builtins/
-BUILT_SRC	= env.c export.c echo.c cd.c pwd.c unset.c
+BUILT_SRC	= env.c export.c echo.c cd.c pwd.c unset.c my_exit.c actual_export.c export_helper.c
 
 SRC			= main.c ft_free.c mini_split.c my_read.c quotes.c ft_duostrdup.c lexer.c\
 			${addprefix ${LEX_PRE}, ${LEX_SRC}} ${addprefix ${REDIR_PRE}, ${REDIR_SRC}}\
 			remove_quotes.c expand.c preset_var.c env_var.c ${addprefix ${PIPE_PRE}, ${PIPE_SRC}}\
 			${addprefix ${BUILT_PRE}, ${BUILT_SRC}} builtin.c ${addprefix ${EXPAND_PRE}, ${EXPAND_SRC}}\
 			split_2.c lexer_helper.c ${addprefix ${EXPAND2_PRE}, ${EXPAND2_SRC}} ft_relocat.c\
-			heredoc.c ft_free_free.c env_var_helper.c
+			heredoc.c ft_free_free.c env_var_helper.c expand_helper.c heredoc_helper.c
 SRCS		= ${addprefix ${PRE}, ${SRC}}
 PRE			= ./srcs/
 HEAD		= ./header/
