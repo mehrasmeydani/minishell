@@ -12,14 +12,18 @@
 
 #include "../header/minishell.h"
 
-int	g_signaln = 0;
+volatile sig_atomic_t	g_signaln = 0;
+
+int	hook_main(void)
+{
+	if (ioctl(STDIN_FILENO, TIOCSTI, "\n") == -1)
+		perror("ioctl");
+	rl_replace_line("", 0);
+	return (0);
+}
 
 void	sigint(int sig)
 {
-	rl_on_new_line();
-	ft_putendl_fd("", 1);
-	rl_replace_line("", 0);
-	rl_redisplay();
 	g_signaln = sig;
 }
 
@@ -51,6 +55,7 @@ int	main(int argc, char **argv, char **env)
 	ft_bzero(&mini, sizeof(mini));
 	if (!set_var(&mini, env, 1))
 		return (1);
+	rl_signal_event_hook = hook_main;
 	while (true)
 	{
 		signal(SIGQUIT, SIG_IGN);

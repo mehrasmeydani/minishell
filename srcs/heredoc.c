@@ -12,7 +12,7 @@
 
 #include "../header/minishell.h"
 
-extern int	g_signaln;
+extern sig_atomic_t	g_signaln;
 
 int	here_docrl2(t_redirect *tmp, char *tmp_str)
 {
@@ -30,13 +30,11 @@ int	here_docrl2(t_redirect *tmp, char *tmp_str)
 	return (1);
 }
 
-void	heredoc_sig(int sig)
+int	heredoc_sig(void)
 {
 	if (ioctl(STDIN_FILENO, TIOCSTI, "\n") == -1)
 		perror("ioctl");
-	rl_done = 1;
-	rl_on_new_line();
-	g_signaln = sig;
+	return (0);
 }
 
 int	add_hd_info(char **tmp_str, t_redirect *tmp)
@@ -59,7 +57,6 @@ int	here_docrl(t_redirect *tmp, char *tmp_str)
 		return (0);
 	while (true)
 	{
-		signal(SIGINT, heredoc_sig);
 		tmp_str = readline(">");
 		if (g_signaln != 0)
 			return (2);

@@ -12,7 +12,7 @@
 
 #include "../../header/minishell.h"
 
-extern int	g_signaln;
+extern sig_atomic_t	g_signaln;
 
 static void	set_exit_status(t_minishell *mini, int status)
 {

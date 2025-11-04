@@ -88,5 +88,4 @@ void	str_helper2(char **in, ssize_t *i);
 void	count_helper2(char *in, ssize_t *i);
 void	count_helper(char *in, ssize_t *i, int *q_s, int *prev);
 int		quotes2(char c, int *state);
-
 #endif

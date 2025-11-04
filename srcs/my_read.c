@@ -12,7 +12,7 @@
 
 #include "../header/minishell.h"
 
-extern int	g_signaln;
+extern sig_atomic_t	g_signaln;
 
 static int	check_quotes(char *in)
 {
@@ -93,9 +93,9 @@ int	my_read(t_minishell *mini)
 		mini->error_code = 128 + g_signaln;
 		g_signaln = 0;
 	}
-	add_history(mini->in);
 	if (!*(mini->in))
 		return (free(mini->in), mini->in = NULL, 1);
+	add_history(mini->in);
 	if (!check_quotes(mini->in))
 		return (free(mini->in), mini->in = NULL
 			, ft_putendl_fd("Count your quotes", 2), mini->error_code = 2, 1);

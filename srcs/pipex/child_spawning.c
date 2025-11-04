@@ -12,7 +12,7 @@
 
 #include "../../header/minishell.h"
 
-extern int	g_signaln;
+extern sig_atomic_t	g_signaln;
 
 t_lex	*find_current_cmd(t_lex *head, size_t pos)
 {
@@ -57,8 +57,6 @@ void	parent_post_child_cleanup(t_minishell *mini, t_exec *exec)
 	signal(SIGQUIT, SIG_IGN);
 	if (mini->lex->cmd[0] && !ft_strcmp(mini->lex->cmd[0], "./minishell"))
 		signal(SIGINT, SIG_IGN);
-	else
-		signal(SIGINT, sig_handler_int_parent);
 	if (exec->children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, exec);
 	clean_after_exec(exec, mini, NULL);
