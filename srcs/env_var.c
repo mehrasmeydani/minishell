@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_var.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:45:37 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 17:45:38 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:55:36 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,11 +75,11 @@ int	set_must_var(t_env *env)
 		tmp = ft_strchr(env->raw_var[i], '=');
 		len = (((tmp != NULL) * (tmp - env->raw_var[i]))
 				+ ((tmp == NULL) * ft_strlen(env->raw_var[i])));
-		if (!ft_strncmp(env->raw_var[i], "SHLVL", len))
+		if (!ft_strncmp(env->raw_var[i], "SHLVL", len) && len == 5)
 			must -= 1;
-		if (!ft_strncmp(env->raw_var[i], "PWD", len))
+		if (!ft_strncmp(env->raw_var[i], "PWD", len) && len == 3)
 			must -= 2;
-		if (!ft_strncmp(env->raw_var[i], "OLDPWD", len))
+		if (!ft_strncmp(env->raw_var[i], "OLDPWD", len) && len == 6)
 			must -= 4;
 	}
 	if (must)
