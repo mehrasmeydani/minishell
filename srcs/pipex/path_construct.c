@@ -45,15 +45,54 @@ static char	**sanitize_paths(char **pathlist)
 	return (pathlist);
 }
 
+static int	has_preceding_trailing_colon(char *envp_path)
+{
+	if (!*envp_path)
+		return (0);
+	if (envp_path[0] == ':')
+		return (1);
+	if (envp_path[ft_strlen(envp_path - 1)] == ':')
+		return (2);
+	return (0);
+}
+
+static char	*join_dot_path(char *path)
+{
+	char	*temp;
+
+	if (has_preceding_trailing_colon(path) == 1)
+	{
+		temp = ft_strjoin(".", path);
+		free (path);
+		return (temp);
+	}
+	if (has_preceding_trailing_colon(path) == 2)
+	{
+		temp = ft_strjoin(path, ".");
+		free (path);
+		return (temp);
+	}
+	else
+		return (path);
+}
+
 char	**get_path_array(char **envp, bool *isemptypath)
 {
 	char	*envp_path;
 	char	**pathlist;
+	char	*path;
 
 	envp_path = findpath(envp);
 	if (!envp_path)
 		return (*isemptypath = true, NULL);
-	pathlist = ft_split(envp_path, ':');
+	path = ft_strdup(envp_path);
+	if (!path)
+		return (NULL);
+	path = join_dot_path(path);
+	if (!path)
+		return (NULL);
+	pathlist = ft_split(path, ':');
+	free(path);
 	if (!pathlist)
 		return (NULL);
 	pathlist = sanitize_paths(pathlist);

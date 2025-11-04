@@ -58,7 +58,7 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 		return (NULL);
 	if (ft_strchr(node->cmd[0], '/') != NULL)
 		return (get_cmd_with_slashes(node, errorcode));
-	if (!pathlist)
+	if (!pathlist || !*pathlist)
 		return (unset_path_cmd(node->cmd[0], errorcode));
 	while (pathlist && pathlist[++i] != NULL)
 	{
