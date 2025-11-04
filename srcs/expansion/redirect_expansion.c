@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redirect_expansion.c                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:44:36 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 17:44:37 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:51:43 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,17 +69,25 @@ t_expands	*reparse(char **in, char *org)
 
 int	redirect_exp2(t_minishell *mini, t_redirect *red)
 {
-	char	*tmp;
+	char		**tmp;
+	t_expands	*exp;
 
-	tmp = expand(mini, red->name, 0);
+	tmp = exp_split(red->name);
 	if (!tmp)
 		return (0);
+	exp = create_exp(tmp);
+	if (!exp)
+		return (ft_free(tmp), 0);
+	free(tmp);
+	tmp = expand_exp(mini, &exp);
+	if (!tmp)
+		return (exp_clear(&exp, free), 0);
+	exp_clear(&exp, free);
+	if (ft_str_str_len(tmp) > 1 || !ft_strlen(tmp[0]))
+		return (ft_free(tmp), errno = 1, perror("ambiguous redirect"), 0, 0);
 	free(red->name);
-	red->name = tmp;
-	if (!has_quotes(red->name) && is_in(red->name, "\t\n\r\v\f "))
-		return (errno = 1, perror("ambiguous redirect"), 0);
-	if (!remove_quotes(&red->name))
-		return (0);
+	red->name = tmp[0];
+	free(tmp);
 	return (1);
 }
 

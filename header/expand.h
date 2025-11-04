@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expand.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:42:49 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 17:42:50 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/11/04 15:33:01 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,5 +71,6 @@ void		ft_swap(char *a, char *b);
 void		exp_exp(t_expands *tmp, char **out);
 int			sub_helper(t_expands **_exp, t_expands **exp, char *tmp);
 t_expands	*reparse_help(char *in, ssize_t i, ssize_t k, char *org);
+char		**expand_exp(t_minishell *mini, t_expands **exp);
 
 #endif
