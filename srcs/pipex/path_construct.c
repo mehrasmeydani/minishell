@@ -51,7 +51,7 @@ static int	has_preceding_trailing_colon(char *envp_path)
 		return (0);
 	if (envp_path[0] == ':')
 		return (1);
-	if (envp_path[ft_strlen(envp_path - 1)] == ':')
+	if (envp_path[ft_strlen(envp_path) - 1] == ':')
 		return (2);
 	return (0);
 }
