@@ -87,14 +87,16 @@ char	**get_path_array(char **envp, bool *isemptypath)
 		return (*isemptypath = true, NULL);
 	path = ft_strdup(envp_path);
 	if (!path)
-		return (NULL);
+		return (errno = ENOMEM, NULL);
 	path = join_dot_path(path);
 	if (!path)
-		return (NULL);
+		return (errno = ENOMEM, NULL);
 	pathlist = ft_split(path, ':');
 	free(path);
 	if (!pathlist)
-		return (NULL);
+		return (errno = ENOMEM, NULL);
 	pathlist = sanitize_paths(pathlist);
+	if (!pathlist)
+		return (errno = ENOMEM, NULL);
 	return (pathlist);
 }

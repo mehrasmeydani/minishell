@@ -29,23 +29,34 @@ char	*unset_path_cmd(char *cmd, int *errorcode)
 	return (free(new_cmd), *errorcode = 127, NULL);
 }
 
-int	pre_cmd_check(t_lex *node, int *errorcode, ssize_t *i)
+int	pre_cmd_check(t_lex *node, int *errorcode, ssize_t *i, char **cmd)
 {
+	*cmd = NULL;
 	*i = -1;
 	if (node->cmd[0] == NULL)
 		return (0);
+	if (!*node->cmd[0])
+		return (errno = ENOENT, *errorcode = 127, 0);
 	if (!ft_strcmp(node->cmd[0], ".") || !ft_strcmp(node->cmd[0], ".."))
 		return (errno = ENOENT, *errorcode = 127, 0);
 	return (1);
 }
 
-int	post_cmd_check(t_lex *node, char **pathlist, int *errorcode, char *new_cmd)
+int	is_exec(char *new_cmd, int *errorcode)
 {
-	if (!*pathlist || !*node->cmd[0])
-		return (free(new_cmd), *errorcode = 127, errno = ENOENT, 0);
-	if (new_cmd && access(new_cmd, X_OK) != 0)
-		return (free(new_cmd), *errorcode = 126, 0);
-	return (1);
+	if (access(new_cmd, X_OK) == 0)
+		return (0);
+	else
+	{
+		*errorcode = 126;
+		return (-1);
+	}
+}
+
+void	check_error(int *errorcode)
+{
+	if (*errorcode != 126)
+		*errorcode = 127;
 }
 
 char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
@@ -53,8 +64,7 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 	ssize_t	i;
 	char	*new_cmd;
 
-	new_cmd = NULL;
-	if (!pre_cmd_check(node, errorcode, &i))
+	if (!pre_cmd_check(node, errorcode, &i, &new_cmd))
 		return (NULL);
 	if (ft_strchr(node->cmd[0], '/') != NULL)
 		return (get_cmd_with_slashes(node, errorcode));
@@ -66,13 +76,14 @@ char	*check_against_cmd(t_lex *node, char **pathlist, int *errorcode)
 		if (!new_cmd)
 			return (*errorcode = 1, perror("command alloc"), NULL);
 		if (access(new_cmd, F_OK) == 0)
-			break ;
+			if (is_exec(new_cmd, errorcode) == 0)
+				break ;
 		free(new_cmd);
 		new_cmd = NULL;
 		if (pathlist[i + 1] == NULL)
-			return (*errorcode = 127, NULL);
+			return (check_error(errorcode), NULL);
 	}
-	if (!post_cmd_check(node, pathlist, errorcode, new_cmd))
-		return (NULL);
-	return (new_cmd);
+	if (!*pathlist || !*node->cmd[0])
+		return (free(new_cmd), *errorcode = 127, errno = ENOENT, NULL);
+	return (*errorcode = 0, new_cmd);
 }

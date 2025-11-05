@@ -12,7 +12,7 @@
 
 #include "../../header/minishell.h"
 
-extern sig_atomic_t	g_signaln;
+extern volatile sig_atomic_t	g_signaln;
 
 t_lex	*find_current_cmd(t_lex *head, size_t pos)
 {

@@ -12,7 +12,7 @@
 
 #include "../header/minishell.h"
 
-extern sig_atomic_t	g_signaln;
+extern volatile sig_atomic_t	g_signaln;
 
 static int	check_quotes(char *in)
 {
