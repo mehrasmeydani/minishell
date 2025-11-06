@@ -6,7 +6,7 @@
 /*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:44:36 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/04 15:51:43 by megardes         ###   ########.fr       */
+/*   Updated: 2025/11/06 17:20:06 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,7 +84,8 @@ int	redirect_exp2(t_minishell *mini, t_redirect *red)
 		return (exp_clear(&exp, free), 0);
 	exp_clear(&exp, free);
 	if (ft_str_str_len(tmp) > 1 || !ft_strlen(tmp[0]))
-		return (ft_free(tmp), errno = 1, perror("ambiguous redirect"), 0, 0);
+		return (ft_free(tmp), errno = 1,
+			perror("ambiguous redirect"), mini->error_code = 1, 0);
 	free(red->name);
 	red->name = tmp[0];
 	free(tmp);

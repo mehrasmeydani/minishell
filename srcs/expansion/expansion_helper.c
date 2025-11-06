@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expansion_helper.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:44:31 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 17:44:31 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/11/06 17:12:00 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 

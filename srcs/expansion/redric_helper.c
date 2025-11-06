@@ -6,7 +6,7 @@
 /*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 18:54:13 by megardes          #+#    #+#             */
-/*   Updated: 2025/11/02 18:54:14 by megardes         ###   ########.fr       */
+/*   Updated: 2025/11/06 17:13:48 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ t_expands	*reparse_help(char *in, ssize_t i, ssize_t k, char *org)
 	tmp2 = ft_strdup(in);
 	if (!tmp2)
 		return (NULL);
-	out = exp_new(tmp2, re_h(1, i, org, k), re_h(1, i, org, k), 0);
+	out = exp_new(tmp2, re_h(1, i, org, k), re_h(0, i, org, k), 0);
 	if (!out)
 		return (free(tmp2), NULL);
 	return (out);

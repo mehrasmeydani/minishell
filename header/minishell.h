@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:43:01 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 17:43:03 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/11/06 16:57:44 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ char	*expand(t_minishell *mini, char *in, int here_doc);
 /**********************env var**********************/
 
 int		set_var(t_minishell *mini, char **env_var, bool first);
-int		preset_var(t_env *env);
 ssize_t	var_exists(t_env *env, char	*input, char *tmp);
 void	free_env(t_env *env);
 
