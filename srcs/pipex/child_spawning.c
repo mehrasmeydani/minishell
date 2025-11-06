@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   child_spawning.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: alvcampo <alvcampo@student.42vienna.com>   +#+  +:+       +#+        */
+/*   By: megardes <megardes@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/02 17:41:16 by alvcampo          #+#    #+#             */
-/*   Updated: 2025/11/02 17:41:19 by alvcampo         ###   ########.fr       */
+/*   Updated: 2025/11/06 13:08:51 by megardes         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,8 +55,6 @@ void	executor(t_minishell *mini, t_exec *exec, size_t i, t_redirect *cur)
 void	parent_post_child_cleanup(t_minishell *mini, t_exec *exec)
 {
 	signal(SIGQUIT, SIG_IGN);
-	if (mini->lex->cmd[0] && !ft_strcmp(mini->lex->cmd[0], "./minishell"))
-		signal(SIGINT, SIG_IGN);
 	if (exec->children_count != 1 || !is_builtin(mini->lex->cmd))
 		wait_for_death(mini, exec);
 	clean_after_exec(exec, mini, NULL);
